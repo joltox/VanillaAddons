@@ -3,6 +3,7 @@ Ich weiße explizit darauf hin, dass ich kein einziges Addon selber geschrieben 
 Daher gehen die Credits an alle Addon Hersteller.
 
 Hier ein Verweis auf mir bekannte Hersteller. Wenn ihr noch jemanden davon kennt bzw. eine Adresse habt, dann teilt sie mir mit.
+
 Shagu: http://shagu.org/pfUI/
 
 Wenn ihr Probleme entdeckt, dann benutzt die „Issues“ Funktion bei Github.
