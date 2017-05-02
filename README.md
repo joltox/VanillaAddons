@@ -1,4 +1,4 @@
-Hier meine Aktuellen World of Warcraft 1.12.1 Addons die ich im Moment im Stream benutze.
+Hier meine Aktuellen World of Warcraft 1.12.1 Addons, die ich im Moment im Stream benutze.
 Ich weiße explizit darauf hin, dass ich kein einziges Addon selber geschrieben haben.
 Daher gehen die Credits an alle Addon Hersteller.
 
