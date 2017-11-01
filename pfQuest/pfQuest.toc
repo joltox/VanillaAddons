@@ -2,9 +2,9 @@
 ## Title: |cff33ffccpf|cffffffffQuest
 ## Author: Shagu
 ## Notes: A lightweight Questhelper and Database
-## Version: 1.3
+## Version: 2.0alpha
 ## OptionalDeps: pfUI
-## SavedVariablesPerCharacter: pfQuest_config, pfDatabase_fav
+## SavedVariablesPerCharacter: pfQuest_config, pfDatabase_fav, pfQuest_history, pfQuest_colors
 
 # database index
 db\init.lua
