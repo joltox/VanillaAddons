@@ -122,27 +122,44 @@ local function UpdateQuestLogID(questIndex, action)
         local text, type, finished = GetQuestLogLeaderBoard(i, questIndex)
         local i, j, itemName, numItems, numNeeded = strfind(text, "(.*):%s*([%d]+)%s*/%s*([%d]+)")
 
+        local match = nil
         if not finished then
           -- spawn data
           if type == "monster" then
             local i, j, monsterName = strfind(itemName, "(.*)")
             zone, score = pfDatabase:SearchMob(monsterName, meta)
-            if zone then maps[zone] = maps[zone] and maps[zone] + score or 1 end
+            if zone then
+              match = true
+              maps[zone] = maps[zone] and maps[zone] + score or 1
+            end
 
             for id, query in pairs(questParse[locale]) do
               local i, j, monsterName = strfind(itemName, query)
               zone, score = pfDatabase:SearchMob(monsterName, meta)
-              if zone then maps[zone] = maps[zone] and maps[zone] + score or 1 end
+              if zone then
+                match = true
+                maps[zone] = maps[zone] and maps[zone] + score or 1
+              end
             end
           end
 
           -- item data
           if type == "item" then
             zone, score = pfDatabase:SearchItem(itemName, meta)
-            if zone then maps[zone] = maps[zone] and maps[zone] + score or 1 end
+            if zone then
+              match = true
+              maps[zone] = maps[zone] and maps[zone] + score or 1
+            end
 
             zone, score = pfDatabase:SearchVendor(itemName, meta)
-            if zone then maps[zone] = maps[zone] and maps[zone] + score or 1 end
+            if zone then
+              match = true
+              maps[zone] = maps[zone] and maps[zone] + score or 1
+            end
+          end
+
+          if not match then
+            meta.dbobj = true
           end
         end
       end
@@ -343,6 +360,7 @@ end
 
 pfQuest = CreateFrame("Frame")
 pfQuest:RegisterEvent("QUEST_LOG_UPDATE")
+pfQuest:RegisterEvent("QUEST_FINISHED")
 pfQuest:RegisterEvent("QUEST_WATCH_UPDATE")
 pfQuest:RegisterEvent("PLAYER_LEVEL_UP")
 pfQuest:RegisterEvent("ADDON_LOADED")
@@ -365,6 +383,12 @@ pfQuest:SetScript("OnEvent", function()
     if pfQuest_config["trackingmethod"] == 3 then return end
     if pfQuest_config["trackingmethod"] == 4 then return end
     if event == "PLAYER_LEVEL_UP" then
+      pfMap:DeleteNode("PFQUEST")
+      pfMap:UpdateNodes()
+
+      questTrackedCache = {}
+      pfQuest:Show()
+    elseif event == "QUEST_FINISHED" then
       UpdateQuestLogID(nil)
     else
       UpdateQuestLogID(arg1)
@@ -403,7 +427,11 @@ end)
 
 local HookAbandonQuest = AbandonQuest
 function AbandonQuest()
-  pfQuest_history[GetAbandonQuestName()] = nil
+  local quest = GetAbandonQuestName()
+  questLogCache[quest] = nil
+  pfQuest_history[quest] = nil
+  questTrackedCache[quest] = "ABANDONED"
+  pfMap:DeleteNode("PFQUEST", quest)
   HookAbandonQuest()
 end
 
@@ -426,32 +454,50 @@ end
 
 local pfQuestHookSetItemRef = SetItemRef
 function SetItemRef(link, text, button)
-  local isQuest, _, _    = string.find(link, "quest:(%d+):.*")
+  local isQuest, _, id    = string.find(link, "quest:(%d+):.*")
   local isQuest2, _, _   = string.find(link, "quest2:.*")
   local _, _, questLevel = string.find(link, "quest:%d+:(%d+)")
 
   local playerHasQuest = false
 
   if isQuest or isQuest2 then
+    local quests = pfDatabase["quests"]
+
     ShowUIPanel(ItemRefTooltip)
     ItemRefTooltip:SetOwner(UIParent, "ANCHOR_PRESERVE")
 
     local hasTitle, _, questTitle = string.find(text, ".*|h%[(.*)%]|h.*")
     if hasTitle then ItemRefTooltip:AddLine(questTitle, 1,1,0) end
 
+    -- scan for questdb entry
+    local qname = nil
+    for name, tab in pairs(quests) do
+      local f, t, questname, _ = strfind(name, "(.*),.*")
+      if questname == questTitle then
+        qname = name
+        if id and tab.id == id then break end
+      end
+    end
+
+    -- add database entries if existing
+    if quests[qname] then
+      if quests[qname]["obj"] then
+        ItemRefTooltip:AddLine(quests[qname]["obj"], 1,1,1,true)
+      end
+
+      if quests[qname]["log"] and quests[qname]["objectives"] then
+        ItemRefTooltip:AddLine(" ", 0,0,0)
+      end
+
+      if quests[qname]["log"] then
+        ItemRefTooltip:AddLine(quests[qname]["log"], .6,1,.9,true)
+      end
+    end
+
+    -- check questlog for active quest
     for i=1, GetNumQuestLogEntries() do
       if GetQuestLogTitle(i) == questTitle then
         playerHasQuest = true
-        SelectQuestLogEntry(i)
-        local _, text = GetQuestLogQuestText()
-        ItemRefTooltip:AddLine(text,1,1,1,true)
-
-        for j=1, GetNumQuestLeaderBoards() do
-          if j == 1 and GetNumQuestLeaderBoards() > 0 then ItemRefTooltip:AddLine("|cffffffff ") end
-          local desc, type, done = GetQuestLogLeaderBoard(j)
-          if done then ItemRefTooltip:AddLine("|cffaaffaa"..desc.."|r")
-          else ItemRefTooltip:AddLine("|cffffffff"..desc.."|r") end
-        end
       end
     end
 
@@ -459,6 +505,7 @@ function SetItemRef(link, text, button)
       ItemRefTooltip:AddLine("You don't have this quest.", 1, .8, .8)
     end
 
+    -- extract quest level
     if questLevel and questLevel ~= 0 and questLevel ~= "0" then
       local color = GetDifficultyColor(questLevel)
       ItemRefTooltip:AddLine("Quest Level " .. questLevel, color.r, color.g, color.b)
