@@ -406,14 +406,16 @@ pfUI:RegisterModule("castbar", function ()
     end
   end)
 
-  pfUI.castbar.target.SPELL_CAST = string.gsub(string.gsub(SPELLCASTOTHERSTART,"%d%$",""), "%%s", "(.+)")
-  pfUI.castbar.target.SPELL_PERFORM = string.gsub(string.gsub(SPELLPERFORMOTHERSTART,"%d%$",""), "%%s", "(.+)")
-  pfUI.castbar.target.SPELL_GAINS = string.gsub(string.gsub(AURAADDEDOTHERHELPFUL,"%d%$",""), "%%s", "(.+)")
-  pfUI.castbar.target.SPELL_AFFLICTED = string.gsub(string.gsub(AURAADDEDOTHERHARMFUL,"%d%$",""), "%%s", "(.+)")
-  pfUI.castbar.target.SPELL_HIT = string.gsub(string.gsub(string.gsub(SPELLLOGSELFOTHER,"%d%$",""),"%%d","%%d+"),"%%s","(.+)")
-  pfUI.castbar.target.SPELL_CRIT = string.gsub(string.gsub(string.gsub(SPELLLOGCRITSELFOTHER,"%d%$",""),"%%d","%%d+"),"%%s","(.+)")
-  pfUI.castbar.target.OTHER_SPELL_HIT = string.gsub(string.gsub(string.gsub(SPELLLOGOTHEROTHER,"%d%$",""), "%%s", "(.+)"), "%%d", "%%d+")
-  pfUI.castbar.target.OTHER_SPELL_CRIT = string.gsub(string.gsub(string.gsub(SPELLLOGOTHEROTHER,"%d%$",""), "%%s", "(.+)"), "%%d", "%%d+")
+  pfUI.castbar.target.SPELL_CAST = SanitizePattern(SPELLCASTOTHERSTART)
+  pfUI.castbar.target.SPELL_PERFORM = SanitizePattern(SPELLPERFORMOTHERSTART)
+  pfUI.castbar.target.SPELL_GAINS = SanitizePattern(AURAADDEDOTHERHELPFUL)
+  pfUI.castbar.target.SPELL_AFFLICTED = SanitizePattern(AURAADDEDOTHERHARMFUL)
+  pfUI.castbar.target.SPELL_HIT = SanitizePattern(SPELLLOGSELFOTHER)
+  pfUI.castbar.target.SPELL_CRIT = SanitizePattern(SPELLLOGCRITSELFOTHER)
+  pfUI.castbar.target.OTHER_SPELL_HIT = SanitizePattern(SPELLLOGOTHEROTHER)
+  pfUI.castbar.target.OTHER_SPELL_CRIT = SanitizePattern(SPELLLOGCRITOTHEROTHER)
+  pfUI.castbar.target.SPELL_INTERRUPT = SanitizePattern(SPELLINTERRUPTSELFOTHER)
+  pfUI.castbar.target.OTHER_SPELL_INTERRUPT = SanitizePattern(SPELLINTERRUPTOTHEROTHER)
 
   pfUI.castbar.target:RegisterEvent("CHAT_MSG_SPELL_SELF_DAMAGE")
   pfUI.castbar.target:RegisterEvent("CHAT_MSG_SPELL_HOSTILEPLAYER_DAMAGE")
@@ -476,27 +478,39 @@ pfUI:RegisterModule("castbar", function ()
         return
       end
 
-      -- Your (.+) hits (.+) for %d+.
+      -- Your (.+) hits (.+) for (%d+).
       for spell, mob in string.gfind(arg1, pfUI.castbar.target.SPELL_HIT) do
         pfUI.castbar.target:StopAction(mob, spell)
         return
       end
 
-      -- Your (.+) crits (.+) for %d+.
+      -- Your (.+) crits (.+) for (%d+).
       for spell, mob in string.gfind(arg1, pfUI.castbar.target.SPELL_CRIT) do
         pfUI.castbar.target:StopAction(mob, spell)
         return
       end
 
-      -- (.+)'s (.+) %a hits (.+) for %d+.
+      -- (.+)'s (.+) %a hits (.+) for (%d+).
       for _, spell, mob in string.gfind(arg1, pfUI.castbar.target.OTHER_SPELL_HIT) do
         pfUI.castbar.target:StopAction(mob, spell)
         return
       end
 
-      -- (.+)'s (.+) %a crits (.+) for %d+.
+      -- (.+)'s (.+) %a crits (.+) for (%d+).
       for _, spell, mob in string.gfind(arg1, pfUI.castbar.target.OTHER_SPELL_CRIT) do
         pfUI.castbar.target:StopAction(mob, spell)
+        return
+      end
+
+      -- You interrupt (.+)'s (.+).";
+      for mob, spell in string.gfind(arg1, pfUI.castbar.target.SPELL_INTERRUPT) do
+        pfUI.castbar.target:StopAction(mob, "INTERRUPT")
+        return
+      end
+
+      -- (.+) interrupts (.+)'s (.+).
+      for _, mob, spell in string.gfind(arg1, pfUI.castbar.target.OTHER_SPELL_INTERRUPT) do
+        pfUI.castbar.target:StopAction(mob, "INTERRUPT")
         return
       end
     end
@@ -520,7 +534,7 @@ pfUI:RegisterModule("castbar", function ()
   end
 
   function pfUI.castbar.target:StopAction(mob, spell)
-    if pfUI.castbar.target.casterDB[mob] and L["interrupts"][spell] ~= nil then
+    if pfUI.castbar.target.casterDB[mob] and ( L["interrupts"][spell] ~= nil or spell == "INTERRUPT" ) then
       pfUI.castbar.target.casterDB[mob] = nil
     end
   end

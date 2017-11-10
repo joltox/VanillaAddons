@@ -194,7 +194,7 @@ pfUI:RegisterModule("chat", function ()
   pfUI.chat.left.panelTop.proxyName.caption:SetPoint("TOP", 0, -10)
   pfUI.chat.left.panelTop.proxyName.caption:SetFontObject(GameFontWhite)
   pfUI.chat.left.panelTop.proxyName.caption:SetJustifyH("CENTER")
-  pfUI.chat.left.panelTop.proxyName.caption:SetText("Forward all whispers to:")
+  pfUI.chat.left.panelTop.proxyName.caption:SetText(T["Forward all whispers to:"])
 
   pfUI.chat.left.panelTop.proxyName.input = CreateFrame("EditBox", nil, pfUI.chat.left.panelTop.proxyName)
   pfUI.chat.left.panelTop.proxyName.input:SetTextColor(.2,1.1,1)
@@ -220,7 +220,7 @@ pfUI:RegisterModule("chat", function ()
   pfUI.chat.left.panelTop.proxyName.okay.text:SetAllPoints(pfUI.chat.left.panelTop.proxyName.okay)
   pfUI.chat.left.panelTop.proxyName.okay.text:SetPoint("CENTER", 0, 0)
   pfUI.chat.left.panelTop.proxyName.okay.text:SetFontObject(GameFontWhite)
-  pfUI.chat.left.panelTop.proxyName.okay.text:SetText("Save")
+  pfUI.chat.left.panelTop.proxyName.okay.text:SetText(T["Save"])
   pfUI.chat.left.panelTop.proxyName.okay:SetScript("OnClick", function()
     pfUI.chat.left.panelTop.proxy.forwardto = pfUI.chat.left.panelTop.proxyName.input:GetText()
     if pfUI.chat.left.panelTop.proxy.enabled == true then
@@ -240,7 +240,7 @@ pfUI:RegisterModule("chat", function ()
   pfUI.chat.left.panelTop.proxyName.abort.text:SetAllPoints(pfUI.chat.left.panelTop.proxyName.abort)
   pfUI.chat.left.panelTop.proxyName.abort.text:SetPoint("CENTER", 0, 0)
   pfUI.chat.left.panelTop.proxyName.abort.text:SetFontObject(GameFontWhite)
-  pfUI.chat.left.panelTop.proxyName.abort.text:SetText("Abort")
+  pfUI.chat.left.panelTop.proxyName.abort.text:SetText(T["Abort"])
   pfUI.chat.left.panelTop.proxyName.abort:SetScript("OnClick", function()
     pfUI.chat.left.panelTop.proxyName:Hide()
   end)
@@ -304,6 +304,22 @@ pfUI:RegisterModule("chat", function ()
       local frame = _G["ChatFrame"..i]
       local tab = _G["ChatFrame"..i.."Tab"]
 
+      if not frame.pfStartMoving then
+        frame.pfStartMoving = frame.StartMoving
+        frame.StartMoving = function(a1)
+          pfUI.chat.hideLock = true
+          frame.pfStartMoving(a1)
+        end
+      end
+
+      if not frame.pfStopMovingOrSizing then
+        frame.pfStopMovingOrSizing = frame.StopMovingOrSizing
+        frame.StopMovingOrSizing = function(a1)
+          frame.pfStopMovingOrSizing(a1)
+          pfUI.chat.RefreshChat()
+          pfUI.chat.hideLock = false
+        end
+      end
 
       if C.chat.global.fadeout == "1" then
         frame:SetFading(true)
@@ -313,18 +329,28 @@ pfUI:RegisterModule("chat", function ()
       end
 
       if i == 3 and C.chat.right.enable == "1" then
+        -- Loot & Spam
         tab:SetParent(pfUI.chat.right.panelTop)
         frame:SetParent(pfUI.chat.right)
         frame:ClearAllPoints()
         frame:SetPoint("TOPLEFT", pfUI.chat.right ,"TOPLEFT", default_border, -panelheight)
         frame:SetPoint("BOTTOMRIGHT", pfUI.chat.right ,"BOTTOMRIGHT", -default_border, panelheight)
         frame:Show()
-      else
+      elseif i == 2 and C.chat.global.combathide == "1" then
+        -- Combat Log
+        FCF_UnDockFrame(frame)
+        FCF_Close(frame)
+      elseif i == 1 or frame.isDocked then
+        -- Left Chat
+        FCF_DockFrame(frame)
         tab:SetParent(pfUI.chat.left.panelTop)
         frame:SetParent(pfUI.chat.left)
-        frame:ClearAllPoints()
         frame:SetPoint("TOPLEFT", pfUI.chat.left ,"TOPLEFT", default_border, -panelheight)
         frame:SetPoint("BOTTOMRIGHT", pfUI.chat.left ,"BOTTOMRIGHT", -default_border, panelheight)
+      else
+        FCF_UnDockFrame(frame)
+        frame:SetParent(UIParent)
+        tab:SetParent(UIParent)
       end
 
       -- hide textures
@@ -340,7 +366,12 @@ pfUI:RegisterModule("chat", function ()
       _G["ChatFrame" .. i .. "TabLeft"]:SetAlpha(0)
       _G["ChatFrame" .. i .. "TabMiddle"]:SetAlpha(0)
       _G["ChatFrame" .. i .. "TabRight"]:SetAlpha(0)
-      _G["ChatFrame" .. i .. "TabFlash"]:SetAlpha(0)
+
+      if C.chat.global.chatflash == "1" then
+        _G["ChatFrame" .. i .. "TabFlash"]:SetAllPoints(_G["ChatFrame" .. i .. "TabText"])
+      else
+        _G["ChatFrame" .. i .. "TabFlash"].Show = function() return end
+      end
 
       local _, class = UnitClass("player")
       _G["ChatFrame" .. i .. "TabText"]:SetTextColor(RAID_CLASS_COLORS[class].r + .3 * .5, RAID_CLASS_COLORS[class].g + .3 * .5, RAID_CLASS_COLORS[class].b + .3 * .5, 1)
@@ -356,25 +387,37 @@ pfUI:RegisterModule("chat", function ()
           if IsShiftKeyDown() then
             frame:ScrollToTop()
           else
-            frame:ScrollUp()
+            for i=1, C.chat.global.scrollspeed do
+              frame:ScrollUp()
+            end
           end
         elseif (arg1 < 0) then
           if IsShiftKeyDown() then
             frame:ScrollToBottom()
           else
-            frame:ScrollDown()
+            for i=1, C.chat.global.scrollspeed do
+              frame:ScrollDown()
+            end
           end
         end
       end)
     end
   end
 
+  hooksecurefunc("FCF_SaveDock", pfUI.chat.RefreshChat)
+
   if C.chat.global.tabmouse == "1" then
     pfUI.chat.mouseovertab = CreateFrame("Frame")
     pfUI.chat.mouseovertab:SetScript("OnUpdate", function()
-      if MouseIsOver(pfUI.chat.left) or MouseIsOver(pfUI.chat.right) then
+
+      if pfUI.chat.hideLock then return end
+
+      if MouseIsOver(pfUI.chat.left, 10, -10, -10, 10) then
         pfUI.chat.left.panelTop:Show()
+        FCF_DockUpdate()
+      elseif MouseIsOver(pfUI.chat.right, 10, -10, -10, 10) then
         pfUI.chat.right.panelTop:Show()
+        FCF_DockUpdate()
       else
         pfUI.chat.left.panelTop:Hide()
         pfUI.chat.right.panelTop:Hide()
@@ -423,7 +466,7 @@ pfUI:RegisterModule("chat", function ()
     if C.chat.right.enable == "1" then
       -- set position of Loot & Spam
       FCF_SetLocked(ChatFrame3, 1)
-      FCF_SetWindowName(ChatFrame3, "Loot & Spam")
+      FCF_SetWindowName(ChatFrame3, T["Loot & Spam"])
       FCF_SetWindowColor(ChatFrame3, 0, 0, 0)
       FCF_SetWindowAlpha(ChatFrame3, 0)
       FCF_SetChatWindowFontSize(ChatFrame3, 12)
@@ -435,8 +478,8 @@ pfUI:RegisterModule("chat", function ()
       ChatFrame3:SetUserPlaced(1)
     end
 
-    FCF_DockUpdate()
     pfUI.chat:RefreshChat()
+    FCF_DockUpdate()
   end
 
   function pfUI.chat.SetupChannels()
@@ -448,10 +491,7 @@ pfUI:RegisterModule("chat", function ()
     ChatFrame_RemoveAllChannels(ChatFrame2)
     ChatFrame_RemoveAllChannels(ChatFrame3)
 
-    local normalg = {"SAY", "EMOTE", "YELL", "GUILD", "OFFICER", "GUILD_ACHIEVEMENT", "WHISPER",
-      "MONSTER_SAY", "MONSTER_EMOTE", "MONSTER_YELL", "MONSTER_WHISPER", "MONSTER_BOSS_EMOTE", "MONSTER_BOSS_WHISPER",
-      "PARTY", "PARTY_LEADER", "RAID", "RAID_LEADER", "RAID_WARNING", "BATTLEGROUND", "BATTLEGROUND_LEADER",
-      "BG_HORDE", "BG_ALLIANCE", "BG_NEUTRAL", "SYSTEM", "ERRORS", "AFK", "DND", "IGNORED", "BN_WHISPER", "BN_CONVERSATION"}
+    local normalg = {"SYSTEM", "SAY", "YELL", "WHISPER", "PARTY", "GUILD", "CREATURE", "CHANNEL"}
     for _,group in pairs(normalg) do
       ChatFrame_AddMessageGroup(ChatFrame1, group)
     end
@@ -459,7 +499,7 @@ pfUI:RegisterModule("chat", function ()
     ChatFrame_ActivateCombatMessages(ChatFrame2)
 
     if C.chat.right.enable == "1" then
-      local spamg = { "COMBAT_XP_GAIN", "COMBAT_HONOR_GAIN", "COMBAT_FACTION_CHANGE", "SKILL", "LOOT", "MONEY" }
+      local spamg = { "COMBAT_XP_GAIN", "COMBAT_HONOR_GAIN", "COMBAT_FACTION_CHANGE", "SKILL", "LOOT" }
       for _,group in pairs(spamg) do
         ChatFrame_AddMessageGroup(ChatFrame3, group)
       end
@@ -478,6 +518,7 @@ pfUI:RegisterModule("chat", function ()
   pfUI.chat:SetScript("OnEvent", function()
       if event == "PLAYER_ENTERING_WORLD" or event == "UI_SCALE_CHANGED" then
         pfUI.chat:RefreshChat()
+        FCF_DockUpdate()
         if C.chat.right.enable == "0" and C.chat.right.alwaysshow == "0" then
           pfUI.chat.right:Hide()
         end
@@ -485,9 +526,7 @@ pfUI:RegisterModule("chat", function ()
         local Name, Class, Level
         for i = 1, GetNumFriends() do
           Name, Level, Class = GetFriendInfo(i)
-          if L["class"] and L["class"][Class] then
-            Class = L["class"][Class]
-          end
+          Class = L["class"][Class] or nil
           if Name and Level and Class and pfUI_playerDB then
             pfUI_playerDB[Name] = { class = Class, level = Level }
           end
@@ -496,9 +535,7 @@ pfUI:RegisterModule("chat", function ()
         local Name, Class, Level
         for i = 1, GetNumGuildMembers() do
           Name, _, _, Level, Class = GetGuildRosterInfo(i)
-          if L["class"] and L["class"][Class] then
-            Class = L["class"][Class]
-          end
+          Class = L["class"][Class] or nil
           if Name and Level and Class and pfUI_playerDB then
             pfUI_playerDB[Name] = { class = Class, level = Level }
           end
@@ -508,9 +545,7 @@ pfUI:RegisterModule("chat", function ()
         local Name, Class, SubGroup, Level
         for i = 1, GetNumRaidMembers() do
           Name, _, SubGroup, Level, Class = GetRaidRosterInfo(i)
-          if L["class"] and L["class"].Class then
-            Class = L["class"][Class]
-          end
+          Class = L["class"][Class] or nil
           if Name and Level and Class and pfUI_playerDB then
             pfUI_playerDB[Name] = { class = Class, level = Level }
           end
@@ -544,9 +579,7 @@ pfUI:RegisterModule("chat", function ()
         local Name, Class, Level
         for i = 1, GetNumWhoResults() do
           Name, _, Level, _, Class, _ = GetWhoInfo(i)
-          if L["class"] and L["class"][Class] then
-            Class = L["class"][Class]
-          end
+          Class = L["class"][Class] or nil
           if Name and Level and Class and pfUI_playerDB then
             pfUI_playerDB[Name] = { class = Class, level = Level }
           end
@@ -706,7 +739,7 @@ pfUI:RegisterModule("chat", function ()
           local Name = string.gsub(text, ".*|Hplayer:(.-)|h.*", "%1")
           if pfUI_playerDB[Name] and pfUI_playerDB[Name].class ~= nil then
             local Class = pfUI_playerDB[Name].class
-            if RAID_CLASS_COLORS[Class] ~= nil then
+            if Class ~= UNKNOWN then
               local Color = string.format("%02x%02x%02x",
                 RAID_CLASS_COLORS[Class].r * 255,
                 RAID_CLASS_COLORS[Class].g * 255,
@@ -741,7 +774,7 @@ pfUI:RegisterModule("chat", function ()
         if C.chat.global.whispermod == "1" then
           -- patch incoming whisper string to match the colors
           if string.find(text, '|cff'..wcol, 1) == 1 then
-            text = string.gsub(text, "|r", "|cff" .. wcol)
+            text = string.gsub(text, "|r", "|r|cff" .. wcol)
           end
         end
 

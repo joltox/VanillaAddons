@@ -1,6 +1,5 @@
 module 'aux.util.completion'
 
-include 'T'
 include 'aux'
 
 local filter_util = require 'aux.util.filter'
@@ -27,7 +26,7 @@ function M:complete_filter()
 	end
 end
 
-function M.complete(options)
+function M.complete(candidates)
 	return function(self)
 		if IsControlKeyDown() then -- TODO problem is ctrl-v, maybe find a better solution
 			return
@@ -35,9 +34,10 @@ function M.complete(options)
 
 		local text = self:GetText()
 
-		for _, item_name in ipairs(options()) do
-			if strsub(strupper(item_name), 1, strlen(text)) == strupper(text) then
-				self:SetText(strlower(item_name))
+		local t = candidates()
+		for i = 1, getn(t) do
+			if strsub(strupper(t[i]), 1, strlen(text)) == strupper(text) then
+				self:SetText(strlower(t[i]))
 				self:HighlightText(strlen(text), -1)
 				return
 			end

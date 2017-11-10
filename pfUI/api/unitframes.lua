@@ -1,4 +1,8 @@
 pfUI.uf = CreateFrame("Frame",nil,UIParent)
+pfUI.uf.frames = {}
+
+-- load pfUI environment
+setfenv(1, pfUI:GetEnvironment())
 
 local pfValidUnits = {}
 pfValidUnits["player"] = true
@@ -38,6 +42,22 @@ function pfUI.uf:CreateUnitFrame(unit, id, config, tick)
 
   local f = CreateFrame("Button", "pf" .. fname, UIParent)
 
+  -- show self in group
+  if unit == "party" and id == "0" then
+    unit = "player"
+    id = ""
+  end
+
+  if unit == "partypet" and id == "0" then
+    unit = "pet"
+    id = ""
+  end
+
+  if unit == "party0target" then
+    unit = "target"
+    id = ""
+  end
+
   if not pfValidUnits[unit .. id] then
     f.unitname = unit
     f.RegisterEvent = function() return end
@@ -54,15 +74,14 @@ function pfUI.uf:CreateUnitFrame(unit, id, config, tick)
   f.config = config or pfUI_config.unitframes.fallback
   f.tick = tick
 
-  if f.config.visible ~= "1" then
-    f:Hide()
-    return f
-  end
+  f:SetFrameStrata("BACKGROUND")
 
   f.hp = CreateFrame("Frame",nil, f)
   f.hp:SetPoint("TOP", 0, 0)
   f.hp:SetWidth(f.config.width)
   f.hp:SetHeight(f.config.height)
+  if tonumber(f.config.height) < 0 then f.hp:Hide() end
+
   pfUI.api.CreateBackdrop(f.hp, default_border)
 
   f.hp.bar = CreateFrame("StatusBar", nil, f.hp)
@@ -72,7 +91,7 @@ function pfUI.uf:CreateUnitFrame(unit, id, config, tick)
 
   if pfUI_config.unitframes.custombg == "1" then
     local cr, cg, cb, ca = pfUI.api.strsplit(",", pfUI_config.unitframes.custombgcolor)
-    cr, cg, cb = tonumber(cr), tonumber(cg), tonumber(cb)
+    cr, cg, cb, ca = tonumber(cr), tonumber(cg), tonumber(cb), tonumber(ca)
     f.hp.bar.texture = f.hp.bar:CreateTexture(nil,"BACKGROUND")
     f.hp.bar.texture:SetTexture(cr,cg,cb,ca)
     f.hp.bar.texture:SetAllPoints(f.hp.bar)
@@ -82,6 +101,8 @@ function pfUI.uf:CreateUnitFrame(unit, id, config, tick)
   f.power:SetPoint("TOP", f.hp, "BOTTOM", 0, -2*default_border - f.config.pspace)
   f.power:SetWidth(f.config.width)
   f.power:SetHeight(f.config.pheight)
+  if tonumber(f.config.pheight) < 0 then f.power:Hide() end
+
   pfUI.api.CreateBackdrop(f.power, default_border)
 
   f.power.bar = CreateFrame("StatusBar", nil, f.power)
@@ -142,6 +163,11 @@ function pfUI.uf:CreateUnitFrame(unit, id, config, tick)
   f.powerCenterText:ClearAllPoints()
   f.powerCenterText:SetPoint("TOPLEFT",f.power.bar, "TOPLEFT", 2*default_border, 1)
   f.powerCenterText:SetPoint("BOTTOMRIGHT",f.power.bar, "BOTTOMRIGHT", -2*default_border, 0)
+
+  if f.config.visible ~= "1" then
+    f:Hide()
+    return f
+  end
 
   f:RegisterForClicks('LeftButtonUp', 'RightButtonUp',
     'MiddleButtonUp', 'Button4Up', 'Button5Up')
@@ -218,13 +244,14 @@ function pfUI.uf:CreateUnitFrame(unit, id, config, tick)
   f:SetScript("OnUpdate", function()
       local unitname = ( this.label and UnitName(this.label) ) or ""
 
+      -- focus unit detection
       if this.unitname and this.unitname ~= strlower(unitname) then
         -- invalid focus frame
         for unit, bool in pairs(pfValidUnits) do
           local scan = UnitName(unit) or ""
           if this.unitname == strlower(scan) then
             this.label = unit
-            this.portrait.model.lastUnit = nil
+            if this.portrait then this.portrait.model.lastUnit = nil end
             this.instantRefresh = true
             pfUI.uf:RefreshUnit(this, "all")
             return
@@ -237,6 +264,7 @@ function pfUI.uf:CreateUnitFrame(unit, id, config, tick)
 
       if not this.label then return end
 
+      -- ticker for non event frames
       if this.tick and not this.lastTick then this.lastTick = GetTime() + this.tick end
       if this.lastTick and this.lastTick < GetTime() then
         this.lastTick = GetTime() + this.tick
@@ -244,9 +272,6 @@ function pfUI.uf:CreateUnitFrame(unit, id, config, tick)
       end
 
       if UnitIsConnected(this.label .. this.id) or ( pfUI.unlock and pfUI.unlock:IsShown()) then
-        if not this.cache then return end
-        if not this.cache.hp or not this.cache.power then return end
-
         if this.config.faderange == "1" then
           if pfUI.api.UnitInRange(this.label .. this.id, 4) or (pfUI.unlock and pfUI.unlock:IsShown()) then
             if this:GetAlpha() ~= 1 then
@@ -263,43 +288,72 @@ function pfUI.uf:CreateUnitFrame(unit, id, config, tick)
               end
             end
           end
-        end
-
-        local hpDisplay = this.hp.bar:GetValue()
-        local hpReal = this.cache.hp
-        local hpDiff = abs(hpReal - hpDisplay)
-
-        if this.config.invert_healthbar == "1" then
-          hpDisplay = this.hp.bar:GetValue()
-          hpReal = this.cache.hpmax - this.cache.hp
-          hpDiff = abs(hpReal - hpDisplay)
-        end
-
-        local powerDisplay = this.power.bar:GetValue()
-        local powerReal = this.cache.power
-        local powerDiff = abs(powerReal - powerDisplay)
-
-        if this.instantRefresh then
-          -- No Animations for new Units
-          this.hp.bar:SetValue(hpReal)
-          this.power.bar:SetValue(powerReal)
-          this.instantRefresh = nil
         else
-          -- Animation
-          if hpDisplay < hpReal then
-            this.hp.bar:SetValue(hpDisplay + ceil(hpDiff / pfUI_config.unitframes.animation_speed))
-          elseif hpDisplay > hpReal then
-            this.hp.bar:SetValue(hpDisplay - ceil(hpDiff / pfUI_config.unitframes.animation_speed))
-          else
-            this.hp.bar:SetValue(hpReal)
+          if this:GetAlpha() ~= 1 then
+            this:SetAlpha(1)
+            if this.config.portrait == "bar" then
+              this.portrait:SetAlpha(pfUI_config.unitframes.portraitalpha)
+            end
+          end
+        end
+
+        if not this.cache then return end
+        if not this.cache.hp or not this.cache.power then return end
+
+        local hpDiff = abs(this.cache.hp - this.cache.hpdisplay)
+        local powerDiff = abs(this.cache.power - this.cache.powerdisplay)
+
+        if UnitName(this.label .. this.id) ~= ( this.lastUnit or "" ) then
+          -- instant refresh on unit change (e.g. target)
+          this.cache.hp = UnitHealth(this.label .. this.id)
+          this.cache.hpmax = UnitHealthMax(this.label .. this.id)
+
+          if this.config.invert_healthbar == "1" then
+            this.cache.hp = this.cache.hpmax - this.cache.hp
           end
 
-          if powerDisplay < powerReal then
-            this.power.bar:SetValue(powerDisplay + ceil(powerDiff / pfUI_config.unitframes.animation_speed))
-          elseif powerDisplay > powerReal then
-            this.power.bar:SetValue(powerDisplay - ceil(powerDiff / pfUI_config.unitframes.animation_speed))
-          else
-            this.power.bar:SetValue(this.cache.power)
+          this.cache.hpdisplay = this.cache.hp
+          this.hp.bar:SetMinMaxValues(0, this.cache.hpmax)
+          this.hp.bar:SetValue(this.cache.hp)
+
+          this.cache.powermax = UnitManaMax(this.label .. this.id)
+          this.cache.powerdisplay = this.cache.power
+          this.power.bar:SetMinMaxValues(0, this.cache.powermax)
+          this.power.bar:SetValue(this.cache.power)
+
+          this.lastUnit = UnitName(this.label .. this.id)
+        else
+          -- smoothen animation based on framerate
+          local fpsmod = GetFramerate() / 30
+
+          -- health animation active
+          if this.cache.hpanimation then
+            if this.cache.hpdisplay < this.cache.hp then
+              this.cache.hpdisplay = this.cache.hpdisplay + ceil(hpDiff / (pfUI_config.unitframes.animation_speed * fpsmod))
+            elseif this.cache.hpdisplay > this.cache.hp then
+              this.cache.hpdisplay = this.cache.hpdisplay - ceil(hpDiff / (pfUI_config.unitframes.animation_speed * fpsmod))
+            else
+              this.cache.hpdisplay = this.cache.hp
+              this.cache.hpanimation = nil
+            end
+
+            -- set statusbar
+            this.hp.bar:SetValue(this.cache.hpdisplay)
+          end
+
+          -- power animation active
+          if this.cache.poweranimation then
+            if this.cache.powerdisplay < this.cache.power then
+              this.cache.powerdisplay = this.cache.powerdisplay + ceil(powerDiff / (pfUI_config.unitframes.animation_speed * fpsmod))
+            elseif this.cache.powerdisplay > this.cache.power then
+              this.cache.powerdisplay = this.cache.powerdisplay - ceil(powerDiff / (pfUI_config.unitframes.animation_speed * fpsmod))
+            else
+              this.cache.powerdisplay = this.cache.power
+              this.cache.poweranimation = nil
+            end
+
+            -- set statusbar
+            this.power.bar:SetValue(this.cache.powerdisplay)
           end
         end
       else
@@ -318,6 +372,7 @@ function pfUI.uf:CreateUnitFrame(unit, id, config, tick)
     end)
   f:SetScript("OnEnter", function()
         if not this.label then return end
+        if this.config.showtooltip == "0" then return end
         GameTooltip_SetDefaultAnchor(GameTooltip, this)
         GameTooltip:SetUnit(this.label .. this.id)
         GameTooltip:Show()
@@ -379,13 +434,8 @@ function pfUI.uf:CreateUnitFrame(unit, id, config, tick)
       f.buffs[i].stacks:SetShadowColor(0, 0, 0)
       f.buffs[i].stacks:SetShadowOffset(0.8, -0.8)
       f.buffs[i].stacks:SetTextColor(1,1,.5)
-      f.buffs[i].cd = f.buffs[i]:CreateFontString(nil, "OVERLAY", f.buffs[i])
-      f.buffs[i].cd:SetFont(pfUI.font_unit, C.global.font_unit_size, "OUTLINE")
-      f.buffs[i].cd:SetPoint("CENTER", f.buffs[i], 0, 0)
-      f.buffs[i].cd:SetJustifyH("LEFT")
-      f.buffs[i].cd:SetShadowColor(0, 0, 0)
-      f.buffs[i].cd:SetShadowOffset(0.8, -0.8)
-      f.buffs[i].cd:SetTextColor(1,1,1)
+      f.buffs[i].cd = CreateFrame("Model", nil, f.buffs[i], "CooldownFrameTemplate")
+      f.buffs[i].cd:SetAlpha(0)
 
       f.buffs[i]:RegisterForClicks("RightButtonUp")
       f.buffs[i]:ClearAllPoints()
@@ -408,6 +458,13 @@ function pfUI.uf:CreateUnitFrame(unit, id, config, tick)
       f.buffs[i]:SetWidth(f.config.buffsize)
       f.buffs[i]:SetHeight(f.config.buffsize)
 
+      if f:GetName() == "pfPlayer" then
+        f.buffs[i]:SetScript("OnUpdate", function()
+          local timeleft = GetPlayerBuffTimeLeft(GetPlayerBuff(this:GetID()-1,"HELPFUL"))
+          CooldownFrame_SetTimer(this.cd, GetTime(), timeleft, 1)
+        end)
+      end
+
       f.buffs[i]:SetScript("OnEnter", function()
         if not this:GetParent().label then return end
 
@@ -428,28 +485,6 @@ function pfUI.uf:CreateUnitFrame(unit, id, config, tick)
           CancelPlayerBuff(GetPlayerBuff(id-1,"HELPFUL"))
         end
       end)
-
-      if f.label == "player" then
-        f.buffs[i]:SetScript("OnUpdate", function()
-          local timeleft = GetPlayerBuffTimeLeft(GetPlayerBuff(this:GetID()-1,"HELPFUL"))
-          if timeleft ~= nil and timeleft ~= 0 then
-            -- if there are more than 0 seconds left
-            if timeleft < 60 then
-              -- show seconds if less than 60 seconds
-              this.cd:SetText(ceil(timeleft))
-            elseif timeleft < 3600 then
-              -- show minutes if less than 3600 seconds (1 hour)
-              this.cd:SetText(ceil(timeleft/60) .. 'm')
-            else
-              -- otherwise show hours
-              this.cd:SetText(ceil(timeleft/3600) .. 'h')
-            end
-          else
-            -- if there's no time left or not set, empty buff text
-            this.cd:SetText("")
-          end
-        end)
-      end
     end
   end
 
@@ -467,13 +502,8 @@ function pfUI.uf:CreateUnitFrame(unit, id, config, tick)
       f.debuffs[i].stacks:SetShadowColor(0, 0, 0)
       f.debuffs[i].stacks:SetShadowOffset(0.8, -0.8)
       f.debuffs[i].stacks:SetTextColor(1,1,.5)
-      f.debuffs[i].cd = f.debuffs[i]:CreateFontString(nil, "OVERLAY", f.debuffs[i])
-      f.debuffs[i].cd:SetFont(pfUI.font_unit, C.global.font_unit_size, "OUTLINE")
-      f.debuffs[i].cd:SetPoint("CENTER", f.debuffs[i], 0, 0)
-      f.debuffs[i].cd:SetJustifyH("LEFT")
-      f.debuffs[i].cd:SetShadowColor(0, 0, 0)
-      f.debuffs[i].cd:SetShadowOffset(0.8, -0.8)
-      f.debuffs[i].cd:SetTextColor(1,1,1)
+      f.debuffs[i].cd = CreateFrame("Model", nil, f.debuffs[i], "CooldownFrameTemplate")
+      f.debuffs[i].cd:SetAlpha(0)
 
       f.debuffs[i]:RegisterForClicks("RightButtonUp")
       f.debuffs[i]:ClearAllPoints()
@@ -499,30 +529,6 @@ function pfUI.uf:CreateUnitFrame(unit, id, config, tick)
           CancelPlayerBuff(GetPlayerBuff(id-1,"HARMFUL"))
         end
       end)
-
-      if f.label == "player" then
-        f.debuffs[i]:SetScript("OnUpdate", function()
-          local bid = GetPlayerBuff(this:GetID() - 1, "HARMFUL");
-          local timeleft = GetPlayerBuffTimeLeft(bid,"HARMFUL")
-
-          if timeleft ~= nil and timeleft ~= 0 then
-            -- if there are more than 0 seconds left
-            if timeleft < 60 then
-              -- show seconds if less than 60 seconds
-              f.debuffs[this:GetID()].cd:SetText(ceil(timeleft))
-            elseif timeleft < 3600 then
-              -- show minutes if less than 3600 seconds (1 hour)
-              f.debuffs[this:GetID()].cd:SetText(ceil(timeleft/60)..'m')
-            else
-              -- otherwise show hours
-              f.debuffs[this:GetID()].cd:SetText(ceil(timeleft/3600) .. 'h')
-            end
-          else
-            -- if there's no time left or not set, empty buff text
-            f.debuffs[this:GetID()].cd:SetText("")
-          end
-        end)
-      end
     end
   end
 
@@ -550,6 +556,8 @@ function pfUI.uf:CreateUnitFrame(unit, id, config, tick)
       f.power:ClearAllPoints()
       f.power:SetPoint("TOPRIGHT", f.hp, "BOTTOMRIGHT", 0, -2*default_border - f.config.pspace)
       pfUI.api.CreateBackdrop(f.portrait)
+      f.portrait:SetFrameStrata("BACKGROUND")
+      f.portrait.model:SetFrameLevel(1)
     elseif f.config.portrait == "right" then
       f.portrait:SetPoint("TOPRIGHT", f, "TOPRIGHT", 0, 0)
       f.hp:ClearAllPoints()
@@ -557,22 +565,44 @@ function pfUI.uf:CreateUnitFrame(unit, id, config, tick)
       f.power:ClearAllPoints()
       f.power:SetPoint("TOPLEFT", f.hp, "BOTTOMLEFT", 0, -2*default_border - f.config.pspace)
       pfUI.api.CreateBackdrop(f.portrait)
+      f.portrait:SetFrameStrata("BACKGROUND")
+      f.portrait.model:SetFrameLevel(1)
     end
   end
 
+  table.insert(pfUI.uf.frames, f)
   return f
 end
 
 function pfUI.uf:RefreshUnit(unit, component)
   if not unit.label then return end
   if not unit.hp then return end
+  if not unit.power then return end
 
   local component = component or ""
   -- break early on misconfigured UF's
-  if not unit.label then return end
-
   if unit.label == "target" or unit.label == "targettarget" then
     if pfScanActive == true then return end
+  end
+
+  -- show groupframes as raid
+  if pfUI_config["unitframes"]["raidforgroup"] == "1" then
+    if strsub(unit:GetName(),0,6) == "pfRaid" then
+      local id = tonumber(strsub(unit:GetName(),7,8))
+
+      if not UnitInRaid("player") and GetNumPartyMembers() > 0 then
+        if id == 1 then
+          unit.id = ""
+          unit.label = "player"
+        elseif id <= 5 then
+          unit.id = id - 1
+          unit.label = "party"
+        end
+      elseif unit.label == "party" or unit.label == "player" then
+        unit.id = id
+        unit.label = "raid"
+      end
+    end
   end
 
   local default_border = pfUI_config.appearance.border.default
@@ -582,22 +612,35 @@ function pfUI.uf:RefreshUnit(unit, component)
 
   local C = pfUI_config
 
-  if UnitName(unit.label .. unit.id) ~= unit.lastUnit then
-    unit.instantRefresh = true
-    unit.lastUnit = UnitName(unit.label .. unit.id)
-  end
-
+  -- hide and return early on unused frames
   if not ( pfUI.unlock and pfUI.unlock:IsShown() ) then
-    if UnitName(unit.label .. unit.id) or unit.unitname then
+    -- check existing units or focus frames
+    if unit.unitname then
+      unit:Show()
+    elseif UnitName(unit.label .. unit.id) then
+      -- hide group while in raid and option is set
       if pfUI_config["unitframes"]["group"]["hide_in_raid"] == "1" and strsub(unit.label,0,5) == "party" and UnitInRaid("player") then
         unit:Hide()
+        return
+
+      -- hide existing but too far away pet
       elseif strsub(unit.label,0,8) == "partypet" and not UnitIsVisible(unit.label .. unit.id) then
         unit:Hide()
-      else
-        unit:Show()
+        return
+
+      -- hide self in group if solo or hide in raid is set
+      elseif unit.fname == "Group0" or unit.fname == "PartyPet0" or unit.fname == "Party0Target" then
+        if ( GetNumPartyMembers() <= 0 ) or ( pfUI_config["unitframes"]["group"]["hide_in_raid"] == "1" and UnitInRaid("player") ) then
+          unit:Hide()
+          return
+        end
       end
+
+      unit:Show()
     else
+      -- hide unused frame
       unit:Hide()
+      return
     end
   end
 
@@ -661,6 +704,7 @@ function pfUI.uf:RefreshUnit(unit, component)
 
       if texture then
         unit.buffs[i]:Show()
+
         if stacks > 1 then
           unit.buffs[i].stacks:SetText(stacks)
         else
@@ -732,6 +776,16 @@ function pfUI.uf:RefreshUnit(unit, component)
 
       if texture then
         unit.debuffs[i]:Show()
+
+        if unit:GetName() == "pfPlayer" then
+            local timeleft = GetPlayerBuffTimeLeft(GetPlayerBuff(unit.debuffs[i]:GetID() - 1, "HARMFUL"),"HARMFUL")
+            CooldownFrame_SetTimer(unit.debuffs[i].cd, GetTime(), timeleft, 1)
+        elseif pfUI.debuffs and pfUI.debuffs.active then
+            local effect = pfUI.debuffs:GetDebuffName(unit.label .. unit.id, unit.debuffs[i]:GetID())
+            local start, duration, timeleft = pfUI.debuffs:GetDebuffInfo(unit.label .. unit.id, effect)
+            CooldownFrame_SetTimer(unit.debuffs[i].cd, start, duration, 1)
+        end
+
         if stacks > 1 then
           unit.debuffs[i].stacks:SetText(stacks)
         else
@@ -739,6 +793,106 @@ function pfUI.uf:RefreshUnit(unit, component)
         end
       else
         unit.debuffs[i]:Hide()
+      end
+    end
+  end
+
+  -- indicators
+  if component == "all" or component == "aura" then
+    pfUI.uf:SetupDebuffFilter()
+    if table.getn(pfUI.uf.debuffs) > 0 and unit.config.debuff_indicator == "1" then
+      local infected = false
+      for i=1,32 do
+        local _,_,dtype = UnitDebuff(unit.label .. unit.id, i)
+        if dtype then
+          for _, filter in pairs(pfUI.uf.debuffs) do
+            if filter == string.lower(dtype) then
+              if dtype == "Magic" then
+                if not unit.hp.bar.magic then
+                  unit.hp.bar.magic = CreateFrame("Frame", unit.hp.bar)
+                  unit.hp.bar.magic:SetAllPoints(unit)
+                  unit.hp.bar.magic:SetParent(unit.hp.bar)
+                  unit.hp.bar.magic.tex = unit.hp.bar.magic:CreateTexture("OVERLAY")
+                  unit.hp.bar.magic.tex:SetAllPoints(unit.hp.bar.magic)
+                  unit.hp.bar.magic.tex:SetTexture(.2,.8,.8,.4)
+                end
+                unit.hp.bar.magic:Show()
+                infected = true
+
+              elseif dtype == "Poison" then
+                if not unit.hp.bar.poison then
+                  unit.hp.bar.poison = CreateFrame("Frame", unit.hp.bar)
+                  unit.hp.bar.poison:SetAllPoints(unit)
+                  unit.hp.bar.poison:SetParent(unit.hp.bar)
+                  unit.hp.bar.poison.tex = unit.hp.bar.poison:CreateTexture("OVERLAY")
+                  unit.hp.bar.poison.tex:SetAllPoints(unit.hp.bar.poison)
+                  unit.hp.bar.poison.tex:SetTexture(.2,.8,.2,.4)
+                end
+                unit.hp.bar.poison:Show()
+                infected = true
+
+              elseif dtype == "Curse" then
+                if not unit.hp.bar.curse then
+                  unit.hp.bar.curse = CreateFrame("Frame", unit.hp.bar)
+                  unit.hp.bar.curse:SetAllPoints(unit)
+                  unit.hp.bar.curse:SetParent(unit.hp.bar)
+                  unit.hp.bar.curse.tex = unit.hp.bar.curse:CreateTexture("OVERLAY")
+                  unit.hp.bar.curse.tex:SetAllPoints(unit.hp.bar.curse)
+                  unit.hp.bar.curse.tex:SetTexture(.8,.2,.8,.4)
+                end
+                unit.hp.bar.curse:Show()
+                infected = true
+
+              elseif dtype == "Disease" then
+                if not unit.hp.bar.disease then
+                  unit.hp.bar.disease = CreateFrame("Frame", unit.hp.bar)
+                  unit.hp.bar.disease:SetAllPoints(unit)
+                  unit.hp.bar.disease:SetParent(unit.hp.bar)
+                  unit.hp.bar.disease.tex = unit.hp.bar.disease:CreateTexture("OVERLAY")
+                  unit.hp.bar.disease.tex:SetAllPoints(unit.hp.bar.disease)
+                  unit.hp.bar.disease.tex:SetTexture(.8,.8,.2,.4)
+                end
+                unit.hp.bar.disease:Show()
+                infected = true
+              end
+            end
+          end
+        end
+      end
+      if infected == false then
+        if unit.hp.bar.magic then unit.hp.bar.magic:Hide() end
+        if unit.hp.bar.poison then unit.hp.bar.poison:Hide() end
+        if unit.hp.bar.curse then unit.hp.bar.curse:Hide() end
+        if unit.hp.bar.disease then unit.hp.bar.disease:Hide() end
+      end
+    end
+
+    pfUI.uf:SetupBuffFilter()
+    if table.getn(pfUI.uf.buffs) > 0 and unit.config.buff_indicator == "1" then
+      local active = {}
+
+      for i=1,32 do
+        local texture = UnitBuff(unit.label .. unit.id,i)
+
+        if texture then
+          -- match filter
+          for _, filter in pairs(pfUI.uf.buffs) do
+            if filter == string.lower(texture) then
+              table.insert(active, texture)
+              break
+            end
+          end
+        end
+      end
+
+      -- add icons for every found buff
+      for pos, icon in pairs(active) do
+        pfUI.uf:AddIcon(unit, pos, icon)
+      end
+
+      -- hide unued icon slots
+      for pos=table.getn(active)+1, 6 do
+        pfUI.uf:HideIcon(unit, pos)
       end
     end
   end
@@ -790,11 +944,34 @@ function pfUI.uf:RefreshUnit(unit, component)
   -- Unit HP/MP
   unit.cache.hp = UnitHealth(unit.label..unit.id)
   unit.cache.hpmax = UnitHealthMax(unit.label..unit.id)
+  unit.cache.hpdisplay = unit.hp.bar:GetValue()
+
   unit.cache.power = UnitMana(unit.label .. unit.id)
   unit.cache.powermax = UnitManaMax(unit.label .. unit.id)
+  unit.cache.powerdisplay = unit.power.bar:GetValue()
 
   unit.hp.bar:SetMinMaxValues(0, unit.cache.hpmax)
   unit.power.bar:SetMinMaxValues(0, unit.cache.powermax)
+
+  if unit.config.invert_healthbar == "1" then
+    unit.cache.hp = unit.cache.hpmax - unit.cache.hp
+  end
+
+  if unit.cache.hpdisplay ~= unit.cache.hp then
+    if pfUI_config.unitframes.animation_speed == "1" then
+      unit.hp.bar:SetValue(unit.cache.hp)
+    else
+      unit.cache.hpanimation = true
+    end
+  end
+
+  if unit.cache.powerdisplay ~= unit.cache.power then
+    if pfUI_config.unitframes.animation_speed == "1" then
+      unit.power.bar:SetValue(unit.cache.power)
+    else
+      unit.cache.poweranimation = true
+    end
+  end
 
   local color = { r = .2, g = .2, b = .2 }
   if UnitIsPlayer(unit.label..unit.id) then
@@ -816,8 +993,8 @@ function pfUI.uf:RefreshUnit(unit, component)
   local r, g, b = .2, .2, .2
   if pfUI_config.unitframes.custom == "1" then
     local cr, cg, cb, ca = pfUI.api.strsplit(",", pfUI_config.unitframes.customcolor)
-    cr, cg, cb = tonumber(cr), tonumber(cg), tonumber(cb)
-    unit.hp.bar:SetStatusBarColor(cr, cg, cb)
+    cr, cg, cb, ca = tonumber(cr), tonumber(cg), tonumber(cb), tonumber(ca)
+    unit.hp.bar:SetStatusBarColor(cr, cg, cb, ca)
     if pfUI_config.unitframes.pastel == "1" then
       r, g, b = (color.r + .5) * .5, (color.g + .5) * .5, (color.b + .5) * .5
     else
@@ -848,103 +1025,6 @@ function pfUI.uf:RefreshUnit(unit, component)
 
     if UnitIsTapped(unit.label .. unit.id) and not UnitIsTappedByPlayer(unit.label .. unit.id) then
       unit.hp.bar:SetStatusBarColor(.5,.5,.5,.5)
-    end
-  end
-
-  pfUI.uf:SetupDebuffFilter()
-  if table.getn(pfUI.uf.debuffs) > 0 and unit.config.debuff_indicator == "1" then
-    local infected = false
-    for i=1,32 do
-      local _,_,dtype = UnitDebuff(unit.label .. unit.id, i)
-      if dtype then
-        for _, filter in pairs(pfUI.uf.debuffs) do
-          if filter == string.lower(dtype) then
-            if dtype == "Magic" then
-              if not unit.hp.bar.magic then
-                unit.hp.bar.magic = CreateFrame("Frame", unit.hp.bar)
-                unit.hp.bar.magic:SetAllPoints(unit)
-                unit.hp.bar.magic:SetParent(unit.hp.bar)
-                unit.hp.bar.magic.tex = unit.hp.bar.magic:CreateTexture("OVERLAY")
-                unit.hp.bar.magic.tex:SetAllPoints(unit.hp.bar.magic)
-                unit.hp.bar.magic.tex:SetTexture(.2,.8,.8,.4)
-              end
-              unit.hp.bar.magic:Show()
-              infected = true
-
-            elseif dtype == "Poison" then
-              if not unit.hp.bar.poison then
-                unit.hp.bar.poison = CreateFrame("Frame", unit.hp.bar)
-                unit.hp.bar.poison:SetAllPoints(unit)
-                unit.hp.bar.poison:SetParent(unit.hp.bar)
-                unit.hp.bar.poison.tex = unit.hp.bar.poison:CreateTexture("OVERLAY")
-                unit.hp.bar.poison.tex:SetAllPoints(unit.hp.bar.poison)
-                unit.hp.bar.poison.tex:SetTexture(.2,.8,.2,.4)
-              end
-              unit.hp.bar.poison:Show()
-              infected = true
-
-            elseif dtype == "Curse" then
-              if not unit.hp.bar.curse then
-                unit.hp.bar.curse = CreateFrame("Frame", unit.hp.bar)
-                unit.hp.bar.curse:SetAllPoints(unit)
-                unit.hp.bar.curse:SetParent(unit.hp.bar)
-                unit.hp.bar.curse.tex = unit.hp.bar.curse:CreateTexture("OVERLAY")
-                unit.hp.bar.curse.tex:SetAllPoints(unit.hp.bar.curse)
-                unit.hp.bar.curse.tex:SetTexture(.8,.2,.8,.4)
-              end
-              unit.hp.bar.curse:Show()
-              infected = true
-
-            elseif dtype == "Disease" then
-              if not unit.hp.bar.disease then
-                unit.hp.bar.disease = CreateFrame("Frame", unit.hp.bar)
-                unit.hp.bar.disease:SetAllPoints(unit)
-                unit.hp.bar.disease:SetParent(unit.hp.bar)
-                unit.hp.bar.disease.tex = unit.hp.bar.disease:CreateTexture("OVERLAY")
-                unit.hp.bar.disease.tex:SetAllPoints(unit.hp.bar.disease)
-                unit.hp.bar.disease.tex:SetTexture(.8,.8,.2,.4)
-              end
-              unit.hp.bar.disease:Show()
-              infected = true
-            end
-          end
-        end
-      end
-    end
-    if infected == false then
-      if unit.hp.bar.magic then unit.hp.bar.magic:Hide() end
-      if unit.hp.bar.poison then unit.hp.bar.poison:Hide() end
-      if unit.hp.bar.curse then unit.hp.bar.curse:Hide() end
-      if unit.hp.bar.disease then unit.hp.bar.disease:Hide() end
-    end
-  end
-
-  pfUI.uf:SetupBuffFilter()
-  if table.getn(pfUI.uf.buffs) > 0 and unit.config.buff_indicator == "1" then
-    local active = {}
-
-    for i=1,32 do
-      local texture = UnitBuff(unit.label .. unit.id,i)
-
-      if texture then
-        -- match filter
-        for _, filter in pairs(pfUI.uf.buffs) do
-          if filter == string.lower(texture) then
-            table.insert(active, texture)
-            break
-          end
-        end
-
-        -- add icons for every found buff
-        for pos, icon in pairs(active) do
-          pfUI.uf:AddIcon(unit, pos, icon)
-        end
-      end
-    end
-
-    -- hide unued icon slots
-    for pos=table.getn(active)+1, 6 do
-      pfUI.uf:HideIcon(unit, pos)
     end
   end
 end
@@ -991,8 +1071,6 @@ function pfUI.uf:ClickAction(button)
   -- dropdown menues
   if button == "RightButton" then
     if label == "player" then
-      UIDropDownMenu_Initialize(PlayerFrameDropDown, pfUI.uf.player.dropdown.Init, "MENU")
-      pfUI.uf.player.dropdown.rebuild = true
       ToggleDropDownMenu(1, nil, PlayerFrameDropDown, "cursor")
     elseif label == "target" then
       ToggleDropDownMenu(1, nil, TargetFrameDropDown, "cursor")
@@ -1060,7 +1138,7 @@ function pfUI.uf:ClickAction(button)
 end
 
 function pfUI.uf:AddIcon(frame, pos, icon)
-  local iconsize = 10
+  local iconsize = C.unitframes.indicator_size
   if not frame.hp then return end
   local frame = frame.hp.bar
   if pos > floor(frame:GetWidth() / iconsize) then return end
@@ -1174,6 +1252,31 @@ function pfUI.uf:SetupBuffFilter()
   end
 
 
+  -- [[ WARLOCK ]]
+  if myclass == "WARLOCK" then
+    -- Fire Shield
+    table.insert(pfUI.uf.buffs, "interface\\icons\\spell_fire_firearmor")
+
+    -- Blood Pact
+    table.insert(pfUI.uf.buffs, "interface\\icons\\spell_shadow_bloodboil")
+
+    -- Soulstone
+    table.insert(pfUI.uf.buffs, "interface\\icons\\spell_shadow_soulgem")
+
+    -- Unending Breath
+    table.insert(pfUI.uf.buffs, "interface\\icons\\spell_shadow_demonbreath")
+
+    -- Detect Greater Invisibility or Detect Invisibility
+    table.insert(pfUI.uf.buffs, "interface\\icons\\spell_shadow_detectinvisibility")
+
+    -- Detect Lesser Invisibility
+    table.insert(pfUI.uf.buffs, "interface\\icons\\spell_shadow_detectlesserinvisibility")
+
+    -- Paranoia
+    table.insert(pfUI.uf.buffs, "interface\\icons\\Spell_Shadow_AuraOfDarkness")
+  end
+
+
   -- [[ WARRIOR ]]
   if myclass == "WARRIOR" then
     -- Battle Shout
@@ -1224,6 +1327,24 @@ function pfUI.uf:SetupBuffFilter()
   end
 end
 
+function pfUI.uf:GetLevelString(unitstr)
+  local level = UnitLevel(unitstr)
+  if level == -1 then level = "??" end
+
+  local elite = UnitClassification(unitstr)
+  if elite == "worldboss" then
+    level = level .. "B"
+  elseif elite == "rareelite" then
+    level = level .. "R+"
+  elseif elite == "elite" then
+    level = level .. "+"
+  elseif elite == "rare" then
+    level = level .. "R"
+  end
+
+  return level
+end
+
 function pfUI.uf:GetStatusValue(unit, pos)
   if not pos or not unit then return end
   local config = unit.config["txt"..pos]
@@ -1236,32 +1357,15 @@ function pfUI.uf:GetStatusValue(unit, pos)
   end
 
   if config == "unit" then
-    local level = UnitLevel(unitstr)
-    if level == -1 then level = "??" end
-
-    local name = UnitName(unitstr)
-
-    local elite = UnitClassification(unitstr)
-    if elite == "worldboss" then
-      level = level .. "B"
-    elseif elite == "rareelite" then
-      level = level .. "R+"
-    elseif elite == "elite" then
-      level = level .. "+"
-    elseif elite == "rare" then
-      level = level .. "R"
-    end
-    level = unit:GetColor("level") .. level
-    name = unit:GetColor("unit") .. name
-
+    local name = unit:GetColor("unit") .. UnitName(unitstr)
+    local level = unit:GetColor("level") .. pfUI.uf:GetLevelString(unitstr)
     return level .. "  " .. name
-
   elseif config == "name" then
     return unit:GetColor("unit") .. UnitName(unitstr)
   elseif config == "level" then
-    return unit:GetColor("level") .. UnitLevel(unitstr)
+    return unit:GetColor("level") .. pfUI.uf:GetLevelString(unitstr)
   elseif config == "class" then
-    return unit:GetColor("class") .. UnitClass(unitstr)
+    return unit:GetColor("class") .. (UnitClass(unitstr) or UNKNOWN)
 
   -- health
   elseif config == "health" then
@@ -1280,7 +1384,7 @@ function pfUI.uf:GetStatusValue(unit, pos)
     return unit:GetColor("health") .. ceil(UnitHealth(unitstr) / UnitHealthMax(unitstr) * 100)
   elseif config == "healthmiss" then
     local health = ceil(UnitHealth(unitstr) - UnitHealthMax(unitstr))
-    if health == 0 then
+    if health == 0 or UnitIsDead(unitstr) then
       return ""
     else
       return unit:GetColor("health") .. pfUI.api.Abbreviate(health)
@@ -1350,9 +1454,9 @@ function pfUI.uf.GetColor(self, preset)
 
   elseif preset == "class" and config["classcolor"] == "1" then
     local _, class = UnitClass(unitstr)
-    r = RAID_CLASS_COLORS[class].r
-    g = RAID_CLASS_COLORS[class].g
-    b = RAID_CLASS_COLORS[class].b
+    if RAID_CLASS_COLORS[class] then
+      r, g, b = RAID_CLASS_COLORS[class].r, RAID_CLASS_COLORS[class].g, RAID_CLASS_COLORS[class].b
+    end
 
   elseif preset == "reaction" and config["classcolor"] == "1" then
     r = UnitReactionColor[UnitReaction(unitstr, "player")].r

@@ -2,9 +2,9 @@ module 'aux'
 
 local gui = require 'aux.gui'
 
-function LOAD()
-	for _, info in ipairs(tab_info) do
-		tabs:create_tab(info.name)
+function handle.LOAD()
+	for _, v in ipairs(tab_info) do
+		tabs:create_tab(v.name)
 	end
 end
 

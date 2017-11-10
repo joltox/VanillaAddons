@@ -46,12 +46,28 @@ CreateBackdrop(GameTooltip, nil, nil, alpha)
           if pfUI.panel then
             GameTooltip:SetPoint("BOTTOMRIGHT", pfUI.panel.right, "TOPRIGHT", 0, C.appearance.border.default*2)
           else
-            GameTooltip:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", 0, -C.appearance.border.default*2)
+            GameTooltip:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", -5, 5)
           end
         elseif C.tooltip.position == "chat" then
-          local anchor = ChatFrame3
-          if pfUI.chat then anchor = pfUI.chat.right end
-          GameTooltip:SetPoint("BOTTOMRIGHT", anchor, "TOPRIGHT", 0, C.appearance.border.default*2)
+          local anchor = nil
+
+          if pfUI.panel and pfUI.panel.right:IsShown() then
+            anchor = pfUI.panel.right
+          end
+
+          if pfUI.chat and pfUI.chat.right:IsShown() then
+            anchor = pfUI.chat.right
+          end
+
+          if pfUI.bag and pfUI.bag.right and pfUI.bag.right:IsShown() then
+            anchor = pfUI.bag.right
+          end
+
+          if anchor then
+            GameTooltip:SetPoint("BOTTOMRIGHT", anchor, "TOPRIGHT", 0, C.appearance.border.default*2)
+          else
+            GameTooltip:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", -5, 5)
+          end
         end
       end
     end)

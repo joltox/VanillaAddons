@@ -184,7 +184,7 @@ local function CreateItemEntry(i)
 
   f:SetScript("OnClick", function()
     local link = "item:"..this.itemID..":0:0:0"
-    local text = this.itemColor .."|H" .. link .. "|h["..this.itemName.."]|h|r"
+    local text = ( this.itemColor or "|cffffffff" ) .."|H" .. link .. "|h["..this.itemName.."]|h|r"
     SetItemRef(link, text, arg1)
   end)
 
@@ -692,7 +692,7 @@ function pfBrowser:SearchQuest(search)
   for quest, object in pairs(database) do
     local f, t, questname, _ = strfind(quest, "(.*),.*")
 
-    if (strfind(strlower(questname), strlower(search))) then
+    if questname and (strfind(strlower(questname), strlower(search))) then
       i = i + 1
 
       if i >= search_limit then break end

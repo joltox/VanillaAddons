@@ -1,14 +1,13 @@
-library 'T'
+if module 'T' then return end
 
 local next, getn, setn, tremove, setmetatable = next, getn, table.setn, tremove, setmetatable
 
 local wipe, acquire, release
-local pool, pool_size, overflow_pool, auto_release, dep_release = {}, 0, setmetatable({}, {__mode='k'}), {}, setmetatable({}, {__mode='k'})
+local pool, pool_size, overflow_pool, auto_release = {}, 0, setmetatable({}, {__mode='k'}), {}
 
 function wipe(t)
 	setmetatable(t, nil)
-	for k, v in t do
-		if dep_release[v] then release(v) end
+	for k in t do
 		t[k] = nil
 	end
 	t.reset, t.reset = nil, 1
@@ -17,7 +16,9 @@ end
 M.wipe = wipe
 
 CreateFrame'Frame':SetScript('OnUpdate', function()
-	for t in auto_release do release(t) end
+	for t in auto_release do
+		release(t)
+	end
 	wipe(auto_release)
 end)
 
@@ -38,7 +39,6 @@ M.acquire = acquire
 function release(t)
 	wipe(t)
 	auto_release[t] = nil
-	dep_release[t] = nil
 	if pool_size < 50 then
 		pool_size = pool_size + 1
 		pool[pool_size] = t
@@ -49,33 +49,33 @@ end
 M.release = release
 
 do
-	local function f(_, v) if v then auto_release[v] = true; return v end end
+	local function f(_, v)
+		if v then
+			auto_release[v] = true
+			return v
+		end
+	end
 	M.temp = setmetatable({}, {__metatable=false, __newindex=nop, __call=f, __sub=f})
 end
 do
-	local function f(_, v) if v then auto_release[v] = nil; return v end end
+	local function f(_, v)
+		if v then
+			auto_release[v] = nil
+			return v
+		end
+	end
 	M.static = setmetatable({}, {__metatable=false, __newindex=nop, __call=f, __sub=f})
 end
-do
-	local function f(_, v) if v then dep_release[v] = true; return v end end
-	M.weak = setmetatable({}, {__metatable=false, __newindex=nop, __call=f, __sub=f})
-end
-do
-	local function f(_, v) if v then dep_release[v] = nil; return v end end
-	M.strong = setmetatable({}, {__metatable=false, __newindex=nop, __call=f, __sub=f})
-end
-
-M.get_T = acquire
 
 do
-	local function ret(t)
+	local function unpack(t)
 		if getn(t) > 0 then
-			return tremove(t, 1), ret(t)
+			return tremove(t, 1), unpack(t)
 		else
 			release(t)
 		end
 	end
-	M.ret = ret
+	M.unpack = unpack
 end
 
 M.empty = setmetatable({}, {__metatable=false, __newindex=nop})
@@ -93,7 +93,7 @@ do
 	end
 	code = code .. [[
 		overflow)
-		if overflow ~= nil then error("Vararg overflow.") end
+		if overflow ~= nil then error("T-vararg overflow.", 2) end
 		local n = 0
 		repeat
 	]]
@@ -123,22 +123,24 @@ do
 	end
 	M.vararg = setmetatable({}, {
 		__metatable = false,
-		__sub = function(_, v) return vararg(v) end,
+		__sub = function(_, v)
+			return vararg(v)
+		end,
 	})
 end
 
-M.A = vararg(function(arg)
+M.list = vararg(function(arg)
 	auto_release[arg] = nil
 	return arg
 end)
-M.S = vararg(function(arg)
+M.set = vararg(function(arg)
 	local t = acquire()
 	for _, v in arg do
 		t[v] = true
 	end
 	return t
 end)
-M.O = vararg(function(arg)
+M.map = vararg(function(arg)
 	local t = acquire()
 	for i = 1, getn(arg), 2 do
 		t[arg[i]] = arg[i + 1]

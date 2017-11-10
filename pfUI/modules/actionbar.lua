@@ -44,6 +44,52 @@ pfUI:RegisterModule("actionbar", function ()
     if pfBonusBar then pfBonusBar:Hide() end
   end)
 
+  -- reagent counter
+  local reagentslots = { }
+  local reagentscan = CreateFrame("GameTooltip", "pfReagentScanner", UIParent, "GameTooltipTemplate")
+  reagentscan:SetOwner(UIParent, "ANCHOR_NONE")
+
+  hooksecurefunc("ActionButton_OnEvent", function()
+    if event == "BAG_UPDATE" and arg1 < 5 then
+      ActionButton_Update()
+    end
+  end)
+
+  local oldIsConsumableAction = IsConsumableAction
+  _G.IsConsumableAction = function(slot)
+    if oldIsConsumableAction(slot) then return true end
+    if this and this.GetParent and ActionButton_GetPagedID(this) == slot then
+      reagentslots[slot] = nil
+      reagentscan:SetAction(slot)
+      if (reagentscan:NumLines() ~=0) then
+        for i=1,reagentscan:NumLines() do
+          local line = getglobal("pfReagentScannerTextLeft" .. i)
+          if line then
+            line = line:GetText()
+            local _, start = strfind(line,SPELL_REAGENTS,1)
+            if start then
+              reagentslots[slot] = strsub(line,start+1)
+              this:RegisterEvent("BAG_UPDATE")
+              return true
+            end
+          end
+        end
+      end
+
+      this:UnregisterEvent("BAG_UPDATE")
+      return nil
+    end
+  end
+
+  local oldGetActionCount = GetActionCount
+  _G.GetActionCount = function(slot)
+    if reagentslots[slot] then
+      return GetItemCount(reagentslots[slot])
+    end
+
+    if oldGetActionCount(slot) then return oldGetActionCount(slot) end
+  end
+
   if C.bars.glowrange == "1" then
 
     function _G.ActionButton_UpdateUsable()
@@ -129,6 +175,7 @@ pfUI:RegisterModule("actionbar", function ()
   pfUI.bars:RegisterEvent("PLAYER_FARSIGHT_FOCUS_CHANGED")
   pfUI.bars:RegisterEvent("PET_BAR_SHOWGRID")
   pfUI.bars:RegisterEvent("PET_BAR_HIDEGRID")
+  pfUI.bars:RegisterEvent("UPDATE_SHAPESHIFT_FORMS")
 
   pfUI.bars.autohide = CreateFrame("Frame", nil, UIParent)
   pfUI.bars.autohide:RegisterEvent("PLAYER_ENTERING_WORLD")
@@ -203,7 +250,6 @@ pfUI:RegisterModule("actionbar", function ()
 
       local shapeshiftbuttons = 0
       if ShapeshiftButton1:IsShown() then
-        pfUI.bars.shapeshift:Show()
         ShapeshiftBarFrame:ClearAllPoints()
         ShapeshiftBarFrame:SetAllPoints(pfUI.bars.shapeshift)
 
@@ -221,12 +267,16 @@ pfUI:RegisterModule("actionbar", function ()
         if pfUI.bars.bottomleft:IsShown() then
           anchor = pfUI.bars.bottomleft
         end
+        if pfUI.bars.pet:IsShown() then
+          anchor = pfUI.bars.pet
+        end
         pfUI.bars.shapeshift:SetPoint("BOTTOM", anchor, "TOP", 0, default_border * 3)
         UpdateMovable(pfUI.bars.shapeshift)
         if C.bars.background == "1" then CreateBackdrop(pfUI.bars.shapeshift, default_border) end
         BarLayoutSize(pfUI.bars.shapeshift, shapeshiftbuttons, C.bars.shapeshift.formfactor, C.bars.icon_size, default_border)
         pfUI.bars.shapeshift:SetWidth(pfUI.bars.shapeshift._size[1])
         pfUI.bars.shapeshift:SetHeight(pfUI.bars.shapeshift._size[2])
+        pfUI.bars.shapeshift:Show()
       else
         pfUI.bars.shapeshift:Hide()
       end
@@ -526,6 +576,12 @@ pfUI:RegisterModule("actionbar", function ()
       else
         hotkey:SetAlpha(0)
       end
+
+      local count = _G[actionbutton..i..'Count']
+      count:SetAllPoints(button)
+      count:SetFont(pfUI.font_unit, C.global.font_unit_size, "OUTLINE")
+      count:SetJustifyH("RIGHT")
+      count:SetJustifyV("BOTTOM")
 
       local name = _G[actionbutton..i..'Name']
       if C.bars.showmacro == "1" then

@@ -27,14 +27,19 @@ frame.parameters:SetHeight(173)
 frame.parameters:SetPoint('TOPLEFT', frame.inventory, 'TOPRIGHT', 2.5, 0)
 frame.parameters:SetPoint('TOPRIGHT', 0, 0)
 
-frame.auctions = gui.panel(frame.content)
-frame.auctions:SetHeight(228)
-frame.auctions:SetPoint('BOTTOMLEFT', frame.inventory, 'BOTTOMRIGHT', 2.5, 0)
-frame.auctions:SetPoint('BOTTOMRIGHT', 0, 0)
+frame.bid_listing = gui.panel(frame.content)
+frame.bid_listing:SetHeight(228)
+frame.bid_listing:SetWidth(271.5)
+frame.bid_listing:SetPoint('BOTTOMLEFT', frame.inventory, 'BOTTOMRIGHT', 2.5, 0)
+
+frame.buyout_listing = gui.panel(frame.content)
+frame.buyout_listing:SetHeight(228)
+frame.buyout_listing:SetWidth(271.5)
+frame.buyout_listing:SetPoint('BOTTOMRIGHT', 0, 0)
 
 do
     local checkbox = gui.checkbox(frame.inventory)
-    checkbox:SetPoint('TOPLEFT', 49, -16)
+    checkbox:SetPoint('TOPLEFT', 49, -15)
     checkbox:SetScript('OnClick', function()
         refresh = true
     end)
@@ -44,46 +49,75 @@ do
     show_hidden_checkbox = checkbox
 end
 
-gui.horizontal_line(frame.inventory, -48)
+gui.horizontal_line(frame.inventory, -45)
 
-inventory_listing = item_listing.create(
-    frame.inventory,
-    function()
-        if arg1 == 'LeftButton' then
-            update_item(this.item_record)
-        elseif arg1 == 'RightButton' then
-            tab = 1
-            search_tab.set_filter(strlower(info.item(this.item_record.item_id).name) .. '/exact')
-            search_tab.execute(nil, false)
-        end
-    end,
-    function(item_record)
-        return item_record == selected_item
-    end
-)
+do
+	local f = CreateFrame('Frame', nil, frame.inventory)
+	f:SetPoint('TOPLEFT', 0, -51)
+	f:SetPoint('BOTTOMRIGHT', 0, 0)
+	inventory_listing = item_listing.new(
+		f,
+	    function()
+	        if arg1 == 'LeftButton' then
+	            update_item(this.item_record)
+	        elseif arg1 == 'RightButton' then
+	            set_tab(1)
+	            search_tab.set_filter(strlower(info.item(this.item_record.item_id).name) .. '/exact')
+	            search_tab.execute(nil, false)
+	        end
+	    end,
+	    function(item_record)
+	        return item_record == selected_item
+	    end
+	)
+end
 
-auction_listing = listing.CreateScrollingTable(frame.auctions)
-auction_listing:SetColInfo{
-    {name='Auctions', width=.12, align='CENTER'},
-    {name='Left', width=.1, align='CENTER'},
-    {name='Qty', width=.08, align='CENTER'},
-    {name='Bid/ea', width=.22, align='RIGHT'},
-    {name='Bid Pct', width=.13, align='CENTER'},
-    {name='Buy/ea', width=.22, align='RIGHT'},
-    {name='Buy Pct', width=.13, align='CENTER'},
+bid_listing = listing.new(frame.bid_listing)
+bid_listing:SetColInfo{
+    {name='Auctions', width=.17, align='CENTER'},
+    {name='Time\nLeft', width=.11, align='CENTER'},
+    {name='Stack\nSize', width=.11, align='CENTER'},
+    {name='Auction Bid\n(per item)', width=.4, align='RIGHT'},
+    {name='% Hist.\nValue', width=.21, align='CENTER'},
 }
-auction_listing:EnableSorting(false)
-auction_listing:DisableSelection(true)
-auction_listing:SetHandler('OnClick', function(table, row_data, column, button)
-    local column_index = key(column, column.row.cols)
-    local unit_start_price, unit_buyout_price = undercut(row_data.record, stack_size_slider:GetValue(), button == 'RightButton')
-    if column_index == 3 then
-        stack_size_slider:SetValue(row_data.record.stack_size)
-    elseif column_index == 4 then
-        set_unit_start_price(unit_start_price)
-    elseif column_index == 6 then
-        set_unit_buyout_price(unit_buyout_price)
-    end
+bid_listing:SetSelection(function(data)
+	return data.record == get_bid_selection() or data.record.historical_value and get_bid_selection() and get_bid_selection().historical_value
+end)
+bid_listing:SetHandler('OnClick', function(table, row_data, column, button)
+	if row_data.record == get_bid_selection() or row_data.record.historical_value and get_bid_selection() and get_bid_selection().historical_value then
+		set_bid_selection()
+	else
+		set_bid_selection(row_data.record)
+	end
+	refresh = true
+end)
+bid_listing:SetHandler('OnDoubleClick', function(table, row_data, column, button)
+	stack_size_slider:SetValue(row_data.record.stack_size)
+	refresh = true
+end)
+
+buyout_listing = listing.new(frame.buyout_listing)
+buyout_listing:SetColInfo{
+	{name='Auctions', width=.17, align='CENTER'},
+	{name='Time\nLeft', width=.11, align='CENTER'},
+	{name='Stack\nSize', width=.12, align='CENTER'},
+	{name='Auction Buyout\n(per item)', width=.4, align='RIGHT'},
+	{name='% Hist.\nValue', width=.20, align='CENTER'},
+}
+buyout_listing:SetSelection(function(data)
+	return data.record == get_buyout_selection() or data.record.historical_value and get_buyout_selection() and get_buyout_selection().historical_value
+end)
+buyout_listing:SetHandler('OnClick', function(table, row_data, column, button)
+	if row_data.record == get_buyout_selection() or row_data.record.historical_value and get_buyout_selection() and get_buyout_selection().historical_value then
+		set_buyout_selection()
+	else
+		set_buyout_selection(row_data.record)
+	end
+	refresh = true
+end)
+buyout_listing:SetHandler('OnDoubleClick', function(table, row_data, column, button)
+	stack_size_slider:SetValue(row_data.record.stack_size)
+	refresh = true
 end)
 
 do
@@ -133,7 +167,6 @@ do
         quantity_update(true)
         if selected_item then
             local settings = read_settings()
-            settings.stack_size = this:GetNumber()
             write_settings(settings)
         end
     end
@@ -176,7 +209,7 @@ do
 end
 do
     local dropdown = gui.dropdown(frame.parameters)
-    dropdown:SetPoint('TOPLEFT', stack_count_slider, 'BOTTOMLEFT', 0, -21)
+    dropdown:SetPoint('TOPLEFT', stack_count_slider, 'BOTTOMLEFT', 0, -22)
     dropdown:SetWidth(90)
     local label = gui.label(dropdown, gui.font_size.small)
     label:SetPoint('BOTTOMLEFT', dropdown, 'TOPLEFT', -2, -3)
@@ -186,11 +219,6 @@ do
         UIDropDownMenu_Initialize(this, initialize_duration_dropdown)
     end)
     duration_dropdown = dropdown
-end
-do
-    local label = gui.label(frame.parameters, gui.font_size.medium)
-    label:SetPoint('LEFT', duration_dropdown, 'RIGHT', 25, 0)
-    deposit = label
 end
 do
     local checkbox = gui.checkbox(frame.parameters)
@@ -208,7 +236,6 @@ do
 end
 do
     local editbox = gui.editbox(frame.parameters)
-    editbox.name = 'start'
     editbox:SetPoint('TOPRIGHT', -71, -60)
     editbox:SetWidth(180)
     editbox:SetHeight(22)
@@ -221,11 +248,12 @@ do
 		    unit_buyout_price_input:SetFocus()
 	    end
     end)
-    editbox.formatter = function() return money.to_string(get_unit_start_price(), true, nil, 3) end
+    editbox.formatter = function() return money.to_string(get_unit_start_price(), true) end
+    editbox.char = function() set_bid_selection(); set_buyout_selection(); set_unit_start_price(money.from_string(this:GetText())) end
     editbox.change = function() refresh = true end
     editbox.enter = function() this:ClearFocus() end
     editbox.focus_loss = function()
-	    this:SetText(money.to_string(get_unit_start_price(), true, nil, 3, nil, true))
+	    this:SetText(money.to_string(get_unit_start_price(), true, nil, nil, true))
     end
     do
         local label = gui.label(editbox, gui.font_size.small)
@@ -243,7 +271,6 @@ do
 end
 do
     local editbox = gui.editbox(frame.parameters)
-    editbox.name = 'buy'
     editbox:SetPoint('TOPRIGHT', unit_start_price_input, 'BOTTOMRIGHT', 0, -19)
     editbox:SetWidth(180)
     editbox:SetHeight(22)
@@ -256,11 +283,12 @@ do
             stack_size_slider.editbox:SetFocus()
         end
     end)
-    editbox.formatter = function() return money.to_string(get_unit_buyout_price(), true, nil, 3) end
+    editbox.formatter = function() return money.to_string(get_unit_buyout_price(), true) end
+    editbox.char = function() set_buyout_selection(); set_unit_buyout_price(money.from_string(this:GetText())) end
     editbox.change = function() refresh = true end
     editbox.enter = function() this:ClearFocus() end
     editbox.focus_loss = function()
-	    this:SetText(money.to_string(get_unit_buyout_price(), true, nil, 3, nil, true))
+	    this:SetText(money.to_string(get_unit_buyout_price(), true, nil, nil, true))
     end
     do
         local label = gui.label(editbox, gui.font_size.small)
@@ -277,19 +305,21 @@ do
     unit_buyout_price_input = editbox
 end
 do
-    local btn = gui.button(frame.parameters, 14)
-    btn:SetPoint('TOPRIGHT', -10, -146)
-    gui.set_size(btn, 150, 20)
-    btn:GetFontString():SetJustifyH('RIGHT')
-    btn:GetFontString():SetPoint('RIGHT', -2, 0)
-    btn:SetScript('OnClick', function()
-        if this.amount then
-            set_unit_start_price(this.amount)
-            set_unit_buyout_price(this.amount)
-        end
-    end)
-    local label = gui.label(btn, gui.font_size.small)
-    label:SetPoint('BOTTOMLEFT', btn, 'TOPLEFT', -2, 1)
-    label:SetText('Historical Value')
-    historical_value_button = btn
+	local label = gui.label(frame.parameters, gui.font_size.medium)
+	label:SetPoint('TOPLEFT', unit_buyout_price_input, 'BOTTOMLEFT', 0, -24)
+	deposit = label
+end
+
+function handle.LOAD()
+	if not aux_post_bid then
+		frame.bid_listing:Hide()
+		frame.buyout_listing:SetPoint('BOTTOMLEFT', frame.inventory, 'BOTTOMRIGHT', 2.5, 0)
+		buyout_listing:SetColInfo{
+			{name='Auctions', width=.15, align='CENTER'},
+			{name='Time Left', width=.15, align='CENTER'},
+			{name='Stack Size', width=.15, align='CENTER'},
+			{name='Auction Buyout (per item)', width=.4, align='RIGHT'},
+			{name='% Hist. Value', width=.15, align='CENTER'},
+		}
+	end
 end

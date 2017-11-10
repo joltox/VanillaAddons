@@ -245,17 +245,28 @@ pfUI:RegisterModule("panel", function ()
     local usedslots = 0
 
     for bag = 0,4 do
-      local bagsize = GetContainerNumSlots(bag)
-      maxslots = maxslots + bagsize
-      for j = 1,bagsize do
-        link = GetContainerItemLink(bag,j)
-        if link then
-          usedslots = usedslots + 1
+      if C.panel.bag.ignorespecial ~= "1" or GetBagFamily(bag) == "BAG" then
+        local bagsize = GetContainerNumSlots(bag)
+        maxslots = maxslots + bagsize
+        for j = 1,bagsize do
+          link = GetContainerItemLink(bag,j)
+          if link then
+            usedslots = usedslots + 1
+          end
         end
       end
     end
     local freeslots = maxslots - usedslots
-    pfUI.panel:OutputPanel("bagspace", freeslots .. " (" .. usedslots .. "/" .. maxslots .. ")")
+    pfUI.panel:OutputPanel("bagspace", freeslots .. " (" .. usedslots .. "/" .. maxslots .. ")", nil, OpenAllBags)
+  end
+
+  function pfUI.panel:WriteGold(group, subgroup, value)
+    if not pfUI_gold[group] then
+      pfUI_gold[group] = {}
+    end
+    if subgroup then
+      pfUI_gold[group][subgroup] = value
+    end
   end
 
   -- Update "gold"
@@ -282,15 +293,18 @@ pfUI:RegisterModule("panel", function ()
       GameTooltip:AddDoubleLine(T["Login"] .. ":", CreateGoldString(pfUI.panel.initMoney))
       GameTooltip:AddDoubleLine(T["Now"] .. ":", CreateGoldString(GetMoney()))
       GameTooltip:AddDoubleLine("|cffffffff","")
+      for name, gold in pfUI_gold[GetRealmName()] do
+        if name ~= UnitName("player") then
+          GameTooltip:AddDoubleLine(name .. ":", CreateGoldString(gold))
+        end
+      end
+      GameTooltip:AddDoubleLine("|cffffffff","")
       GameTooltip:AddDoubleLine(T["This Session"] .. ":", dmod .. CreateGoldString(math.abs(pfUI.panel.diffMoney)))
       GameTooltip:Show()
     end
 
-    local click = function ()
-      OpenAllBags()
-    end
-
-    pfUI.panel:OutputPanel("gold", gold .. "|cffffd700g|r " .. silver .. "|cffc7c7cfs|r " .. copper .. "|cffeda55fc|r", tooltip, click)
+    pfUI.panel:WriteGold(GetRealmName(), UnitName("player"), GetMoney())
+    pfUI.panel:OutputPanel("gold", gold .. "|cffffd700g|r " .. silver .. "|cffc7c7cfs|r " .. copper .. "|cffeda55fc|r", tooltip, OpenAllBags)
   end
 
   -- Update "friends"
@@ -486,9 +500,7 @@ pfUI:RegisterModule("panel", function ()
 
 
   pfUI.panel.left = CreateFrame("Frame", "pfPanelLeft", UIParent)
-
-
-  pfUI.panel.left:SetFrameStrata("HIGH")
+  pfUI.panel.left:SetFrameStrata("FULLSCREEN")
   pfUI.panel.left:ClearAllPoints()
 
   if pfUI.chat then
@@ -506,6 +518,7 @@ pfUI:RegisterModule("panel", function ()
   CreateBackdrop(pfUI.panel.left, default_border, nil)
 
   pfUI.panel.left.hide = CreateFrame("Button", nil, pfUI.panel.left)
+  pfUI.panel.left.hide:SetFrameLevel(0)
   pfUI.panel.left.hide:ClearAllPoints()
   pfUI.panel.left.hide:SetWidth(12)
   pfUI.panel.left.hide:SetHeight(pfUI.panel.left:GetHeight())
@@ -522,6 +535,7 @@ pfUI:RegisterModule("panel", function ()
     end)
 
   pfUI.panel.left.left = CreateFrame("Button", nil, pfUI.panel.left)
+  pfUI.panel.left.left:SetFrameLevel(0)
   pfUI.panel.left.left:ClearAllPoints()
   pfUI.panel.left.left:SetWidth(115)
   pfUI.panel.left.left:SetHeight(pfUI.panel.left:GetHeight())
@@ -534,6 +548,7 @@ pfUI:RegisterModule("panel", function ()
   pfUI.panel.left.left.text:SetFontObject(GameFontWhite)
 
   pfUI.panel.left.center = CreateFrame("Button", nil, pfUI.panel.left)
+  pfUI.panel.left.center:SetFrameLevel(0)
   pfUI.panel.left.center:ClearAllPoints()
   pfUI.panel.left.center:SetWidth(115)
   pfUI.panel.left.center:SetHeight(pfUI.panel.left:GetHeight())
@@ -546,6 +561,7 @@ pfUI:RegisterModule("panel", function ()
   pfUI.panel.left.center.text:SetFontObject(GameFontWhite)
 
   pfUI.panel.left.right = CreateFrame("Button", nil, pfUI.panel.left)
+  pfUI.panel.left.right:SetFrameLevel(0)
   pfUI.panel.left.right:ClearAllPoints()
   pfUI.panel.left.right:SetWidth(115)
   pfUI.panel.left.right:SetHeight(pfUI.panel.left:GetHeight())
@@ -558,7 +574,7 @@ pfUI:RegisterModule("panel", function ()
   pfUI.panel.left.right.text:SetFontObject(GameFontWhite)
 
   pfUI.panel.right = CreateFrame("Frame", "pfPanelRight", UIParent)
-  pfUI.panel.right:SetFrameStrata("HIGH")
+  pfUI.panel.right:SetFrameStrata("FULLSCREEN")
   pfUI.panel.right:ClearAllPoints()
   if pfUI.chat then
     pfUI.panel.right:SetScale(pfUI.chat.left:GetScale())
@@ -575,6 +591,7 @@ pfUI:RegisterModule("panel", function ()
   CreateBackdrop(pfUI.panel.right, default_border, nil)
 
   pfUI.panel.right.hide = CreateFrame("Button", nil, pfUI.panel.right)
+  pfUI.panel.right.hide:SetFrameLevel(0)
   pfUI.panel.right.hide:ClearAllPoints()
   pfUI.panel.right.hide:SetWidth(12)
   pfUI.panel.right.hide:SetHeight(pfUI.panel.right:GetHeight())
@@ -591,6 +608,7 @@ pfUI:RegisterModule("panel", function ()
     end)
 
   pfUI.panel.right.left = CreateFrame("Button", nil, pfUI.panel.right)
+  pfUI.panel.right.left:SetFrameLevel(0)
   pfUI.panel.right.left:ClearAllPoints()
   pfUI.panel.right.left:SetWidth(115)
   pfUI.panel.right.left:SetHeight(pfUI.panel.right:GetHeight())
@@ -603,6 +621,7 @@ pfUI:RegisterModule("panel", function ()
   pfUI.panel.right.left.text:SetFontObject(GameFontWhite)
 
   pfUI.panel.right.center = CreateFrame("Button", nil, pfUI.panel.right)
+  pfUI.panel.right.center:SetFrameLevel(0)
   pfUI.panel.right.center:ClearAllPoints()
   pfUI.panel.right.center:SetWidth(115)
   pfUI.panel.right.center:SetHeight(pfUI.panel.right:GetHeight())
@@ -615,6 +634,7 @@ pfUI:RegisterModule("panel", function ()
   pfUI.panel.right.center.text:SetFontObject(GameFontWhite)
 
   pfUI.panel.right.right = CreateFrame("Button", nil, pfUI.panel.right)
+  pfUI.panel.right.right:SetFrameLevel(0)
   pfUI.panel.right.right:ClearAllPoints()
   pfUI.panel.right.right:SetWidth(115)
   pfUI.panel.right.right:SetHeight(pfUI.panel.right:GetHeight())
@@ -637,11 +657,13 @@ pfUI:RegisterModule("panel", function ()
     pfUI.panel.minimap:SetWidth(200)
     pfUI.panel.minimap:SetPoint("TOP", UIParent, "TOP", 0, -5)
   end
-  pfUI.panel.minimap:SetFrameStrata("BACKGROUND")
+  pfUI.panel.minimap:SetFrameStrata("MEDIUM")
   pfUI.panel.minimap.text = pfUI.panel.minimap:CreateFontString("MinimapZoneText", "LOW", "GameFontNormal")
   pfUI.panel.minimap.text:SetFont(font, font_size, "OUTLINE")
   pfUI.panel.minimap.text:SetPoint("CENTER", 0, 0)
   pfUI.panel.minimap.text:SetFontObject(GameFontWhite)
+
+  if C.panel.other.minimap == "none" then pfUI.panel.minimap:Hide() end
 
   -- MicroButtons
   if C.panel.micro.enable == "1" then
@@ -650,7 +672,7 @@ pfUI:RegisterModule("panel", function ()
     UpdateMovable(pfUI.panel.microbutton)
     pfUI.panel.microbutton:SetHeight(23)
     pfUI.panel.microbutton:SetWidth(145)
-    pfUI.panel.microbutton:SetFrameStrata("BACKGROUND")
+    pfUI.panel.microbutton:SetFrameStrata("MEDIUM")
 
     local MICRO_BUTTONS = {
       'CharacterMicroButton', 'SpellbookMicroButton', 'TalentMicroButton',
