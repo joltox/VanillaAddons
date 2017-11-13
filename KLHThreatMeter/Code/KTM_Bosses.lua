@@ -33,6 +33,12 @@ me.isspellreportingactive = false
 me.istrackingspells = false
 me.bosstarget = ""
 
+me.onyxia = 
+{
+	lastcheck = 0,
+	lasttargetself = 0,
+}
+
 -- me.onload() - called by Core.lua.
 me.onload = function()
 	
@@ -41,12 +47,7 @@ me.onload = function()
 	
 end
 
-function klhtm:ResetRaidThreat()
-        mod.table.resetraidthreat()
-end
-
-
-me.myevents = { "CHAT_MSG_MONSTER_EMOTE", "CHAT_MSG_MONSTER_YELL", "CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE", "CHAT_MSG_SPELL_CREATURE_VS_SELF_DAMAGE", "CHAT_MSG_SPELL_PERIODIC_CREATURE_BUFFS", "CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE", "CHAT_MSG_COMBAT_HOSTILE_DEATH", }
+me.myevents = { "CHAT_MSG_MONSTER_EMOTE", "CHAT_MSG_MONSTER_YELL", "CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE", "CHAT_MSG_SPELL_CREATURE_VS_SELF_DAMAGE", "CHAT_MSG_SPELL_PERIODIC_CREATURE_BUFFS", "CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE", "CHAT_MSG_COMBAT_HOSTILE_DEATH"}
 
 me.onevent = function()
 	
@@ -68,32 +69,6 @@ me.onevent = function()
 		end
 	
 	elseif event == "CHAT_MSG_MONSTER_YELL" then
-	
-		-- Thad Phase 2
-		if string.find(arg1, mod.string.get("boss", "speech", "thad1")) or string.find(arg1, mod.string.get("boss", "speech", "thad2")) or string.find(arg1, mod.string.get("boss", "speech", "thad3")) then
-			
-			-- reset threat in phase 2
-			mod.table.resetraidthreat()
-			
-			return
-		end
-	
-		-- Noth
-		if string.find(arg1, mod.string.get("boss", "speech", "noth1")) or string.find(arg1, mod.string.get("boss", "speech", "noth2")) or string.find(arg1, mod.string.get("boss", "speech", "noth3")) then
-			
-			mod.target.automastertarget(arg2)
-			
-			return
-		end
-	
-		-- Ony Phase 2
-		if string.find(arg1, mod.string.get("boss", "speech", "onyxiaphase3")) then
-			
-			-- reset threat in phase 2
-			mod.table.resetraidthreat()
-			
-			return
-		end
 	
 		-- Nef Phase 2
 		if string.find(arg1, mod.string.get("boss", "speech", "nefphase2")) then
@@ -134,19 +109,25 @@ me.onevent = function()
 		-- Azuregos Port
 		if string.find(arg1, mod.string.get("boss", "speech", "azuregosport")) then
 			
+			-- 1) Find Azuregos
+			local bossfound = false
+			
+			for x = 1, 40 do
+				
+				if UnitClassification("raid" .. x .. "target") == "worldboss" then
+					if CheckInteractDistance("raid" .. x .. "target", 4) then
+						mod.table.resetraidthreat()
+					end
+					
+					bossfound = true
+					break
+				end	
+			end
+			
+			-- couldn't find anyone targetting Azuregos. Better reset just to be sure.
+			if bossfound == false then
 				mod.table.resetraidthreat()
-			
-			return
-		end
-
-		-- KT Phase 2
-		if string.find(arg1, mod.string.get("boss", "speech", "ktphase2")) then
-			
-			-- reset threat in phase 2
-			mod.table.resetraidthreat()
-			
-			-- boss name is given by the arg2
-			mod.target.automastertarget(arg2)
+			end
 			
 			return
 		end
@@ -319,6 +300,37 @@ me.onupdate = function()
 	
 	-- 4) Check triggers
 	me.checktriggers()
+	
+	-- 5) Onyxia - check for targettarget = self. Only start if Onyxia is the MT
+	if mod.target.mastertarget == mod.string.get("boss", "name", "onyxia") then
+			
+		local timenow = GetTime()
+		
+		-- check at most once per second
+		if timenow < me.onyxia.lastcheck + 1.0 then
+			-- do nothing
+			
+		else
+			me.onyxia.lastcheck = timenow
+			
+			-- scan raid for onyxia
+			local unitname
+			
+			for x = 1, 40 do
+				unitname = UnitName("raid" .. x .. "target")
+				
+				if unitname == mod.string.get("boss", "name", "onyxia") then -- found onyxia
+					
+					-- are you target target?
+					if UnitIsUnit("player", "raid" .. x .. "targettarget") then
+						me.onyxia.lasttargetself = timenow
+					end
+					
+					break
+				end
+			end	
+		end
+	end
 	
 end
 
@@ -785,7 +797,7 @@ me.parsebossattack = function(message, event)
 	if (spellid == nil) or (me.bossattacks[spellid] == nil) then
 		return
 	end
-	
+
 	-- Check for a mob match
 	local spelldata
 	
@@ -861,6 +873,21 @@ me.parsebossattack = function(message, event)
 			me.tickcounters[me.action.ability][me.action.mobname] = 0
 			
 		end
+	end
+	
+	-- Interrupt: Fireball from Onyxia. When was your last target time?
+	if spellid == "fireball" then
+		-- only activate if you have been targetted within 5 seconds
+		
+		if GetTime() > me.onyxia.lasttargetself + 5.0 then
+			-- don't activate. this was just stray aoe
+			return
+		end
+	end	
+	
+	-- 2z) Don't do anything if there is meant to be no effect
+	if (spelldata.multiplier == 1.0) and (spelldata.addition == 0.0) then
+		return
 	end
 	
 	-- 3) To get here, the ability is definitely activating
@@ -1039,7 +1066,7 @@ me.bossattacks =
 		default = 
 		{
 			multiplier = 1.0,
-			addition = 1000,
+			addition = 0,
 			effectonmiss = false,
 			ticks = 1,
 			type = "physical"
@@ -1055,5 +1082,24 @@ me.bossattacks =
 			ticks = 1,
 			type = "spell"
 		}
+	},
+	fireball = 
+	{
+		onyxia = 
+		{
+			multiplier = 0,
+			addition = 0,
+			effectonmiss = true,
+			ticks = 1,
+			type = "spell",
+		},
+		default = 
+		{
+			multiplier = 1.0,
+			addition = 0,
+			effectonmiss = false,
+			ticks = 1,
+			type = "spell",
+		},
 	},
 }

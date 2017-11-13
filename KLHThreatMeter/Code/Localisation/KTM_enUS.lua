@@ -35,17 +35,10 @@ klhtm.string.data["enUS"] =
 		backstab = "Backstab",
 		sinisterstrike = "Sinister Strike",
 		eviscerate = "Eviscerate",
-
-		corruption = "Corruption",
-		curseofagony = "Curse of Agony",
-		siphonlife = "Siphon Life",
-		immolate = "Immolate",
 		
 		-- Items / Buffs:
 		["arcaneshroud"] = "Arcane Shroud",
-		["theeyeofdiminution"] = "The Eye of Diminution",
 		["reducethreat"] = "Reduce Threat",
-		["notthere"] = "Not There",
 
 		-- Leeches: no threat from heal
 		["holynova"] = "Holy Nova", -- no heal or damage threat
@@ -89,6 +82,7 @@ klhtm.string.data["enUS"] =
 		["mindflay"] = "Mind Flay",
 		["devouringplague"] = "Devouring Plague",
 		["shadowwordpain"] = "Shadow Word: Pain",
+		,
 		["manaburn"] = "Mana Burn",
 		]]
 	},
@@ -147,8 +141,6 @@ klhtm.string.data["enUS"] =
 	{
 		["bloodfang"] = "Bloodfang",
 		["nemesis"] = "Nemesis",
-		["plagueheart"] = "Plagueheart",
-		["bonescythe"] = "Bonescythe",
 		["netherwind"] = "Netherwind",
 		["might"] = "Might",
 		["arcanist"] = "Arcanist",
@@ -157,19 +149,13 @@ klhtm.string.data["enUS"] =
 	{
 		["speech"] = 
 		{
+			onyxiaphase2 = "This meaningless exertion bores me. I'll incinerate you all from above!",
 			["razorphase2"] = "flee as the controlling power of the orb is drained.",
 			["onyxiaphase3"] = "It seems you'll need another lesson",
 			["thekalphase2"] = "fill me with your RAGE",
 			["rajaxxfinal"] = "Impudent fool! I will kill you myself!",
 			["azuregosport"] = "Come, little ones",
-			["nefphase2"] = "Burn, you wretches! Burn!",
-			["thad1"] = "EAT YOUR BONES",
-			["thad2"] = "BREAK YOU!",
-			["thad3"] = "KILL!",
-			["noth1"] = "Die, trespasser!",
-			["noth2"] = "Glory to the master!",
-			["noth3"] = "Your life is forfeit!",
-			["ktphase2"] = "Pray for mercy!",
+			["nefphase2"] = "BURN! You wretches! BURN!",
 		},
 		-- Some of these are unused. Also, if none is defined in your localisation, they won't be used,
 		-- so don't worry if you don't implement it.
@@ -204,6 +190,9 @@ klhtm.string.data["enUS"] =
 			mark2 = "Mark of Korth'azz",
 			mark3 = "Mark of Mograine",
 			mark4 = "Mark of Zeliek",
+			
+			-- Onyxia fireball (presumably same as mage)
+			fireball = "Fireball",
 		}
 	},
 	["misc"] = 
@@ -394,13 +383,13 @@ klhtm.string.data["enUS"] =
 		-- new in R17.7
 		["boss"] = 
 		{
-			["automt"] = "The master target has been automatically set to %s.",
-			["spellsetmob"] = "%s sets the %s parameter of %s's %s ability to %s from %s.", -- "Kenco sets the multiplier parameter of Onyxia's Knock Away ability to 0.7"
-			["spellsetall"] = "%s sets the %s parameter of the %s ability to %s from %s.",
+			["automt"] = "The master target has been automatically set to |cffffff00%s|r.",
+			["spellsetmob"] = "|cffffff00%s|r sets the |cffffff00%s|r parameter of |cffffff00%s|r's |cffffff00%s|r ability to |cffffff00%s|r from |cffffff00%s|r.", -- "Kenco sets the multiplier parameter of Onyxia's Knock Away ability to 0.7"
+			["spellsetall"] = "|cffffff00%s|r sets the |cffffff00%s|r parameter of the |cffffff00%s|r ability to |cffffff00%s|r from |cffffff00%s|r.",
 			["reportmiss"] = "%s reports that %s's %s missed him.",
 			["reporttick"] = "%s reports that %s's %s hit him. He has suffered %s ticks, and will be affected in %s more ticks.",
-			["reportproc"] = "%s reports that %s's %s changed his threat from %s to %s.",
-			["bosstargetchange"] = "%s changed tagets from %s (on %s threat) to %s (on %s threat).",
+			["reportproc"] = "|cffffff00%s|r reports that |cffffff00%s|r's |cffffff00%s|r changed his threat from |cffffff00%s|r to |cffffff00%s|r.",
+			["bosstargetchange"] = "|cffffff00%s|r changed tagets from |cffffff00%s|r (on |cffffff00%s|r threat) to |cffffff00%s|r (on |cffffff00%s|r threat).",
 			["autotargetstart"] = "You will automatically clear the meter and set the master target when you next target a world boss.",
 			["autotargetabort"] = "The master target has already been set to the world boss %s.",
 		},

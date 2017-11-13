@@ -162,13 +162,6 @@ klhtm.string.data["frFR"] =
 			["azuregosport"] = "Venez m'affronter, mes petits !",
 			["razorphase2"] = "le pouvoir de l'orbe vient de se terminer.",
 			["onyxiaphase3"] = "Il semble que vous ayez besoin d'une autre le\195\167on",
-			["thad1"] = "EAT YOUR BONES",
-			["thad2"] = "BREAK YOU!",
-			["thad3"] = "KILL!",
-			["noth1"] = "Die, trespasser!",
-			["noth2"] = "Glory to the master!",
-			["noth3"] = "Your life is forfeit!",
-			["ktphase2"] = "Pray for mercy!",
 		},
 		["spell"] = 
 		{
@@ -180,6 +173,9 @@ klhtm.string.data["frFR"] =
 			["burningadrenaline"] = "Mont\195\169e d'adr\195\169naline", --"Must Check this in the French client"
 			["nothblink"] = nil, --"Blink", --"Not known at this time"
 			["wrathofragnaros"] = "Col\195\168re de Ragnaros", -- "Ragnaros's Wrath of Ragnaros hits you for 100 Fire damage. Must Check this in the French client"
+			
+			-- Onyxia fireball (presumably same as mage)
+			fireball = "Boule de feu",
 		},
 	},
 	["misc"] =
@@ -188,36 +184,7 @@ klhtm.string.data["frFR"] =
 		["spellrank"] = "Rang (%d+)", -- second value of GetSpellName(x, "spell")
 		["aggrogain"] = "Gain d'Aggro",
 	},
-	
-	--[[ 
-	Reserved for possible future use
-	
-	["mobattack"] = 
-	{
-		["self"] = {
-			["hit"] = "(.+) vous inflige %d+ points de d\195\169g\195\162ts%.", -- COMBATHITOTHERSELF
-			["crit"] = "(.+) vous inflige un coup critique pour %d points de d\195\169g\195\162ts%.", -- COMBATHITCRITOTHERSELF
-			["absorb"] = "(.+) attaque%. Vous absorbez tous les d\195\169g\195\162ts%.", -- VSABSORBOTHERSELF
-			["dodge"] = "(.+) attaque et vous esquivez%.", -- VSDODGEOTHERSELF
-			["parry"] = "(.+) attaque, mais vous parez le coup%.", -- VSPARRYOTHERSELF
-			["block"] = "(.+) attaque, mais vous bloquez le coup%.", -- VSBLOCKOTHERSELF
-			["miss"] = "(.+) vous rate%.", -- MISSEDOTHERSELF
-			["resist"] = "(.+) attaque%. Vous r\195\169sistez \195\160 tous les d\195\169g\195\162ts%.", -- VSRESISTOTHERSELF
-		},
-		["other"] = {
-			["hit"] = "(.+) touche (.+) et inflige %d+ points de d\195\169g\195\162ts%.", -- COMBATHITOTHEROTHER 
-			["crit"] = "(.+) inflige un coup critique \195\160 (.+) (%d+ points de d\195\169g\195\162ts)%.", -- COMBATHITCRITOTHEROTHER
-			["absorb"] = "(.+) attaque%. (.+) absorbe tous les d\195\169g\195\162ts%.", -- VSABSORBOTHEROTHER
-			["dodge"] = "(.+) attaque et (.+) esquive%.", -- VSDODGEOTHEROTHER
-			["parry"] = "(.+) attaque et (.+) pare son attaque%.", -- VSPARRYOTHEROTHER
-			["block"] = "(.+) attaque et (.+) bloque l'attaque%.", -- VSBLOCKOTHEROTHER
-			["miss"] = "(.+) manque (.+)%.", -- MISSEDOTHEROTHER
-			["resist"] = "(.+) attaque%. (.+) r\195\169siste \195\160 tous les d\195\169g\195\162ts%.", -- VSRESISTOTHEROTHER
-		},
-	},
-	
-	]]
-	
+		
 	["gui"] = {
 		["raid"] = {
 			["head"] = {

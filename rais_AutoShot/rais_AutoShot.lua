@@ -17,7 +17,7 @@ local Textures = {
 }
 local Table = {
 	["posX"] = 0;
-	["posY"] = -235;
+	["posY"] = -140;
 	["Width"] = 100;
 	["Height"] = 15;
 }

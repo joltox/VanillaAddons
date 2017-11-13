@@ -80,14 +80,14 @@ KLHTM_GuiHeights = {["button"] = 15, ["string"] = 12, ["header"] = 14, ["data"] 
 -- The texture gradient colours used by the main frame and options frame's title bar
 KLHTM_TitleBarColours = {
 	-- purple
-	["raid"] = {["minR"] = 0.0, ["minG"] = 0.0, ["minB"] = 0.0, ["minA"] = 1.0,
-				["maxR"] = 0.0, ["maxG"] = 0.0, ["maxB"] = 0.0, ["maxA"] = 1.0, },
+	["raid"] = {["minR"] = 0.2, ["minG"] = 0.0, ["minB"] = 0.2, ["minA"] = 0.5,
+				["maxR"] = 1.0, ["maxG"] = 0.0, ["maxB"] = 1.0, ["maxA"] = 0.5, },
 	-- dark green
-	["self"] = {["minR"] = 0.0, ["minG"] = 0.0, ["minB"] = 0.0, ["minA"] = 0.5,
-				["maxR"] = 0.0, ["maxG"] = 0.0, ["maxB"] = 0.0, ["maxA"] = 1.0, },
+	["self"] = {["minR"] = 0.0, ["minG"] = 0.2, ["minB"] = 0.0, ["minA"] = 0.5,
+				["maxR"] = 0.0, ["maxG"] = 0.7, ["maxB"] = 0.0, ["maxA"] = 0.5, },
 	-- blue
-	["gen"] =  {["minR"] = 0.0, ["minG"] = 0.0, ["minB"] = 0.0, ["minA"] = 0.5,
-				["maxR"] = 0.0, ["maxG"] = 0.0, ["maxB"] = 0.0, ["maxA"] = 1.0, }, };
+	["gen"] =  {["minR"] = 0.0, ["minG"] = 0.2, ["minB"] = 0.2, ["minA"] = 0.5,
+				["maxR"] = 0.0, ["maxG"] = 1.0, ["maxB"] = 1.0, ["maxA"] = 0.5, }, };
 	
 ------------------------------------------------------------------------------
 -- Prepares the GUI for use. Called after the Variables Loaded event is
@@ -224,8 +224,8 @@ function KLHTM_SetupGuiComponents()
 	gui.frame:RegisterForDrag("LeftButton");
 	gui.frame:SetMovable(true);
 	gui.frame:SetUserPlaced(true);
-	gui.frame:SetBackdropColor(0, 0, 0);
-	gui.frame:SetBackdropBorderColor(0, 0, 0);
+	gui.frame:SetBackdropColor(0.1, 0.1, 0.1);
+	gui.frame:SetBackdropBorderColor(1, 1, 1);
 end
 
 
@@ -646,4 +646,57 @@ function KLHTM_Frame_OnDragStart()
 end
 function KLHTM_Frame_OnDragStop()
 	gui.frame:StopMovingOrSizing();
+end
+--------------------------------------------------
+--MOVEBUTTON
+--------------------------------------------------
+function KTM_MouseDown()
+
+if (arg1 == "RightButton") then
+		this.isMoving = true;
+	end
+end
+
+function KTM_MouseUp()
+	if (arg1 == "RightButton") then
+		this.isMoving = false;
+	end
+end
+
+function KTM_MoveButton()
+		if not KTM_Data then
+			KTM_Data = {
+				["Position"] = { 
+					["x"] = 0,
+					["y"] = -82,
+				},
+			};
+		else
+			this:ClearAllPoints();
+			this:SetPoint("CENTER", "Minimap", "CENTER", KTM_Data.Position.x, KTM_Data.Position.y);
+		end
+	if ( this.isMoving ) then
+
+	local mouseX, mouseY = GetCursorPosition();
+	local centerX, centerY = Minimap:GetCenter();
+	local scale = Minimap:GetEffectiveScale();
+	mouseX = mouseX / scale;
+	mouseY = mouseY / scale;
+	
+	local x = mouseX - centerX;
+	local y = mouseY - centerY;
+	local r = math.sqrt(x*x + y*y);
+	if (r>0) then
+		local radius = ((Minimap:GetRight()-Minimap:GetLeft())/2) + ((this:GetRight()-this:GetLeft())/2) - 4;
+		x = radius * x / r;
+		y = radius * y / r;
+
+		this:ClearAllPoints();
+		this:SetPoint("CENTER", "Minimap", "CENTER", x, y);
+
+		KTM_Data.Position.x = x;
+		KTM_Data.Position.y = y;
+	end
+
+	end
 end

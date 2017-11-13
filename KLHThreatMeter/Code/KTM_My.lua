@@ -122,12 +122,6 @@ me.parserstagetwo =
 		elseif buff == mod.string.get("spell", "arcaneshroud") then
 			me.setstate("arcaneshroud", false) 
 		
-		elseif buff == mod.string.get("spell", "theeyeofdiminution") then
-			me.setstate("theeyeofdiminution", false)
-		
-		elseif buff == mod.string.get("spell", "notthere") then
-			me.setstate("notthere", false)
-		
 		elseif buff == mod.string.get("spell", "fade") then
 			-- retract fade
 			mod.table.raidthreatoffset = mod.table.raidthreatoffset + me.lastfadevalue
@@ -170,12 +164,6 @@ me.parserstagetwo =
 			mod.my.lastfadevalue = threat
 			
 			mod.my.setstate("fade", true)
-		
-		elseif buff == mod.string.get("spell", "theeyeofdiminution") then
-			mod.my.setstate("theeyeofdiminution", true)
-		
-		elseif buff == mod.string.get("spell", "notthere") then
-			me.setstate("notthere", true)
 		end
 	end,
 	
@@ -367,7 +355,6 @@ me.testthreat = function()
 	
 	elseif me.class == "warlock" then
 		mod.out.print(string.format(mod.string.get("print", "data", "setactive"), mod.string.get("sets", "nemesis"), 8, mod.out.booltostring(me.mods.warlock.nemesis)))
-		mod.out.print(string.format(mod.string.get("print", "data", "setactive"), mod.string.get("sets", "plagueheart"), 6, mod.out.booltostring(me.mods.warlock.plagueheart)))
 	
 	elseif me.class == "mage" then
 		mod.out.print(string.format(mod.string.get("print", "data", "setactive"), mod.string.get("sets", "netherwind"), 3, mod.out.booltostring(me.mods.mage.netherwind)))
@@ -425,18 +412,6 @@ me.states =
 		["value"] = false,
 		["lastchange"] = 0,
 		["duration"] = 20.0
-	},
-	["theeyeofdiminution"] = -- from Eye of Diminution
-	{
-		["value"] = false,
-		["lastchange"] = 0,
-		["duration"] = 20.0
-	},
-	["notthere"] =			-- frostfire 8 piece proc
-	{
-		["value"] = false,
-		["lastchange"] = 0,
-		["duration"] = 8.0
 	},
 	["incombat"] = 
 	{
@@ -679,7 +654,6 @@ me.mods =
 	{
 		["masterdemo"] = 0.0, 		-- modifier to global threat. e.g. "-0.2" for imp out, 5/5.
 		["nemesis"] = false,			-- 8 piece bonus
-		["plagueheart"] = false,			-- 6 piece bonus
 	},
 	["priest"] =
 	{
@@ -833,13 +807,6 @@ me.redomods = function()
 		else
 			me.mods.warlock.nemesis = false
 		end
-
-		-- plagueheart 6 piece
-		if mod.data.getsetpieces("plagueheart") >= 6 then
-			me.mods.warlock.plagueheart = true
-		else
-			me.mods.warlock.plagueheart = false
-		end
 		
 	-- shaman
 	elseif mod.my.class == "shaman" then
@@ -991,18 +958,14 @@ me.redoglobalthreat = function()
 	
 	-- fungal bloom
 	if me.states["fungalbloom"].value == true then
-		me.modifyglobalthreat(0.0, mod.string.get("boss", "spell", "fungalbloom"))
+		me.modifyglobalthreat(-1.0, mod.string.get("boss", "spell", "fungalbloom"))
 	end
 	
 	-- Fetish of the Sand Reaver
 	if me.states["arcaneshroud"].value == true then
 		me.modifyglobalthreat(-0.7, mod.string.get("spell", "arcaneshroud"))
 	end
-	
-	-- Eye of Diminution
-	if me.states["theeyeofdiminution"].value == true then
-		me.modifyglobalthreat(-0.35, mod.string.get("spell", "theeyeofdiminution"))
-	end	
+		
 	local linkstring
 	local enchant
 	

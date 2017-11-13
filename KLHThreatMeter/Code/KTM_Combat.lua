@@ -333,19 +333,8 @@ me.normalattack = function(spellname, spellid, damage, isdot, target, iscrit, sp
 		-- Nemesis 8/8
 		if (mod.my.mods.warlock.nemesis == true) and (mod.data.spellmatchesset("Warlock Destruction", spellid) == true) then
 			me.event.threat = me.event.threat * 0.8
-			end
-		-- Plagueheart 6/8
-		if mod.my.mods.warlock.plagueheart == true then
-			
-			-- 1) 25% less for crits
-			if iscrit == true then
-				me.event.threat = me.event.threat * 0.75
-			
-			-- 2) 25% less for some dots
-			elseif mod.data.spellmatchesset("Plagueheart 6 Bonus", abilityid, nil) == true then
-				me.event.threat = me.event.threat * 0.75
-			end
 		end
+	
 	-- Priest
 	elseif mod.my.class == "priest" then
 			
@@ -374,12 +363,6 @@ me.normalattack = function(spellname, spellid, damage, isdot, target, iscrit, sp
 			end
 		end
 	
-		-- frostfire 8 piece proc
-		if mod.my.states.notthere.value == true then
-			me.event.threat = 0
-			mod.my.setstate("notthere", false)
-		end
-
 	-- Rogue
 	elseif mod.my.class == "rogue" then
 		

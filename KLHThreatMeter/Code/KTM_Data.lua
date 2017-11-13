@@ -234,6 +234,11 @@ me.spells =
 		class = "item",
 		threat = 0,
 	},
+	["execute"] = 
+	{	
+		class = "warrior",
+		multiplier = 1.25,
+	},
 }
 
 -- These are the DPS modifiers for ranks of rockbiter. Whenever a hit lands with a rockbiter weapon, the added threat
@@ -302,8 +307,6 @@ me.spellsets =
 {
 	["Warlock Destruction"] = 
 	{ "shadowbolt", "immolate", "conflagrate", "searingpain", "rainoffire", "soulfire", "shadowburn", "hellfire" },
-	["Plagueheart 6 Bonus"] = 
-	{"corruption", "curseofagony", "immolate", "siphonlife"	},
 }
 
 --[[ 
@@ -503,17 +506,6 @@ me.itemsets =
 		wrist = "22483",
 		chest = "22476",
 		hands = "22481",
-	},
-	plagueheart = 
-	{
-		head = "22506",
-		legs = "22505",
-		shoulder = "22507",
-		feet = "22508",
-		waist = "22510",
-		wrist = "22511",
-		chest = "22504",
-		hands = "22509",
 	},
 }
 

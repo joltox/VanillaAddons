@@ -1,4 +1,4 @@
-klhtm.string.data["koKR"] =
+﻿klhtm.string.data["koKR"] =
 
 {
 	["binding"] =
@@ -174,6 +174,8 @@ klhtm.string.data["koKR"] =
 			["fungalbloom"] = "곰팡이 번식",
 			["hatefulstrike"] = "증오의 일격",
 
+			-- Onyxia fireball (presumably same as mage)
+			fireball = "화염구",
 		}
 	},
 	["misc"] =

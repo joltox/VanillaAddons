@@ -225,6 +225,9 @@ klhtm.string.data["zhTW"] =
 			mark2 = "寇斯艾茲印記",
 			mark3 = "莫格萊尼印記",
 			mark4 = "札里克印記",
+			
+			-- Onyxia fireball (presumably same as mage)
+			fireball = "火球術",
 		}
 	},
 	["misc"] =

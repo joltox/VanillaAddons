@@ -303,10 +303,10 @@ me.commands =
 				suppose we receive the message "spellvalue timelapse default ticks 6". Then this would print out
 					"Kenco sets the ticks parameter of the Time Lapse ability to 6."
 				]]
-				mod.out.print(string.format(mod.string.get("print", "boss", "spellsetall"), author, "|cffffff00" .. arglist[3] .. "|r", mod.string.get("boss", "spell", arglist[1]), value, mod.boss.bossattacks[arglist[1]][arglist[2]][arglist[3]]))
+				mod.out.print(string.format(mod.string.get("print", "boss", "spellsetall"), author, "|cffffff00" .. arglist[3] .. "|r", mod.string.get("boss", "spell", arglist[1]), tostring(value), tostring(mod.boss.bossattacks[arglist[1]][arglist[2]][arglist[3]])))
 			
 			else				
-				mod.out.print(string.format(mod.string.get("print", "boss", "spellsetmob"), author, "|cffffff00" .. arglist[3] .. "|r", mod.string.get("boss", "spell", arglist[2]), mod.string.get("boss", "spell", arglist[1]), value, mod.boss.bossattacks[arglist[1]][arglist[2]][arglist[3]]))
+				mod.out.print(string.format(mod.string.get("print", "boss", "spellsetmob"), author, "|cffffff00" .. arglist[3] .. "|r", mod.string.get("boss", "spell", arglist[2]), mod.string.get("boss", "spell", arglist[1]), tostring(value), tostring(mod.boss.bossattacks[arglist[1]][arglist[2]][arglist[3]])))
 			end
 			
 			mod.boss.bossattacks[arglist[1]][arglist[2]][arglist[3]] = value
