@@ -28,11 +28,11 @@ L:RegisterTranslations("enUS", function() return {
 	freeze_name = "Freezing States Alert",
 	freeze_desc = "Warn for the different frozen states",
 
-	slow_trigger 	= "Viscidus begins to slow.",
-	freeze_trigger 	= "Viscidus is freezing up.",
-	frozen_trigger 	= "Viscidus is frozen solid.",
-	crack_trigger 	= "Viscidus begins to crack.",
-	shatter_trigger 	= "Viscidus looks ready to shatter.",
+	slow_trigger 	= "begins to slow",
+	freeze_trigger 	= "is freezing up",
+	frozen_trigger 	= "is frozen solid",
+	crack_trigger 	= "begins to crack",
+	shatter_trigger 	= "looks ready to shatter",
 	volley_trigger	= "afflicted by Poison Bolt Volley",
 	toxin_trigger 	= "^([^%s]+) ([^%s]+) afflicted by Toxin%.$",
 
@@ -50,6 +50,48 @@ L:RegisterTranslations("enUS", function() return {
 	toxin_self_warn		= "You are in the toxin cloud!",
 
 	volley_bar	= "Poison Bolt Volley",
+} end )
+
+L:RegisterTranslations("esES", function() return {
+	--cmd = "Viscidus",
+	--volley_cmd = "volley",
+	volley_name = "Alerta de Lluvia de descarga de veneno",
+	volley_desc = "Avisa para Lluvia de descarga de veneno",
+
+	--toxinyou_cmd = "toxinyou",
+	toxinyou_name = "Alerta personal de Nube de toxina",
+	toxinyou_desc = "Avisa si estás en un Nube de toxina",
+
+	--toxinother_cmd = "toxinother",
+	toxinother_name = "Alerta de Nube de toxina",
+	toxinother_desc = "Avisa si otros están en un Nube de toxina",
+
+	--freeze_cmd = "freeze",
+	freeze_name = "Alerta de estados congelados",
+	freeze_desc = "Avisa para estados congelados diferentes",
+
+	slow_trigger 	= "begins to slow",
+	freeze_trigger 	= "is freezing up",
+	frozen_trigger 	= "is frozen solid",
+	crack_trigger 	= "begins to crack",
+	shatter_trigger 	= "looks ready to shatter",
+	volley_trigger	= "sufre de Lluvia de descarga de veneno",
+	toxin_trigger 	= "^([^%s]+) ([^%s]+) sufre de Toxina%.$",
+
+	you 		= "Tu",
+	are 		= "estás",
+
+	freeze1_warn 		= "¡Primera fase congelada!",
+	freeze2_warn 		= "¡Segunda fase congelada!",
+	frozen_warn 		= "¡Viscidus está congelado!",
+	crack1_warn 		= "¡Rajadura - un poco más!",
+	crack2_warn 		= "¡Rajadura - casi!",
+	volley_warn		= "¡Lluvia de descarga de veneno!",
+	volley_soon_warn	= "¡Lluvia de descarga de veneno en ~3 segundos!",
+	toxin_warn		= " está en un Nube de toxina!",
+	toxin_self_warn		= "¡Estás en un Nube de toxina!",
+
+	volley_bar	= "Lluvia de descarga de veneno",
 } end )
 
 L:RegisterTranslations("deDE", function() return {
@@ -94,7 +136,7 @@ L:RegisterTranslations("deDE", function() return {
 ---------------------------------
 
 -- module variables
-module.revision = 20006 -- To be overridden by the module!
+module.revision = 20007 -- To be overridden by the module!
 module.enabletrigger = module.translatedName -- string or table {boss, add1, add2}
 --module.wipemobs = { L["add_name"] } -- adds which will be considered in CheckForEngage
 module.toggleoptions = {"freeze", "volley", "toxinyou", "toxinother", "bosskill"}
@@ -102,7 +144,8 @@ module.toggleoptions = {"freeze", "volley", "toxinyou", "toxinother", "bosskill"
 
 -- locals
 local timer = {
-	volley = 12,
+	earliestVolley = 10,
+	latestVolley = 15,
 }
 local icon = {
 	volley = "Spell_Nature_CorrosiveBreath",
@@ -112,44 +155,12 @@ local syncName = {}
 
 local prior
 
---[[
-45:39 pull
-45:41 cloud 2
-45:49 volley
-46:01 volley 12
-46:12 cloud 31
-46:13 volley 12
-46:42 emerge
-46:50 volley
-47:01 volley 11
-47:05 cloud 23/53
-47:14 volley 13
-47:45 emerge
-47:48 volley 
-47:59 cloud 14/54
-48:01 volley 13
-48:16 volley 15
-48:50 emerge
-48:51 volley 
-48:53 cloud 3/54
-49:03 volley 14
-49:16 volley 13
-49:23 cloud 30
-49:50 emerge
-49:54 volley 
-50:05 volley
-50:16 volley
-50:17 cloud 54
-
-cloud: every 30s and 24s delay on explosion
-]]
-
 ------------------------------
 --      Initialization      --
 ------------------------------
 
 -- called after module is enabled
-function module:OnEnable()	
+function module:OnEnable()
 	self:RegisterEvent("BigWigs_Message")
 	self:RegisterEvent("CHAT_MSG_MONSTER_EMOTE", "Emote")
 	self:RegisterEvent("CHAT_MSG_RAID_BOSS_EMOTE", "Emote")
@@ -166,6 +177,9 @@ end
 
 -- called after boss is engaged
 function module:OnEngage()
+	if self.db.profile.volley then
+		self:IntervalBar(L["volley_bar"], timer.earliestVolley, timer.latestVolley, icon.volley)
+	end
 end
 
 -- called after boss is disengaged (wipe(retreat) or victory)
@@ -180,8 +194,8 @@ end
 function module:CheckVis(arg1)
 	if not prior and self.db.profile.volley and string.find(arg1, L["volley_trigger"]) then
 		self:Message(L["volley_warn"], "Urgent")
-		self:DelayedMessage(timer.volley - 3, L["volley_soon_warn"], "Urgent", nil, nil, true)
-		self:Bar(L["volley_bar"], timer.volley, icon.volley)
+		self:DelayedMessage(timer.earliestVolley - 3, L["volley_soon_warn"], "Urgent", nil, nil, true)
+		self:IntervalBar(L["volley_bar"], timer.earliestVolley, timer.latestVolley, icon.volley)
 		prior = true
 	elseif string.find(arg1, L["toxin_trigger"]) then
 		local _,_, pl, ty = string.find(arg1, L["toxin_trigger"])
@@ -199,16 +213,17 @@ function module:CheckVis(arg1)
 end
 
 function module:Emote(arg1)
+	BigWigs:Debug("Emote: "..arg1)
 	if not self.db.profile.freeze then return end
-	if arg1 == L["slow_trigger"] then
+	if string.find(arg1, L["slow_trigger"]) then
 		self:Message(L["freeze1_warn"], "Atention")
-	elseif arg1 == L["freeze_trigger"] then
+	elseif string.find(arg1, L["freeze_trigger"]) then
 		self:Message(L["freeze2_warn"], "Urgent")
-	elseif arg1 == L["frozen_trigger"] then
+	elseif string.find(arg1, L["frozen_trigger"]) then
 		self:Message(L["frozen_warn"], "Important")
-	elseif arg1 == L["crack_trigger"] then
+	elseif string.find(arg1, L["crack_trigger"]) then
 		self:Message(L["crack1_warn"], "Urgent")
-	elseif arg1 == L["shatter_trigger"] then
+	elseif string.find(arg1, L["shatter_trigger"]) then
 		self:Message(L["crack2_warn"], "Important")
 	end
 end

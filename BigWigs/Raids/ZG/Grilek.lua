@@ -25,7 +25,7 @@ L:RegisterTranslations("enUS", function() return {
 	avatar_cmd = "avatar",
 	avatar_name = "Avatar alert",
 	avatar_desc = "Announce when the boss has Avatar (enrage phase).",
-	
+
 	melee_cmd = "melee",
 	melee_name = "Warnings for melee",
 	melee_desc = "Warn before Avatar is cast, so melee classes can get away from the boss in time.",
@@ -37,6 +37,35 @@ L:RegisterTranslations("enUS", function() return {
 	puticon_cmd = "puticon",
 	puticon_name = "Place icon",
 	puticon_desc = "Place a raid icon on the targetted player.\n\n(Requires assistant or higher)",
+} end )
+
+L:RegisterTranslations("esES", function() return {
+	--cmd = "Grilek",
+
+	avatar_trigger = "Gri\'lek gana Avatar\.",
+	preavatar_warn = "¡Avatar pronto! Retroceden los melee!",
+	avatar_bar = "Avatar",
+	avatar_message = "¡Avatar! Váyanse del jefe!",
+	avatar_end = "Avatar desaparece de Gri\'lek\.",
+	avatar_whisper_you = "¡Gri'lek está viniendo hacia ti! Váyate!",
+	avatar_whisper = "¡Gri'lek está viniendo hacia ti! Váyate!",
+	avatar_watch = "¡Gri'lek está viniendo hacia %s!",
+
+	--avatar_cmd = "avatar",
+	avatar_name = "Alerta de Avatar",
+	avatar_desc = "Anuncia cuando el jefe tenga Avatar.",
+
+	--melee_cmd = "melee",
+	melee_name = "Alerta para melee",
+	melee_desc = "Avisa antes de que el jefe lance Avatar para que los melee puedan retroceder del jefe.",
+
+	--announce_cmd = "announce",
+	announce_name = "Susurrar a los jugadores",
+	announce_desc = "Susurra a los jugadores para que sepan que son el objetivo de Gril'ek.",
+
+	--puticon_cmd = "puticon",
+	puticon_name = "Marcar el objetivo de Gri'lek",
+	puticon_desc = "Marca con un icono el objetivo de Gri'lek.\n\n(Require asistente o líder)",
 } end )
 
 L:RegisterTranslations("deDE", function() return {
@@ -54,7 +83,7 @@ L:RegisterTranslations("deDE", function() return {
 	avatar_cmd = "avatar",
 	avatar_name = "Alarm f\195\188r Avatar",
 	avatar_desc = "Ank\195\188ndingen wenn der Boss Avatar ist (Raserei Phase).",
-	
+
 	melee_cmd = "melee",
 	melee_name = "Warnunken f\195\188r die Nahk\195\164mpfer",
 	melee_desc = "Warnt bevor Avatar gewirkt wird, sodass die Nahk\195\164mpfe Zeit haben um sich vom Boss zu entfernen.",
@@ -87,10 +116,10 @@ local icon = {
 	avatar = "Ability_Creature_Cursed_05",
 }
 local syncName = {
-	meleeIni = "GrilekMeleeIni",
-	melee = "GrilekMelee",
-	avatar = "GrilekAvatar",
-	avatarOver = "GrilekAvatarStop",
+	meleeIni = "GrilekMeleeIni"..module.revision,
+	melee = "GrilekMelee"..module.revision,
+	avatar = "GrilekAvatar"..module.revision,
+	avatarOver = "GrilekAvatarStop"..module.revision,
 }
 
 
@@ -101,10 +130,10 @@ local syncName = {
 --module:RegisterYellEngage(L["start_trigger"])
 
 -- called after module is enabled
-function module:OnEnable()	
+function module:OnEnable()
 	self:RegisterEvent("CHAT_MSG_SPELL_PERIODIC_CREATURE_BUFFS", "Event")
 	self:RegisterEvent("CHAT_MSG_SPELL_AURA_GONE_OTHER", "Event")
-	
+
 	self:ThrottleSync(8, syncName.meleeIni)
 	self:ThrottleSync(8, syncName.melee)
 	self:ThrottleSync(10, syncName.avatar)
@@ -123,7 +152,7 @@ end
 function module:OnEngage()
 	if firstwarn == 0 then
 		self:Sync(syncName.meleeIni)
-	end	
+	end
 end
 
 -- called after boss is disengaged (wipe(retreat) or victory)

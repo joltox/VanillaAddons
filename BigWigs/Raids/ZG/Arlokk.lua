@@ -13,7 +13,7 @@ local module, L = BigWigs:ModuleDeclaration("High Priestess Arlokk", "Zul'Gurub"
 L:RegisterTranslations("enUS", function() return {
 	cmd = "Arlokk",
 
-    engage_trigger = "your priestess calls upon your might",
+	engage_trigger = "your priestess calls upon your might",
 	mark_trigger = "Feast on (.+), my pretties!",
 	mark_warning_self = "You are marked!",
 	mark_warning_other = "%s is marked!",
@@ -37,20 +37,57 @@ L:RegisterTranslations("enUS", function() return {
 	whirlwind_cmd = "whirlwind",
 	whirlwind_name = "Whirldind alert",
 	whirlwind_desc = "Shows you when the boss has Whirlwind.",
-	
+
 	phase_cmd = "phase",
 	phase_name = "Phase notification",
 	phase_desc = "Announces the boss' phase transitions.",
-	
+
 	puticon_cmd = "puticon",
 	puticon_name = "Raid icon on marked players",
 	puticon_desc = "Place a raid icon on the player with Mark of Arlokk.\n\n(Requires assistant or higher)",
 } end )
 
+L:RegisterTranslations("esES", function() return {
+	cmd = "Arlokk",
+
+	--engage_trigger = "your priestess calls upon your might",
+	--mark_trigger = "Feast on (.+), my pretties!",
+	mark_warning_self = "¡Estás marcado!",
+	mark_warning_other = "¡%s está marcado!",
+	mark_fade = "Marca de Arlokk desaparece de (.+)\.",
+	ww_trigger = "Suma sacerdotisa Arlokk gana Torbellino\.",
+	ww_bar = "Torbellino",
+	trollphase_message = "Fase de Trol",
+	pantherphase_message = "Fase de Pantera",
+	vanishphase_message = "¡Se Esfuma!",
+	vanish_bar = "Estimación de Regreso",
+	vanish_Nextbar = "Próximo Esfumar",
+
+	--vanish_cmd = "vanish",
+	vanish_name = "Alerta de Esfumar",
+	vanish_desc = "Muestra una barra para la duración de Esfumar.",
+
+	--mark_cmd = "mark",
+	mark_name = "Alerta de Marca de Arlokk",
+	mark_desc = "Avisa cuando un jugador tenga Marca de Arlokk.",
+
+	--whirlwind_cmd = "whirlwind",
+	whirlwind_name = "Alerta de Torbellino",
+	whirlwind_desc = "Muestra cuando tenga Torbellino la jefa.",
+
+	--phase_cmd = "phase",
+	phase_name = "Alerta de Fase",
+	phase_desc = "Anuncia cuando cambie la fase de la jefa.",
+
+	--puticon_cmd = "puticon",
+	puticon_name = "Marcar para Marca de Arlokk",
+	puticon_desc = "Marca los jugadores quien tienen Marca de Arlokk con un icono de la banda.\n\n(Require asistente o líder)",
+} end )
+
 L:RegisterTranslations("deDE", function() return {
 	cmd = "Arlokk",
 
-    engage_trigger = "your priestess calls upon your might",
+	engage_trigger = "your priestess calls upon your might",
 	mark_trigger = "Feast on (.+), my pretties!",
 	mark_warning_self = "Du bist markiert!",
 	mark_warning_other = "%s ist markiert!",
@@ -74,11 +111,11 @@ L:RegisterTranslations("deDE", function() return {
 	whirlwind_cmd = "whirlwind",
 	whirlwind_name = "Alarm f\195\188r Wirbelwind",
 	whirlwind_desc = "Zeigt Balken f\195\188r Wirbelwind.",
-	
+
 	phase_cmd = "phase",
 	phase_name = "Phasen-Benachrichtigung",
 	phase_desc = "Verk\195\188ndet den Phasenwechsel des Bosses.",
-	
+
 	puticon_cmd = "puticon",
 	puticon_name = "Schlachtzugsymbol auf die markiert Spieler",
 	puticon_desc = "Versetzt eine Schlachtzugsymbol auf der markiert Spieler.\n\n(Ben\195\182tigt Schlachtzugleiter oder Assistent)",
@@ -102,9 +139,9 @@ module.toggleoptions = {"phase", "whirlwind", "vanish", "mark", "puticon", "boss
 
 -- locals
 local timer = {
-	firstVanish = 29,
-	vanish = 8,
-    unvanish = 8,
+	firstVanish = 35,
+	vanish = 75,
+	unvanish = 35,
 	whirlwind = 2,
 }
 local icon = {
@@ -112,9 +149,9 @@ local icon = {
 	whirlwind = "Ability_Whirlwind",
 }
 local syncName = {
-	trollPhase = "ArlokkPhaseTroll",
-	vanishPhase = "ArlokkPhaseVanish",
-	pantherPhase = "ArlokkPhasePanther",
+	trollPhase = "ArlokkPhaseTroll"..module.revision,
+	vanishPhase = "ArlokkPhaseVanish"..module.revision,
+	pantherPhase = "ArlokkPhasePanther"..module.revision,
 }
 
 
@@ -125,10 +162,10 @@ local syncName = {
 module:RegisterYellEngage(L["engage_trigger"])
 
 -- called after module is enabled
-function module:OnEnable()	
+function module:OnEnable()
 	self:RegisterEvent("CHAT_MSG_MONSTER_YELL")
 	self:RegisterEvent("CHAT_MSG_SPELL_PERIODIC_CREATURE_BUFFS")
-	
+
 	self:ThrottleSync(3, syncName.trollPhase)
 	self:ThrottleSync(3, syncName.vanishPhase)
 	self:ThrottleSync(3, syncName.pantherPhase)
@@ -143,7 +180,7 @@ end
 -- called after boss is engaged
 function module:OnEngage()
 	self:CancelScheduledEvent("checkvanish")
-    self:ScheduleRepeatingEvent("checkvanish", self.CheckVanish, 1, self)
+	self:ScheduleRepeatingEvent("checkvanish", self.CheckVanish, 1, self)
 	if self.db.profile.phase then
 		self:Message(L["trollphase_message"], "Attention")
 	end
@@ -200,16 +237,16 @@ end
 ------------------------------
 
 function module:PantherPhase()
-    vanished = false
+	vanished = false
 	self:CancelScheduledEvent("checkunvanish")
 	if self.db.profile.vanish then
 		self:RemoveBar(L["vanish_bar"])
-        self:Bar(L["vanish_Nextbar"], timer.vanish, icon.vanish)
+		self:Bar(L["vanish_Nextbar"], timer.vanish, icon.vanish)
 	end
 	if self.db.profile.phase then
 		self:Message(L["pantherphase_message"], "Attention")
 	end
-    
+
 	if not vanished then
 		self:ScheduleRepeatingEvent("checkvanish", self.CheckVanish, 0.5, self)
 	end
@@ -223,7 +260,7 @@ function module:VanishPhase()
 		self:Message(L["vanishphase_message"], "Attention")
 	end
 	if self.db.profile.vanish then
-        self:RemoveBar(L["vanish_Nextbar"])
+		self:RemoveBar(L["vanish_Nextbar"])
 		self:Bar(L["vanish_bar"], timer.unvanish, icon.vanish, true, "White")
 	end
 	self:ScheduleRepeatingEvent("checkunvanish", self.CheckUnvanish, 0.5, self)
@@ -234,30 +271,18 @@ end
 --      Utility	Functions   --
 ------------------------------
 
-function module:IsArlokkVisible()
-    if UnitName("playertarget") == self.submergeCheckName then
-		return true
-	else
-		for i = 1, GetNumRaidMembers(), 1 do
-			if UnitName("Raid"..i.."target") == self.submergeCheckName then
-				return true
-			end
-		end
-	end
-    
-    return false
-end
+
 function module:CheckUnvanish()
-    self:DebugMessage("CheckUnvanish")
-    if module:IsArlokkVisible() then
-        self:Sync(syncName.pantherPhase)
-    end
+	self:DebugMessage("CheckUnvanish")
+	if module:IsArlokkVisible() then
+		self:Sync(syncName.pantherPhase)
+	end
 end
 function module:CheckVanish()
-    self:DebugMessage("CheckVanish")
-    if not module:IsArlokkVisible() then
-        self:Sync(syncName.vanishPhase)
-    end	
+	self:DebugMessage("CheckVanish")
+	if not module:IsArlokkVisible() then
+		self:Sync(syncName.vanishPhase)
+	end
 end
 function module:IsArlokkVisible()
 	if UnitName("playertarget") == self.translatedName then
@@ -269,52 +294,50 @@ function module:IsArlokkVisible()
 			end
 		end
 	end
-    
-    return false
+
+	return false
 end
 
-
-
 function module:Test()
-    -- /run local m=BigWigs:GetModule("High Priestess Arlokk");m:Test()
-    local translatedName = self.translatedName
-    
+	-- /run local m=BigWigs:GetModule("High Priestess Arlokk");m:Test()
+	local translatedName = self.translatedName
+
 	local function testCheckVanish()
-        ClearTarget()
-        BigWigs:Print("testCheckVanish")
-    end
-    local function testCheckUnvanish()
-        TargetUnit("player")
-        BigWigs:Print("testCheckUnvanish")
-    end
+		ClearTarget()
+		BigWigs:Print("testCheckVanish")
+	end
+	local function testCheckUnvanish()
+		TargetUnit("player")
+		BigWigs:Print("testCheckUnvanish")
+	end
 	local function testDisable()
 		--module:SendWipeSync()
 		BigWigs:TriggerEvent("BigWigs_RebootModule", self:ToString())
 		BigWigs:DisableModule(module:ToString())
-        BigWigs:Print("Test finished")
-        self.translatedName = translatedName
+		BigWigs:Print("Test finished")
+		self.translatedName = translatedName
 	end
-    
-    -- short test
-    local testTimer = 0
-    self:SendEngageSync()
-    
-    BigWigs:Print("Target/Untarget yourself to test CheckVanish/CheckUnvanish")
-    testCheckUnvanish()
-    self.translatedName = UnitName("player") -- override name to test CheckVanish/CheckUnvanish
 
-    -- vanish
-    testTimer = testTimer + 5
-    self:ScheduleEvent(self:ToString() .. "testCheckVanish", testCheckVanish, testTimer, self)
-    BigWigs:Print("testCheckVanish in " .. testTimer)
+	-- short test
+	local testTimer = 0
+	self:SendEngageSync()
 
-    -- unvanish
-    testTimer = testTimer + 5
-    self:ScheduleEvent(self:ToString() .. "testCheckUnvanish", testCheckUnvanish, testTimer, self)
-    BigWigs:Print("testCheckUnvanish in " .. testTimer)
-    
-    -- disable
-    testTimer = testTimer + 10
-    self:ScheduleEvent(self:ToString() .. "testDisable", testDisable, testTimer, self)
-    BigWigs:Print("testDisable in " .. testTimer)
+	BigWigs:Print("Target/Untarget yourself to test CheckVanish/CheckUnvanish")
+	testCheckUnvanish()
+	self.translatedName = UnitName("player") -- override name to test CheckVanish/CheckUnvanish
+
+	-- vanish
+	testTimer = testTimer + 5
+	self:ScheduleEvent(self:ToString() .. "testCheckVanish", testCheckVanish, testTimer, self)
+	BigWigs:Print("testCheckVanish in " .. testTimer)
+
+	-- unvanish
+	testTimer = testTimer + 5
+	self:ScheduleEvent(self:ToString() .. "testCheckUnvanish", testCheckUnvanish, testTimer, self)
+	BigWigs:Print("testCheckUnvanish in " .. testTimer)
+
+	-- disable
+	testTimer = testTimer + 10
+	self:ScheduleEvent(self:ToString() .. "testDisable", testDisable, testTimer, self)
+	BigWigs:Print("testDisable in " .. testTimer)
 end

@@ -59,6 +59,53 @@ L:RegisterTranslations("enUS", function() return {
 	["Close"] = true,
 } end)
 
+L:RegisterTranslations("esES", function() return {
+	["Messages"] = "Mensajes",
+
+	["msg"] = "msg",
+	["anchor"] = "ancla",
+	["rw"] = "rw",
+	["color"] = "color",
+	["scale"] = "escala",
+
+	["Options for the message frame."] = "Opciones para el marco del mensajes",
+	["Anchor"] = "Ancla",
+	["Show the message anchor frame."] = "Muestra la ancla del marco del mensaje",
+	["Use RaidWarning"] = "Usar Advertencia de la Banda",
+	["Toggle sending messages to the RaidWarnings frame."] = "Alterna de enviar mensajes al marco Advertencia de la Banda",
+	["Use colors"] = "Usar colores",
+	["Toggles white only messages ignoring coloring."] = "Alterna solamente los mensajes blancos y ignora los coloreados.",
+	["Message frame scale"] = "Escala del marco del mensaje",
+
+	["Message frame"] = "Marco del mensaje",
+	["Show anchor"] = "Mostrar Ancla",
+	["Send messages to RaidWarning frame"] = "Envia mensajes al marco de Advertencia de la Banda",
+	["Set the message frame scale."] = "Define la escala del marco del mensaje",
+	["Colorize messages"] = "Colorea los mensajes",
+	["Scale"] = "Escala",
+
+	["|cffff0000Co|cffff00fflo|cff00ff00r|r"] = "|cffff0000Co|cffff00fflo|cff00ff00r|r",
+	["White"] = "Blanco",
+	["BigWigs frame"] = "Marco de BigWigs",
+	["RaidWarning frame"] = "Marco de Advertencia de la Banda",
+	["Scale is set to %s"] = "Escala se define a %s",
+	["Messages are now sent to the %2$s"] = "Mensajes están enviados al %2$s",
+	["Messages are currently sent to the %2$s"] = "Mensajes actuales están enviados al %2$s",
+
+	["display"] = "display",
+	["Display"] = "Muestra",
+	["Set where messages are displayed."] = "Define donde los mensajes están mostrados",
+	["Display is now set to %2$s"] = "Muestra",
+	["Display is currently set to %2$s"] = "Muestra actual define a %2$s",
+
+	["Mik's Scrolling Battle Text"] = "Flotación de texto de combate de Mik",
+	["Scrolling Combat Text"] = "Flotación de texto de combate",
+	["Floating Combat Text"] = "Flotación de texto de combate",
+
+	["Test"] = "Probar",
+	["Close"] = "Cerrar",
+} end)
+
 L:RegisterTranslations("deDE", function() return {
 	["Messages"] = "Nachrichten",
 
@@ -231,8 +278,8 @@ end
 function BigWigsMessages:BigWigs_Message(text, color, noraidsay, sound, broadcastonly)
 	if not text then return end
 	if broadcastonly then return end
-	
-    local r, g, b
+
+	local r, g, b
 	if color ~= nil and type(color) == "table" and type(color.r) == "number" and type(color.g) == "number" and type(color.b) == "number" then
 		r, g, b = color.r, color.g, color.b
 	else
@@ -279,7 +326,7 @@ function BigWigsMessages:SetupFrames()
 		bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background", tile = true, tileSize = 16,
 		edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", edgeSize = 16,
 		insets = {left = 4, right = 4, top = 4, bottom = 4},
-		})
+	})
 	self.frames.anchor:SetBackdropBorderColor(.5, .5, .5)
 	self.frames.anchor:SetBackdropColor(0,0,0)
 	self.frames.anchor:ClearAllPoints()
@@ -308,7 +355,7 @@ function BigWigsMessages:SetupFrames()
 	self.frames.cheader:ClearAllPoints()
 	self.frames.cheader:SetPoint("TOP", self.frames.anchor, "TOP", 0, -10)
 
-    
+
 	self.frames.leftbutton = CreateFrame("Button", nil, self.frames.anchor)
 	self.frames.leftbutton.owner = self
 	self.frames.leftbutton:SetWidth(40)
@@ -341,7 +388,7 @@ function BigWigsMessages:SetupFrames()
 	self.frames.leftbuttontext:SetText(L["Test"])
 	self.frames.leftbuttontext:SetAllPoints(self.frames.leftbutton)
 
-    
+
 	self.frames.rightbutton = CreateFrame("Button", nil, self.frames.anchor)
 	self.frames.rightbutton.owner = self
 	self.frames.rightbutton:SetWidth(40)
@@ -362,7 +409,7 @@ function BigWigsMessages:SetupFrames()
 	t:SetTexCoord(0, 0.625, 0, 0.6875)
 	t:SetAllPoints(self.frames.rightbutton)
 	self.frames.rightbutton:SetPushedTexture(t)
-	
+
 	t = self.frames.rightbutton:CreateTexture()
 	t:SetTexture("Interface\\Buttons\\UI-Panel-Button-Highlight")
 	t:SetTexCoord(0, 0.625, 0, 0.6875)

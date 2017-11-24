@@ -11,65 +11,127 @@ local module, L = BigWigs:ModuleDeclaration("High Priest Venoxis", "Zul'Gurub")
 ----------------------------
 
 L:RegisterTranslations("enUS", function() return {
-    add_name                        = "Razzashi Cobra",
-    renew_trigger                   = "High Priest Venoxis gains Renew\.",
-    renewend_trigger                = "Renew fades from High Priest Venoxis\.",
-    enrage_trigger                  = "High Priest Venoxis gains Enrage\.",
-    holyfire_trigger                = "High Priest Venoxis begins to cast Holy Fire\.",
-    phase2_trigger                  = "Let the coils of hate unfurl!",
-    attack_trigger1                 = "High Priest Venoxis attacks",
-    attack_trigger2                 = "High Priest Venoxis misses",
-    attack_trigger3                 = "High Priest Venoxis hits",
-    attack_trigger4                 = "High Priest Venoxis crits",
-    poisoncloud_trigger             = "Poison Cloud",
-    poisoncloudhitsyou_trigger      = "You suffer (.+) Nature damage from High Priest Venoxis 's Poison Cloud.",
-    poisoncloudhitsother_trigger    = "(.+) suffers (.+) Nature damage from High Priest Venoxis 's Poison Cloud.",
-    poisoncloud_on_you              = "You are afflicted by Poison Cloud.",
-    poisoncloudabsorbyou_trigger    = "You absorb High Priest Venoxis 's Poison Cloud\.",
-    poisoncloudabsorb_trigger       = "High Priest Venoxis 's Poison Cloud is absorbed by (.+)\.",
-    poisoncloudresistyou_trigger    = "High Priest Venoxis 's Poison Cloud was resisted\.",
-    poisoncloudresist_trigger       = "High Priest Venoxis 's Poison Cloud was resisted by (.+)\.",
-    poisoncloudimmuneyou_trigger    = "High Priest Venoxis 's Poison Cloud failed. You are immune\.",
-    poisoncloudimmune_trigger       = "High Priest Venoxis 's Poison Cloud fails. (.+) is immune\.",
-    deadaddtrigger                  = "Razzashi Cobra dies",
-    deadbosstrigger                 = "High Priest Venoxis dies",
+	add_name                        = "Razzashi Cobra",
+	renew_trigger                   = "High Priest Venoxis gains Renew\.",
+	renewend_trigger                = "Renew fades from High Priest Venoxis\.",
+	enrage_trigger                  = "High Priest Venoxis gains Enrage\.",
+	holyfire_trigger                = "High Priest Venoxis begins to cast Holy Fire\.",
+	phase2_trigger                  = "Let the coils of hate unfurl!",
+	attack_trigger1                 = "High Priest Venoxis attacks",
+	attack_trigger2                 = "High Priest Venoxis misses",
+	attack_trigger3                 = "High Priest Venoxis hits",
+	attack_trigger4                 = "High Priest Venoxis crits",
+	poisoncloud_trigger             = "Poison Cloud",
+	poisoncloudhitsyou_trigger      = "You suffer (.+) Nature damage from High Priest Venoxis 's Poison Cloud.",
+	poisoncloudhitsother_trigger    = "(.+) suffers (.+) Nature damage from High Priest Venoxis 's Poison Cloud.",
+	poisoncloud_on_you              = "You are afflicted by Poison Cloud.",
+	poisoncloudabsorbyou_trigger    = "You absorb High Priest Venoxis 's Poison Cloud\.",
+	poisoncloudabsorb_trigger       = "High Priest Venoxis 's Poison Cloud is absorbed by (.+)\.",
+	poisoncloudresistyou_trigger    = "High Priest Venoxis 's Poison Cloud was resisted\.",
+	poisoncloudresist_trigger       = "High Priest Venoxis 's Poison Cloud was resisted by (.+)\.",
+	poisoncloudimmuneyou_trigger    = "High Priest Venoxis 's Poison Cloud failed. You are immune\.",
+	poisoncloudimmune_trigger       = "High Priest Venoxis 's Poison Cloud fails. (.+) is immune\.",
+	deadaddtrigger                  = "Razzashi Cobra dies",
+	deadbosstrigger                 = "High Priest Venoxis dies",
 
-    holyfirebar         = "Holy Fire",
-    renewbar            = "Renew",
-    renew_message       = "Renew! Dispel it!",
-    phase1_message      = "Troll Phase",
-    phase2_message      = "Snake Phase",
-    enrage_message      = "Boss is enraged! Spam heals!",
-    poisonyou_message   = "Move away from poison cloud!",
-    poison_message      = "Move away from poison cloud!",
-    addmsg              = "%d/4 Razzashi Cobras dead!",
-    you                 = "you",
-	
-    cmd                 = "Venoxis",
+	holyfirebar         = "Holy Fire",
+	renewbar            = "Renew",
+	renew_message       = "Renew! Dispel it!",
+	phase1_message      = "Troll Phase",
+	phase2_message      = "Snake Phase",
+	enrage_message      = "Boss is enraged! Spam heals!",
+	poisonyou_message   = "Move away from poison cloud!",
+	poison_message      = "Move away from poison cloud!",
+	addmsg              = "%d/4 Razzashi Cobras dead!",
+	you                 = "you",
 
-    adds_cmd            = "adds",
-    adds_name           = "Dead adds counter",
-    adds_desc           = "Announces dead Razzashi Cobras",
-	
-    renew_cmd           = "renew",
-    renew_name          = "Renew Alert",
-    renew_desc          = "Warn for Renew",
+	cmd                 = "Venoxis",
 
-    holyfire_cmd        = "holyfire",
-    holyfire_name       = "Holy Fire Alert",
-    holyfire_desc       = "Warn for Holy Fire",
+	adds_cmd            = "adds",
+	adds_name           = "Dead adds counter",
+	adds_desc           = "Announces dead Razzashi Cobras",
 
-    phase_cmd           = "phase",
-    phase_name          = "Phase Notification",
-    phase_desc          = "Announces the boss' phase transition",
+	renew_cmd           = "renew",
+	renew_name          = "Renew Alert",
+	renew_desc          = "Warn for Renew",
 
-    announce_cmd        = "whispers",
-    announce_name       = "Whisper to people in Poison Clouds",
-    announce_desc       = "Sends a whisper to players that stand in poison\n\n(Requires assistant or higher)\n\n(Disclaimer: to avoid spamming whispers, it will only whisper people that actually take damage from the Poison Clouds)",
+	holyfire_cmd        = "holyfire",
+	holyfire_name       = "Holy Fire Alert",
+	holyfire_desc       = "Warn for Holy Fire",
 
-    enrage_cmd          = "enrage",
-    enrage_name         = "Enrage Alert",
-    enrage_desc         = "Warn for Enrage",
+	phase_cmd           = "phase",
+	phase_name          = "Phase Notification",
+	phase_desc          = "Announces the boss' phase transition",
+
+	announce_cmd        = "whispers",
+	announce_name       = "Whisper to people in Poison Clouds",
+	announce_desc       = "Sends a whisper to players that stand in poison\n\n(Requires assistant or higher)\n\n(Disclaimer: to avoid spamming whispers, it will only whisper people that actually take damage from the Poison Clouds)",
+
+	enrage_cmd          = "enrage",
+	enrage_name         = "Enrage Alert",
+	enrage_desc         = "Warn for Enrage",
+} end )
+
+L:RegisterTranslations("esES", function() return {
+	add_name                        = "Cobra Razzashi",
+	renew_trigger                   = "Sumo sacerdote Venoxis gana Renovar\.",
+	renewend_trigger                = "Renovar desaparece de Sumo sacerdote Venoxis\.",
+	enrage_trigger                  = "Sumo sacerdote Venoxis gana Enfurecer\.",
+	holyfire_trigger                = "Sumo sacerdote Venoxis comienza a lanzar Fuego Sagrado\.",
+	phase2_trigger                  = "Let the coils of hate unfurl!",
+	attack_trigger1                 = "Sumo sacerdote Venoxis ataca",
+	attack_trigger2                 = "Sumo sacerdote Venoxis falla",
+	attack_trigger3                 = "Sumo sacerdote Venoxis golpea",
+	attack_trigger4                 = "Sumo sacerdote Venoxis golpe crítico",
+	poisoncloud_trigger             = "Nube de veneno",
+	poisoncloudhitsyou_trigger      = "Sufres (.+) de daño de la Naturaleza del Nube de veneno de Sumo sacerdote Venoxis.",
+	poisoncloudhitsother_trigger    = "(.+) sufre (.+) de daño de la Naturaleza del Nube de veneno de Sumo sacerdote Venoxis.",
+	poisoncloud_on_you              = "Sufres de Nube de veneno.",
+	poisoncloudabsorbyou_trigger    = "Absorbes Nube de veneno de Sumo sacerdote Venoxis\.",
+	poisoncloudabsorb_trigger       = "Nube de veneno de Sumo sacerdote Venoxis está absorbido por (.+)\.",
+	poisoncloudresistyou_trigger    = "Resistido Nube de veneno de Sumo sacerdote Venoxis\.",
+	poisoncloudresist_trigger       = "Nube de veneno de Sumo sacerdote Venoxis fue resistido por (.+)\.",
+	poisoncloudimmuneyou_trigger    = "Nube de veneno de Sumo sacerdote Venoxis ha fallado. Eres inmune\.",
+	poisoncloudimmune_trigger       = "Nube de veneno de Sumo sacerdote Venoxis ha fallado. (.+) es inmune\.",
+	deadaddtrigger                  = "Cobra Razzashi muere",
+	deadbosstrigger                 = "Sumo sacerdote Venoxis muere",
+
+	holyfirebar         = "Fuego Sagrado",
+	renewbar            = "Renovar",
+	renew_message       = "¡Renovar! Disípala!",
+	phase1_message      = "Fase de Trol",
+	phase2_message      = "Fase de Serpiente",
+	enrage_message      = "¡El jefe está enfurecido! Cúranse!",
+	poisonyou_message   = "¡Muévate del Nube de veneno!",
+	poison_message      = "¡Muévanse del Nube de veneno!",
+	addmsg              = "¡%d/4 Cobras Razzashi muertas!",
+	you                 = "tu",
+
+	cmd                 = "Venoxis",
+
+	--adds_cmd            = "adds",
+	adds_name           = "Contador de adds muertos",
+	adds_desc           = "Anuncia Cobras Razzashi muertas",
+
+	--renew_cmd           = "renew",
+	renew_name          = "Alerta de Renovar",
+	renew_desc          = "Avisa para Renovar",
+
+	--holyfire_cmd        = "holyfire",
+	holyfire_name       = "Alerta de Fuego Sagrado",
+	holyfire_desc       = "Avisa para Fuego Sagrado",
+
+	--phase_cmd           = "phase",
+	phase_name          = "Alerta de Fase",
+	phase_desc          = "Anuncia los cambios de fase del jefe",
+
+	--announce_cmd        = "whispers",
+	announce_name       = "Susurrar a los jugadores en el Nube de veneno",
+	announce_desc       = "Susurra a los jugadores que están en el Nube de veneno\n\n(Require asistente o líder)\n\n(descargo de responsabilidad: para evitar spam, solamente susurrará a los jugadores que sufren daño del Nube de veneno)",
+
+	--enrage_cmd          = "enrage",
+	enrage_name         = "Alerta de Enfurecer",
+	enrage_desc         = "Avisa para Enfurecer",
 } end )
 
 L:RegisterTranslations("deDE", function() return {
@@ -86,7 +148,7 @@ L:RegisterTranslations("deDE", function() return {
 	poisoncloud_trigger = "Giftwolke",
 	poisoncloudhitsyou_trigger = "Ihr erleidet (.+) Naturschaden von High Priest Venoxis (durch Giftwolke)\.",
 	poisoncloudhitsother_trigger = "(.+) erleidet (.+) Naturschaden von High Priest Venoxis (durch Giftwolke)\.",
-    poisoncloud_on_you              = "You are afflicted by Poison Cloud.",
+	poisoncloud_on_you              = "You are afflicted by Poison Cloud.",
 	poisoncloudabsorbyou_trigger = "Ihr absorbiert High Priest Venoxiss Giftwolke\.",
 	poisoncloudabsorb_trigger = "Giftwolke von High Priest Venoxis wird absorbiert von\: (.+)\.",
 	poisoncloudresistyou_trigger = "High Priest Venoxis versucht es mit Giftwolke\.\.\. widerstanden\.",
@@ -106,13 +168,13 @@ L:RegisterTranslations("deDE", function() return {
 	poison_message = "Move away from poison cloud!",
 	addmsg = "%d/4 Razzashi Cobra tot!",
 	you = "Ihr",
-	
+
 	cmd = "Venoxis",
 
 	adds_cmd = "adds",
 	adds_name = "Z\195\164hler f\195\188r tote Adds",
 	adds_desc = "Verk\195\188ndet Razzashi Cobras Tod",
-	
+
 	renew_cmd = "renew",
 	renew_name = "Alarm f\195\188r Erneuerung",
 	renew_desc = "Warnung, wenn Venoxis Erneuerung auf sich wirkt",
@@ -149,8 +211,8 @@ module.toggleoptions = {"phase", "adds", "renew", "holyfire", "enrage", "announc
 -- locals
 local timer = {
 	holyfireCast = 3.5,
-	holyfire = 12,
-	renew = 15,
+	holyfire = 8,
+	renew = 20,
 }
 local icon = {
 	addDead = "INV_WAEPON_BOW_ZULGRUB_D_01",
@@ -159,13 +221,13 @@ local icon = {
 	holyfire = "Spell_Holy_SearingLight",
 }
 local syncName = {
-	phase2 = "VenoxisPhaseTwo",
-	renew = "VenoxisRenewStart",
-	renewOver = "VenoxisRenewStop",
-	holyfire = "VenoxisHolyFireStart",
-	holyfireOver = "VenoxisHolyFireStop",
-	enrage = "VenoxisEnrage",
-	addDead = "VenoxisAddDead",
+	phase2 = "VenoxisPhaseTwo"..module.revision,
+	renew = "VenoxisRenewStart"..module.revision,
+	renewOver = "VenoxisRenewStop"..module.revision,
+	holyfire = "VenoxisHolyFireStart"..module.revision,
+	holyfireOver = "VenoxisHolyFireStop"..module.revision,
+	enrage = "VenoxisEnrage"..module.revision,
+	addDead = "VenoxisAddDead"..module.revision,
 }
 
 local berserkannounced = nil
@@ -178,7 +240,7 @@ local berserkannounced = nil
 --module:RegisterYellEngage(L["start_trigger"])
 
 -- called after module is enabled
-function module:OnEnable()	
+function module:OnEnable()
 	self:RegisterEvent("CHAT_MSG_MONSTER_YELL")
 	self:RegisterEvent("CHAT_MSG_SPELL_PERIODIC_CREATURE_BUFFS")
 	self:RegisterEvent("CHAT_MSG_COMBAT_CREATURE_VS_SELF_HITS", "Event")
@@ -194,8 +256,8 @@ function module:OnEnable()
 	self:RegisterEvent("CHAT_MSG_SPELL_CREATURE_VS_PARTY_DAMAGE", "Event")
 	self:RegisterEvent("CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE", "Event")
 	self:RegisterEvent("CHAT_MSG_SPELL_AURA_GONE_OTHER")
-    self:RegisterEvent("CHAT_MSG_SPELL_AURA_GONE_SELF")
-	
+	self:RegisterEvent("CHAT_MSG_SPELL_AURA_GONE_SELF")
+
 	self:ThrottleSync(10, syncName.phase2)
 	self:ThrottleSync(2, syncName.renew)
 	self:ThrottleSync(2, syncName.renewOver)
@@ -208,10 +270,10 @@ end
 function module:OnSetup()
 	self.started = nil
 	self.cobra = 0
-    
+
 	castingholyfire = 0
 	holyfiretime = 0
-	
+
 	self:RegisterEvent("CHAT_MSG_COMBAT_HOSTILE_DEATH")
 end
 
@@ -235,7 +297,7 @@ end
 
 function module:CHAT_MSG_COMBAT_HOSTILE_DEATH(msg)
 	BigWigs:CheckForBossDeath(msg, self)
-	
+
 	if string.find(msg, L["deadaddtrigger"]) then
 		self:Sync(syncName.addDead .. " " .. tostring(self.cobra + 1))
 	end
@@ -257,16 +319,16 @@ function module:Event(msg)
 	if string.find(msg, L["holyfire_trigger"]) then
 		self:Sync(syncName.holyfire)
 	elseif string.find(msg, L["attack_trigger1"]) or string.find(msg, L["attack_trigger2"]) or string.find(msg, L["attack_trigger3"]) or string.find(msg, L["attack_trigger4"]) then
-		if castingholyfire == 1 then 
+		if castingholyfire == 1 then
 			if (GetTime() - holyfiretime) < timer.holyfireCast then
 				self:Sync("VenoxisHolyFireStop")
 			elseif (GetTime() - holyfiretime) >= timer.holyfireCast then
 				castingholyfire = 0
 			end
 		end
-    elseif msg == L["poisoncloud_on_you"] then
-        self:WarningSign(icon.cloud, 5)
-        self:Message(L["poisonyou_message"], "Attention", "Alarm")
+	elseif msg == L["poisoncloud_on_you"] then
+		self:WarningSign(icon.cloud, 5)
+		self:Message(L["poisonyou_message"], "Attention", "Alarm")
 	elseif string.find(msg, L["poisoncloud_trigger"]) then
 		if self.db.profile.announce then
 			if string.find(msg, L["poisoncloudhitsyou_trigger"]) or msg == L["poisoncloudresistyou_trigger"] or msg == L["poisoncloudabsorbyou_trigger"] or msg == L["poisoncloudimmuneyou_trigger"] then
@@ -297,9 +359,9 @@ function module:CHAT_MSG_SPELL_AURA_GONE_OTHER(msg)
 end
 
 function module:CHAT_MSG_SPELL_AURA_GONE_SELF(msg)
-    if string.find(msg, L["poisoncloud_trigger"]) then
-        self:RemoveWarningSign(icon.cloud)
-    end
+	if string.find(msg, L["poisoncloud_trigger"]) then
+		self:RemoveWarningSign(icon.cloud)
+	end
 end
 
 
@@ -342,11 +404,11 @@ function module:BigWigs_RecvSync(sync, rest, nick)
 			self:Message(L["enrage_message"], "Attention")
 		end
 	elseif sync == syncName.addDead and rest and rest ~= "" then
-        rest = tonumber(rest)
-        if rest <= 4 and self.cobra < rest then
-            self.cobra = rest
-            self:Message(string.format(L["addmsg"], self.cobra), "Positive")
-            --self:TriggerEvent("BigWigs_SetCounterBar", self, "Snakes dead", (4 - self.cobra))
-        end
+		rest = tonumber(rest)
+		if rest <= 4 and self.cobra < rest then
+			self.cobra = rest
+			self:Message(string.format(L["addmsg"], self.cobra), "Positive")
+			--self:TriggerEvent("BigWigs_SetCounterBar", self, "Snakes dead", (4 - self.cobra))
+		end
 	end
 end

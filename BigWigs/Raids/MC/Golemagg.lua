@@ -33,14 +33,31 @@ L:RegisterTranslations("enUS", function() return {
 	enragewarn = "Boss is enraged!",
 
 	cmd = "Golemagg",
-	
+
 	enraged_cmd = "enraged",
 	enraged_name = "Announce boss Enrage",
 	enraged_desc = "Lets you know when boss hits harder",
-	
+
 	earthquake_cmd = "earthquake",
 	earthquake_name = "Earthquake announce",
 	earthquake_desc = "Announces when it's time for melees to back off",
+} end)
+
+L:RegisterTranslations("esES", function() return {
+	corerager_name = "Furibundo del Núcleo",
+	earthquakesoonwarn = "Terremoto pronto",
+	golemaggenrage = "Golemagg el Incinerador gana Enfurecer",
+	enragewarn = "¡Golemagg está enfurecido!",
+
+	--cmd = "Golemagg",
+
+	--enraged_cmd = "enraged",
+	enraged_name = "Anuncia de Enfurecer",
+	enraged_desc = "Te avisa cuando se enfurezca Golemagg",
+
+	--earthquake_cmd = "earthquake",
+	earthquake_name = "Anuncia de Terremoto",
+	earthquake_desc = "Anuncia cuando los melee tienen que retroceder",
 } end)
 
 L:RegisterTranslations("deDE", function() return {
@@ -50,11 +67,11 @@ L:RegisterTranslations("deDE", function() return {
 	enragewarn = "Boss ist in Raserei!",
 
 	--cmd = "Golemagg",
-	
+
 	--enraged_cmd = "enraged",
 	enraged_name = "Verk\195\188ndet Boss' Raserei",
 	enraged_desc = "L\195\164sst dich wissen, wenn Boss h\195\164rter zuschl\195\164gt",
-	
+
 	--earthquake_cmd = "earthquake",
 	earthquake_name = "Verk\195\188ndet erdbeben",
 	earthquake_desc = "Sagt an, wenn es f\195\188r die Melees zeit ist, weg zu gehen",
@@ -68,10 +85,10 @@ L:RegisterTranslations("deDE", function() return {
 module.wipemobs = { L["corerager_name"] }
 
 -- called after module is enabled
-function module:OnEnable()	
+function module:OnEnable()
 	self:RegisterEvent("CHAT_MSG_SPELL_PERIODIC_CREATURE_BUFFS")
 	self:RegisterEvent("UNIT_HEALTH")
-	
+
 	self:ThrottleSync(10, syncName.earthquake)
 	self:ThrottleSync(10, syncName.enrage)
 end
@@ -102,7 +119,7 @@ function module:CHAT_MSG_SPELL_PERIODIC_CREATURE_BUFFS(msg)
 end
 
 function module:UNIT_HEALTH(arg1)
-	if UnitName(arg1) == boss then
+	if UnitName(arg1) == module.translatedName then
 		local health = UnitHealth(arg1)
 		if health > 15 and health <= 20 and not earthquakeon then
 			self:Sync(syncName.earthquake)
@@ -119,7 +136,7 @@ end
 ------------------------------
 
 function module:BigWigs_RecvSync(sync, rest, nick)
-    if sync == syncName.earthquake and self.db.profile.earthquake then
+	if sync == syncName.earthquake and self.db.profile.earthquake then
 		self:Message(L["earthquakesoonwarn"], "Attention", "Alarm")
 	elseif sync == syncName.enrage and self.db.profile.enraged then
 		self:Message(L["enragewarn"], "Attention", true, "Beware")

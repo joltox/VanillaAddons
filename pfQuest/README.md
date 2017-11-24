@@ -3,7 +3,7 @@
 # pfQuest
 This is an addon for World of Warcraft Classic (1.12). It helps players to find several ingame objects and quests. The addon reads questobjectives, parses them and uses its internal database to plot the found matches on the world- and minimap. It ships with a GUI to browse through all known objects. If one of the items is not yet available on your realm, you'll see a [?] in front of the name.
 
-The addon is not designed to be a quest- or tourguide and won't ever going to be like that. Instead the goals are more like an ingame version of [AoWoW](http://db.vanillagaming.org/) or [Wowhead](http://www.wowhead.com/). By default it uses the opensource database provided by the [Elysium Project](https://elysium-project.org).
+The addon is not designed to be a quest- or tourguide and won't ever going to be like that. Instead the goals are more like an ingame version of [AoWoW](http://db.vanillagaming.org/) or [Wowhead](http://www.wowhead.com/). By default it uses the opensource database provided by [Light's Hope](https://github.com/LightsHope/server/releases).
 
 pfQuest is the successor of [ShaguQuest](http://shagu.org/archive/) and has been entirely written from scratch. In comparison to [ShaguQuest](http://shagu.org/archive/), this addon does not depend on any specific map- or questlog addon. It's designed to support the default interface aswell as every other addon. In case you experience any addon conflicts, please add an issue to the bugtracker.
 
@@ -63,7 +63,7 @@ The "Reset" button will restore the default visibility of icons to match the set
 # Chat/Macro CLI
 <img src="http://shagu.org/pfQuest/img/chat-cli.png">
 
-The addon features a CLI interface which allows you to easilly create macros to show your favourite herb or mining-veins. Let's say you want to display all **Iron Ore** deposits, then type in chat or create a macro with the text: `/db spawn Iron ore`. If `/db` doesn't work for you, there are also some other aliases available like `/shagu`, `pfquest` and `/pfdb`.
+The addon features a CLI interface which allows you to easilly create macros to show your favourite herb or mining-veins. Let's say you want to display all **Iron Deposit** deposits, then type in chat or create a macro with the text: `/db spawn Iron Deposit`. If `/db` doesn't work for you, there are also some other aliases available like `/shagu`, `pfquest` and `/pfdb`.
 
 
 # Map & Minimap Nodes

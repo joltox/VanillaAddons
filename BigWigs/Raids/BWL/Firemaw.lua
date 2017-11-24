@@ -26,7 +26,7 @@ L:RegisterTranslations("enUS", function() return {
 	wingbuffet_bar = "Next Wing Buffet",
 	wingbuffet1_bar = "Initial Wing Buffet",
 	shadowflame_bar = "Shadow Flame",
-	shadowflame_Nextbar = "Possible Shadow Flame",
+	shadowflame_Nextbar = "Next Shadow Flame",
 	flamebuffet_bar = "Flame Buffet",
 
 	cmd = "Firemaw",
@@ -42,6 +42,41 @@ L:RegisterTranslations("enUS", function() return {
 	shadowflame_cmd = "shadowflame",
 	shadowflame_name = "Shadow Flame alert",
 	shadowflame_desc = "Warn when Flamegor casts Shadow Flame.",
+} end)
+
+L:RegisterTranslations("esES", function() return {
+	wingbuffet_trigger = "Faucefogo comienza a lanzar Festín de alas.",
+	shadowflame_trigger = "Faucefogo comienza a lanzar Llama de las Sombras.",
+	flamebuffetafflicted_trigger = "sufre de Sacudón de llamas",
+	flamebuffetresisted_trigger = "Resistido Sacudón de llamas de Faucefogo",
+	flamebuffetimmune_trigger = "Sacudón de llamas de Faucefogo falla(.+) inmune\.",
+	flamebuffetabsorb1_trigger = "Absorbe Sacudón de llamas de Faucefogo",
+	flamebuffetabsorb2_trigger = "Sacudón de llamas de Faucefogo es absorbido",
+
+	wingbuffet_message = "¡Festín de alas! El Próximo en 30 segundos!",
+	wingbuffet_warning = "¡IRRITA ahora! Festín de alas pronto!",
+	shadowflame_warning = "¡Llama de las Sombras entrante!",
+
+	wingbuffetcast_bar = "Festín de alas",
+	wingbuffet_bar = "Próximo Festín de alas",
+	wingbuffet1_bar = "Festín de alas Inicial",
+	shadowflame_bar = "Llama de las Sombras",
+	shadowflame_Nextbar = "Próxima Llama de las Sombras",
+	flamebuffet_bar = "Sacudón de llamas",
+
+	--cmd = "Firemaw",
+
+	--flamebuffet_cmd = "flamebuffet",
+	flamebuffet_name = "Alerta de Sacudón de llamas",
+	flamebuffet_desc = "Avisa cuando Faucefogo lance Sacudón de llamas.",
+
+	--wingbuffet_cmd = "wingbuffet",
+	wingbuffet_name = "Alerta de Festín de alas",
+	wingbuffet_desc = "Avisa cuando Faucefogo lance Festín de alas.",
+
+	--shadowflame_cmd = "shadowflame",
+	shadowflame_name = "Alerta de Llama de las Sombras",
+	shadowflame_desc = "Avisa cuando Faucefogo lance Llama de las Sombras.",
 } end)
 
 L:RegisterTranslations("deDE", function() return {
@@ -61,7 +96,7 @@ L:RegisterTranslations("deDE", function() return {
 	wingbuffet_bar = "N\195\164chster Fl\195\188gelsto\195\159",
 	wingbuffet1_bar = "Erster Fl\195\188gelsto\195\159",
 	shadowflame_bar = "Schattenflamme",
-	shadowflame_Nextbar = "Mögliche Schattenflamme",
+	shadowflame_Nextbar = "Nächste Schattenflamme",
 	flamebuffet_bar = "Flammenpuffer",
 
 	cmd = "Firemaw",
@@ -85,7 +120,7 @@ L:RegisterTranslations("deDE", function() return {
 ---------------------------------
 
 -- module variables
-module.revision = 20006 -- To be overridden by the module!
+module.revision = 20007 -- To be overridden by the module!
 module.enabletrigger = module.translatedName -- string or table {boss, add1, add2}
 --module.wipemobs = { L["add_name"] } -- adds which will be considered in CheckForEngage
 module.toggleoptions = {"wingbuffet", "shadowflame", "flamebuffet", "bosskill"}
@@ -93,19 +128,22 @@ module.toggleoptions = {"wingbuffet", "shadowflame", "flamebuffet", "bosskill"}
 
 -- locals
 local timer = {
-	firstWingbuffet = 25,
+	firstWingbuffet = 30,
 	wingbuffet = 30,
 	wingbuffetCast = 1,
 	shadowflame = 16,
 	shadowflameCast = 2,
+	firstFlameBuffet = 2,
+	flameBuffet = 1.8,
 }
 local icon = {
 	wingbuffet = "INV_Misc_MonsterScales_14",
-	shadowflame = "Spell_Fire_Incinerate",	
+	shadowflame = "Spell_Fire_Incinerate",
+	flameBuffet = "Spell_Fire_Fireball"
 }
 local syncName = {
-	wingbuffet = "FiremawWingBuffetX",
-	shadowflame = "FiremawShadowflameX",
+	wingbuffet = "FiremawWingBuffet"..module.revision,
+	shadowflame = "FiremawShadowflame"..module.revision,
 }
 
 
@@ -114,14 +152,14 @@ local syncName = {
 ------------------------------
 
 -- called after module is enabled
-function module:OnEnable()	
+function module:OnEnable()
 	self:RegisterEvent("CHAT_MSG_SPELL_CREATURE_VS_SELF_DAMAGE", "Event")
 	self:RegisterEvent("CHAT_MSG_SPELL_CREATURE_VS_PARTY_DAMAGE", "Event")
 	self:RegisterEvent("CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE", "Event")
 	self:RegisterEvent("CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE", "Event")
 	self:RegisterEvent("CHAT_MSG_SPELL_PERIODIC_PARTY_DAMAGE", "Event")
 	self:RegisterEvent("CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_DAMAGE", "Event")
-	
+
 	self:ThrottleSync(10, syncName.wingbuffet)
 	self:ThrottleSync(10, syncName.shadowflame)
 end
@@ -140,6 +178,9 @@ function module:OnEngage()
 	if self.db.profile.shadowflame then
 		self:Bar(L["shadowflame_Nextbar"], timer.shadowflame, icon.shadowflame)
 	end
+	if self.db.profile.flamebuffet then
+		self:Bar(L["flamebuffet_bar"], timer.firstFlameBuffet, icon.flameBuffet, true, "White")
+	end
 end
 
 -- called after boss is disengaged (wipe(retreat) or victory)
@@ -153,11 +194,11 @@ end
 function module:Event(msg)
 	if msg == L["wingbuffet_trigger"] then
 		self:Sync(syncName.wingbuffet)
-	elseif msg == L["shadowflame_trigger"] then 
+	elseif msg == L["shadowflame_trigger"] then
 		self:Sync(syncName.shadowflame)
-	-- flamebuffet triggers too often on nefarian and therefor this warning doesn't make any sense
-	--elseif (string.find(msg, L["flamebuffetafflicted_trigger"]) or string.find(msg, L["flamebuffetresisted_trigger"]) or string.find(msg, L["flamebuffetimmune_trigger"]) or string.find(msg, L["flamebuffetabsorb1_trigger"]) or string.find(msg, L["flamebuffetabsorb2_trigger"])) and self.db.profile.flamebuffet then
-	--	self:Bar(L["flamebuffet_bar"], 5, "Spell_Fire_Fireball", true, "White")
+		-- flamebuffet triggers too often on nefarian and therefor this warning doesn't make any sense
+	elseif (string.find(msg, L["flamebuffetafflicted_trigger"]) or string.find(msg, L["flamebuffetresisted_trigger"]) or string.find(msg, L["flamebuffetimmune_trigger"]) or string.find(msg, L["flamebuffetabsorb1_trigger"]) or string.find(msg, L["flamebuffetabsorb2_trigger"])) and self.db.profile.flamebuffet then
+		self:Bar(L["flamebuffet_bar"], timer.flameBuffet, icon.flameBuffet, true, "White")
 	end
 end
 
@@ -168,15 +209,15 @@ end
 
 function module:BigWigs_RecvSync(sync, rest, nick)
 	if sync == syncName.wingbuffet and self.db.profile.wingbuffet then
-        self:Message(L["wingbuffet_message"], "Important")
+		self:Message(L["wingbuffet_message"], "Important")
 		self:RemoveBar(L["wingbuffet_bar"]) -- remove timer bar
 		self:Bar(L["wingbuffetcast_bar"], timer.wingbuffetCast, icon.wingbuffet, true, "Black") -- show cast bar
 		self:DelayedBar(timer.wingbuffetCast, L["wingbuffet_bar"], timer.wingbuffet, icon.wingbuffet) -- delayed timer bar
-        self:DelayedMessage(timer.wingbuffet - 5, L["wingbuffet_warning"], "Attention", nil, nil, true)
+		self:DelayedMessage(timer.wingbuffet - 5, L["wingbuffet_warning"], "Attention", nil, nil, true)
 	elseif sync == syncName.shadowflame and self.db.profile.shadowflame then
-        self:Message(L["shadowflame_warning"], "Important", true, "Alarm")
+		self:Message(L["shadowflame_warning"], "Important", true, "Alarm")
 		self:RemoveBar(L["shadowflame_Nextbar"]) -- remove timer bar
 		self:Bar(L["shadowflame_bar"], timer.shadowflameCast, icon.shadowflame) -- show cast bar
-        self:DelayedBar(timer.shadowflameCast, L["shadowflame_Nextbar"], timer.shadowflame, icon.shadowflame) -- delayed timer bar
+		self:DelayedBar(timer.shadowflameCast, L["shadowflame_Nextbar"], timer.shadowflame-timer.shadowflameCast, icon.shadowflame) -- delayed timer bar
 	end
 end

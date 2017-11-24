@@ -348,8 +348,8 @@ local function CreateQuestEntry(i)
       ChatFrameEditBox:Show()
       ChatFrameEditBox:Insert("|cffffff00|Hquest:0:0:0:0|h[" .. this.questname .. "]|h|r")
     else
-      local meta = { ["dbobj"] = true }
-      local map = pfDatabase:SearchQuest(this.quest, meta)
+      local meta = { ["addon"] = "PFDB" }
+      local map = pfDatabase:SearchQuest(this.quest, meta, true)
       pfMap:ShowMapID(map)
     end
   end)
@@ -399,7 +399,11 @@ pfBrowserIcon:SetMovable(true)
 pfBrowserIcon:EnableMouse(true)
 pfBrowserIcon:RegisterForDrag('LeftButton')
 pfBrowserIcon:RegisterForClicks('LeftButtonUp', 'RightButtonUp')
-pfBrowserIcon:SetScript("OnDragStart", function() this:StartMoving() end)
+pfBrowserIcon:SetScript("OnDragStart", function()
+  if IsShiftKeyDown() then
+    this:StartMoving()
+  end
+end)
 pfBrowserIcon:SetScript("OnDragStop", function() this:StopMovingOrSizing() end)
 pfBrowserIcon:SetScript("OnClick", function()
   if arg1 == "RightButton" then
@@ -414,6 +418,7 @@ pfBrowserIcon:SetScript("OnEnter", function()
   GameTooltip:SetText("pfQuest")
   GameTooltip:AddDoubleLine("Left-Click", "Open Browser", 1, 1, 1, 1, 1, 1)
   GameTooltip:AddDoubleLine("Right-Click", "Open Configuration", 1, 1, 1, 1, 1, 1)
+  GameTooltip:AddDoubleLine("Shift-Click", "Move Button", 1, 1, 1, 1, 1, 1)
   GameTooltip:Show()
 end)
 

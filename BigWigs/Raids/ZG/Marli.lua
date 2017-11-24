@@ -12,7 +12,7 @@ local module, L = BigWigs:ModuleDeclaration("High Priestess Mar'li", "Zul'Gurub"
 
 L:RegisterTranslations("enUS", function() return {
 	spawn_name = "Spawn of Mar'li",
-	
+
 	cmd = "Marli",
 
 	spiders_trigger = "Aid me my brood!",
@@ -46,15 +46,57 @@ L:RegisterTranslations("enUS", function() return {
 	drain_cmd = "drain",
 	drain_name = "Drain Life Alert",
 	drain_desc = "Warn for life drain",
-	
+
 	phase_cmd = "phase",
 	phase_name = "Phase Notification",
 	phase_desc = "Announces the boss' phase transition",
 } end )
 
+L:RegisterTranslations("esES", function() return {
+	spawn_name = "Engendro de Mar'li",
+
+	--cmd = "Marli",
+
+	spiders_trigger = "Aid me my brood!",
+	drainlifeyoustart_trigger = "Sufres de Drenar vida\.",
+	drainlifeotherstart_trigger = "(.+) sufre de Drenar vida\.",
+	drainlifeyouend_trigger = "Drenar vida acaba de disiparse\.",
+	drainlifeotherend_trigger = "Drenar vida desaparece de (.+)\.",
+	pbv = "Lluvia de descarga de veneno",
+	pbvafflicts_trigger = "afligido por Lluvia de descarga de veneno",
+	pbvhits_trigger = "Lluvia de descarga de veneno de Suma sacerdotisa Mar'li golpea",
+	pbvresist_trigger = "Resistido (.+) Lluvia de descarga de veneno de Suma sacerdotisa Mar'li",
+	pbvimmune_trigger = "Lluvia de descarga de veneno de Suma sacerdotisa Mar'li falla(.+) inmune",
+	you = "tu",
+	drainlife = "Drenar vida",
+	spiders_message = "¡Aparecen las arañas!",
+	drainlife_message = "¡Drenar vida! Interrúmpelo/disípalo!",
+	trollphase = "Fase de Trol",
+	trollphase_trigger = "The brood shall not fall",
+	spiderphase = "Fase de Araña",
+	spiderphase_trigger1 = "Draw me to your web mistress Shadra",
+	spiderphase_trigger2 = "Shadra, make of me your avatar",
+
+	--spider_cmd = "spider",
+	spider_name = "Alerta de Araña",
+	spider_desc = "Avisa cuando aparenzcan las arañas",
+
+	--volley_cmd = "volley",
+	volley_name = "Alerta de Lluvia de descarga de veneno",
+	volley_desc = "Avisa para Lluvia de descarga de veneno\n\n(Descargo de responsabilidad: la barra tiene un error de \194\1772 segundos)",
+
+	--drain_cmd = "drain",
+	drain_name = "Alerta de Drenar vida",
+	drain_desc = "Avisa para Drenar vida",
+
+	--phase_cmd = "phase",
+	phase_name = "Alerta de Fase",
+	phase_desc = "Anuncia los cambios de fase del jefe",
+} end )
+
 L:RegisterTranslations("deDE", function() return {
 	spawn_name = "Spawn of Mar'li",
-	
+
 	--cmd = "Marli",
 
 	spiders_trigger = "Aid me my brood!",
@@ -88,7 +130,7 @@ L:RegisterTranslations("deDE", function() return {
 	--drain_cmd = "drain",
 	drain_name = "Alarm f\195\188r Blutsauger",
 	drain_desc = "Warnen vor Blutsauger",
-	
+
 	--phase_cmd = "phase",
 	phase_name = "Phasen-Benachrichtigung",
 	phase_desc = "Verk\195\188ndet den Phasenwechsel des Bosses",
@@ -116,12 +158,12 @@ local icon = {
 	teleport = "Spell_Arcane_Blink",
 }
 local syncName = {
-	drain = "MarliDrainStart",
-	drainOver = "MarliDrainEnd",
-	trollPhase = "MarliTrollPhase",
-	spiderPhase = "MarliSpiderPhase",
-	spiders = "MarliSpiders",
-	volley = "MarliVolley",
+	drain = "MarliDrainStart"..module.revision,
+	drainOver = "MarliDrainEnd"..module.revision,
+	trollPhase = "MarliTrollPhase"..module.revision,
+	spiderPhase = "MarliSpiderPhase"..module.revision,
+	spiders = "MarliSpiders"..module.revision,
+	volley = "MarliVolley"..module.revision,
 }
 
 
@@ -132,7 +174,7 @@ local syncName = {
 --module:RegisterYellEngage(L["start_trigger"])
 
 -- called after module is enabled
-function module:OnEnable()	
+function module:OnEnable()
 	self:RegisterEvent("CHAT_MSG_MONSTER_YELL")
 	self:RegisterEvent("CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE", "Event")
 	self:RegisterEvent("CHAT_MSG_SPELL_PERIODIC_PARTY_DAMAGE", "Event")
@@ -143,7 +185,7 @@ function module:OnEnable()
 	self:RegisterEvent("CHAT_MSG_SPELL_AURA_GONE_SELF", "Event")
 	self:RegisterEvent("CHAT_MSG_SPELL_AURA_GONE_PARTY", "Event")
 	self:RegisterEvent("CHAT_MSG_SPELL_AURA_GONE_OTHER", "Event")
-	
+
 	self:ThrottleSync(5, syncName.drain)
 	self:ThrottleSync(5, syncName.drainOver)
 	self:ThrottleSync(5, syncName.trollPhase)
@@ -203,7 +245,7 @@ end
 ------------------------------
 
 function module:BigWigs_RecvSync(sync, rest, nick)
-    if sync == syncName.spiders and self.db.profile.spider then
+	if sync == syncName.spiders and self.db.profile.spider then
 		self:Message(L["spiders_message"], "Attention")
 	elseif sync == syncName.trollPhase and self.db.profile.phase then
 		self:Message(L["trollphase"], "Attention")

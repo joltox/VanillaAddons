@@ -37,12 +37,12 @@ L:RegisterTranslations("enUS", function() return {
 	heal_cmd = "heal",
 	heal_name = "Heal Alert",
 	heal_desc = "Warn for Twins Healing",
-            
-    blizzard_cmd = "blizzard",
-    blizzard_name = "Blizzard Warning",
-    blizzard_desc = "Shows an Icon if you are standing in a Blizzard",
 
-	porttrigger = "casts Twin Teleport.",
+	blizzard_cmd = "blizzard",
+	blizzard_name = "Blizzard Warning",
+	blizzard_desc = "Shows an Icon if you are standing in a Blizzard",
+
+	porttrigger = "gains Twin Teleport.",
 	portwarn = "Teleport!",
 	portdelaywarn = "Teleport in 5 seconds!",
 	portdelaywarn10 = "Teleport in 10 seconds!",
@@ -64,86 +64,151 @@ L:RegisterTranslations("enUS", function() return {
 	warn5 = "Enrage in 60 seconds",
 	warn6 = "Enrage in 30 seconds",
 	warn7 = "Enrage in 10 seconds",
-    
-    blizzard_trigger = "You are afflicted by Blizzard.",
-    blizzard_gone_trigger = "Blizzard fades from you",
+
+	blizzard_trigger = "You are afflicted by Blizzard.",
+	blizzard_gone_trigger = "Blizzard fades from you",
 	blizzard_warn = "Run from Blizzard!",
-            
-            
-    pull_trigger1 = "Ah, lambs to the slaughter.",
-    pull_trigger2 = "Prepare to embrace oblivion!",
-    pull_trigger3 = "Join me brother, there is blood to be shed.",
-    pull_trigger4 = "To decorate our halls.",
-    pull_trigger5 = "Let none survive!",
-    pull_trigger6 = "It's too late to turn away.",
-    pull_trigger7 = "Look brother, fresh blood.",
-    pull_trigger8 = "Like a fly in a web.",
-    pull_trigger9 = "Shall be your undoing!",
-    pull_trigger10 = "Your brash arrogance",
-            
-    kill_trigger = "My brother...NO!",
+
+
+	pull_trigger1 = "Ah, lambs to the slaughter.",
+	pull_trigger2 = "Prepare to embrace oblivion!",
+	pull_trigger3 = "Join me brother, there is blood to be shed.",
+	pull_trigger4 = "To decorate our halls.",
+	pull_trigger5 = "Let none survive!",
+	pull_trigger6 = "It's too late to turn away.",
+	pull_trigger7 = "Look brother, fresh blood.",
+	pull_trigger8 = "Like a fly in a web.",
+	pull_trigger9 = "Shall be your undoing!",
+	pull_trigger10 = "Your brash arrogance",
+
+	kill_trigger = "My brother...NO!",
+} end )
+
+L:RegisterTranslations("esES", function() return {
+	--cmd = "Twins",
+
+	--bug_cmd = "bug",
+	bug_name = "Alerta de Explotar insecto",
+	bug_desc = "Avisa para Explotar insecto",
+
+	--teleport_cmd = "teleport",
+	teleport_name = "Alerta de Teletransporte",
+	teleport_desc = "Avisa para Teletransporte",
+
+	--enrage_cmd = "enrage",
+	enrage_name = "Alerta de Enfurecer",
+	enrage_desc = "Avisa para Enfurecer",
+
+	--heal_cmd = "heal",
+	heal_name = "Alerta de Curación",
+	heal_desc = "Avisa para Curación de los Gemelos",
+
+	--blizzard_cmd = "blizzard",
+	blizzard_name = "Alerta de Gélido",
+	blizzard_desc = "Muestra un icono si estás en Gélido",
+
+	porttrigger = "gana Teletransporte gemelo.",
+	portwarn = "¡Teletransporte!",
+	portdelaywarn = "¡Teletransporte en 5 segundos!",
+	portdelaywarn10 = "¡Teletransporte en 10 segundos!",
+	bartext = "Teletransporte",
+	explodebugtrigger = "gana Explotar insecto",
+	explodebugwarn = "¡Insecto explotando cercano!",
+	enragetrigger = "enfurecido.",
+	--trigger = "Blizzard",
+	enragewarn = "Gemelos están enfurecidos",
+	healtrigger1 = "Curar a hermano cura",
+	healtrigger2 = " Curar a hermano cura",
+	healwarn = "¡Curando",
+	startwarn = "¡Entrando en combate con Los Emperadores Gemelos! Enfurecer en 15 minutos!",
+	enragebartext = "Enrage",
+	warn1 = "Enfurecer en 10 minutos",
+	warn2 = "Enfurecer en 5 minutos",
+	warn3 = "Enfurecer en 3 minutos",
+	warn4 = "Enfurecer en 90 segundos",
+	warn5 = "Enfurecer en 60 segundos",
+	warn6 = "Enfurecer en 30 segundos",
+	warn7 = "Enfurecer en 10 segundos",
+
+	blizzard_trigger = "Sufres de Gélido.",
+	blizzard_gone_trigger = "Gélido acaba de disiparse",
+	blizzard_warn = "¡Váyate del Gélido!",
+
+
+	pull_trigger1 = "Ah, lambs to the slaughter.",
+	pull_trigger2 = "Prepare to embrace oblivion!",
+	pull_trigger3 = "Join me brother, there is blood to be shed.",
+	pull_trigger4 = "To decorate our halls.",
+	pull_trigger5 = "Let none survive!",
+	pull_trigger6 = "It's too late to turn away.",
+	pull_trigger7 = "Look brother, fresh blood.",
+	pull_trigger8 = "Like a fly in a web.",
+	pull_trigger9 = "Shall be your undoing!",
+	pull_trigger10 = "Your brash arrogance",
+
+	kill_trigger = "My brother...NO!",
 } end )
 
 L:RegisterTranslations("deDE", function() return {
 
-	bug_name = "Explodierende K\195\164fer",
-	bug_desc = "Warnung vor explodierenden K\195\164fern.",
+		bug_name = "Explodierende K\195\164fer",
+		bug_desc = "Warnung vor explodierenden K\195\164fern.",
 
-	teleport_name = "Teleport",
-	teleport_desc = "Warnung, wenn die Zwillings Imperatoren sich teleportieren.",
+		teleport_name = "Teleport",
+		teleport_desc = "Warnung, wenn die Zwillings Imperatoren sich teleportieren.",
 
-	enrage_name = "Wutanfall",
-	enrage_desc = "Warnung, wenn die Zwillings Imperatoren w\195\188tend werden.",
+		enrage_name = "Wutanfall",
+		enrage_desc = "Warnung, wenn die Zwillings Imperatoren w\195\188tend werden.",
 
-	heal_name = "Heilung",
-	heal_desc = "Warnung, wenn die Zwillings Imperatoren sich heilen.",
+		heal_name = "Heilung",
+		heal_desc = "Warnung, wenn die Zwillings Imperatoren sich heilen.",
 
-    blizzard_name = "Blizzard Warnung",
-    blizzard_desc = "Zeigt ein Icon wenn du im Blizzard stehst",
-            
-	porttrigger = "wirkt Zwillingsteleport.",
-	portwarn = "Teleport!",
-	portdelaywarn = "Teleport in ~5 Sekunden!",
-	portdelaywarn10 = "Teleport in ~10 Sekunden!",
-	bartext = "Teleport",
-	explodebugtrigger = "bekommt 'Käfer explodieren lassen'",
-	explodebugwarn = "K\195\164fer explodiert!",
-	enragetrigger = "wird w\195\188tend.", -- ? "bekommt 'Wutanfall'"
-	enragewarn = "Zwillings Imperatoren sind w\195\188tend!",
-	healtrigger1 = "'s Bruder heilen heilt",
-	healtrigger2 = " Bruder heilen heilt",
-	healwarn = "Heilung gewirkt!",
-	startwarn = "Zwillings Imperatoren angegriffen! Wutanfall in 15 Minuten!",
-	enragebartext = "Wutanfall",
-	warn1 = "Wutanfall in 10 Minuten",
-	warn2 = "Wutanfall in 5 Minuten",
-	warn3 = "Wutanfall in 3 Minuten",
-	warn4 = "Wutanfall in 90 Sekunden",
-	warn5 = "Wutanfall in 60 Sekunden",
-	warn6 = "Wutanfall in 30 Sekunden",
-	warn7 = "Wutanfall in 10 Sekunden",
-    
-    blizzard_trigger = "Ihr seid von Blizzard betroffen.",
-    blizzard_gone_trigger = "'Blizzard' schwindet von Euch.",
-	blizzard_warn = "Lauf aus Blizzard!",
-            
-    pull_trigger1 = "Ihr seid nichts weiter als",
-    pull_trigger2 = "Seid bereit in die",
-    pull_trigger3 = "Komm Bruder",
-    pull_trigger4 = "Um unsere Hallen",
-    pull_trigger5 = "Niemand wird",
-    pull_trigger6 = "Nun gibt es kein",
-    pull_trigger7 = "Sieh Bruder",
-    pull_trigger8 = "Wie eine Fliege",
-    pull_trigger9 = "Wird euer Untergang",
-    pull_trigger10 = "Eure unversch",
-            
-    kill_trigger = "Mein Bruder...",
+		blizzard_name = "Blizzard Warnung",
+		blizzard_desc = "Zeigt ein Icon wenn du im Blizzard stehst",
+
+		porttrigger = "wirkt Zwillingsteleport.",
+		portwarn = "Teleport!",
+		portdelaywarn = "Teleport in ~5 Sekunden!",
+		portdelaywarn10 = "Teleport in ~10 Sekunden!",
+		bartext = "Teleport",
+		explodebugtrigger = "bekommt 'Käfer explodieren lassen'",
+		explodebugwarn = "K\195\164fer explodiert!",
+		enragetrigger = "wird w\195\188tend.", -- ? "bekommt 'Wutanfall'"
+		enragewarn = "Zwillings Imperatoren sind w\195\188tend!",
+		healtrigger1 = "'s Bruder heilen heilt",
+		healtrigger2 = " Bruder heilen heilt",
+		healwarn = "Heilung gewirkt!",
+		startwarn = "Zwillings Imperatoren angegriffen! Wutanfall in 15 Minuten!",
+		enragebartext = "Wutanfall",
+		warn1 = "Wutanfall in 10 Minuten",
+		warn2 = "Wutanfall in 5 Minuten",
+		warn3 = "Wutanfall in 3 Minuten",
+		warn4 = "Wutanfall in 90 Sekunden",
+		warn5 = "Wutanfall in 60 Sekunden",
+		warn6 = "Wutanfall in 30 Sekunden",
+		warn7 = "Wutanfall in 10 Sekunden",
+
+		blizzard_trigger = "Ihr seid von Blizzard betroffen.",
+		blizzard_gone_trigger = "'Blizzard' schwindet von Euch.",
+		blizzard_warn = "Lauf aus Blizzard!",
+
+		pull_trigger1 = "Ihr seid nichts weiter als",
+		pull_trigger2 = "Seid bereit in die",
+		pull_trigger3 = "Komm Bruder",
+		pull_trigger4 = "Um unsere Hallen",
+		pull_trigger5 = "Niemand wird",
+		pull_trigger6 = "Nun gibt es kein",
+		pull_trigger7 = "Sieh Bruder",
+		pull_trigger8 = "Wie eine Fliege",
+		pull_trigger9 = "Wird euer Untergang",
+		pull_trigger10 = "Eure unversch",
+
+		kill_trigger = "Mein Bruder...",
 } end )
 
 
 -- module variables
-module.revision = 20006 -- To be overridden by the module!
+module.revision = 20008 -- To be overridden by the module!
 local veklor = AceLibrary("Babble-Boss-2.2")["Emperor Vek'lor"]
 local veknilash = AceLibrary("Babble-Boss-2.2")["Emperor Vek'nilash"]
 module.enabletrigger = {veklor, veknilash} -- string or table {boss, add1, add2}
@@ -152,7 +217,8 @@ module.toggleoptions = {"bug", "teleport", "enrage", "heal", "blizzard", "bosski
 
 -- locals
 local timer = {
-	teleport = 30,
+	earliestTeleport = 30,
+	latestTeleport = 40,
 	enrage = 900,
 	blizzard = 10,
 }
@@ -162,8 +228,8 @@ local icon = {
 	blizzard = "Spell_Frost_IceStorm",
 }
 local syncName = {
-	teleport = "TwinsTeleport43",
-	teleport_old = "TwinsTeleport",
+	teleport = "TwinsTeleport"..module.revision,
+	teleport_old = "TwinsTeleport"..module.revision,
 }
 
 local berserkannounced = nil
@@ -186,14 +252,12 @@ module:RegisterYellEngage(L["pull_trigger10"])
 
 -- called after module is enabled
 function module:OnEnable()
-    self:RegisterEvent("CHAT_MSG_MONSTER_YELL")
+	self:RegisterEvent("CHAT_MSG_MONSTER_YELL")
 	self:RegisterEvent("CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE")
 	self:RegisterEvent("CHAT_MSG_SPELL_AURA_GONE_SELF")
 	self:RegisterEvent("CHAT_MSG_SPELL_PERIODIC_CREATURE_BUFFS")
-	self:RegisterEvent("CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE")
 	self:RegisterEvent("CHAT_MSG_SPELL_CREATURE_VS_CREATURE_BUFF")
-	--self:RegisterEvent("CHAT_MSG_COMBAT_HOSTILE_DEATH", "CheckForBossDeath") -- addition
-	
+
 	self:ThrottleSync(28, syncName.teleport)
 end
 
@@ -209,7 +273,7 @@ function module:OnEngage()
 	if self.db.profile.enrage then
 		self:Message(L["startwarn"], "Important")
 		self:Bar(L["enragebartext"], timer.enrage, icon.enrage)
-		
+
 		self:DelayedMessage(timer.enrage - 10 * 60, L["warn1"], "Attention", nil, nil, true)
 		self:DelayedMessage(timer.enrage - 5 * 60, L["warn2"], "Attention", nil, nil, true)
 		self:DelayedMessage(timer.enrage - 3 * 60, L["warn3"], "Attention", nil, nil, true)
@@ -237,34 +301,31 @@ end
 
 function module:CHAT_MSG_MONSTER_YELL(msg)
 	if string.find(msg, L["kill_trigger"]) then
-        self:SendBossDeathSync()
-    end
+		self:SendBossDeathSync()
+	end
 end
 
 function module:CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE(msg)
 	if string.find(msg, L["blizzard_trigger"]) then
-        if self.db.profile.blizzard then
-            self:Message(L["blizzard_warn"], "Personal", true, "Alarm")
-            self:WarningSign(icon.blizzard, timer.blizzard)
-        end
+		if self.db.profile.blizzard then
+			self:Message(L["blizzard_warn"], "Personal", true, "Alarm")
+			self:WarningSign(icon.blizzard, timer.blizzard)
+		end
 	end
 end
 
 function module:CHAT_MSG_SPELL_AURA_GONE_SELF(msg)
 	if string.find(msg, L["blizzard_gone_trigger"]) then
-        self:RemoveWarningSign(icon.blizzard)
-	end
-end
-
-function module:CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE(msg)
-	if (string.find(msg, L["porttrigger"])) then
-		self:Sync(syncName.teleport_old)
-        self:Sync(syncName.teleport)
-        self:DebugMessage("real port trigger")
+		self:RemoveWarningSign(icon.blizzard)
 	end
 end
 
 function module:CHAT_MSG_SPELL_PERIODIC_CREATURE_BUFFS(msg)
+	if (string.find(msg, L["porttrigger"])) then
+		self:Sync(syncName.teleport_old)
+		self:Sync(syncName.teleport)
+		self:DebugMessage("real port trigger")
+	end
 	if (string.find(msg, L["explodebugtrigger"]) and self.db.profile.bug) then
 		self:Message(L["explodebugwarn"], "Personal", true)
 	end
@@ -291,7 +352,7 @@ end
 
 function module:BigWigs_RecvSync(sync, rest, nick)
 	if sync == syncName.teleport then
-        self:Teleport()
+		self:Teleport()
 	end
 end
 
@@ -301,16 +362,16 @@ end
 
 function module:Teleport()
 	if self.db.profile.teleport then
-		self:Bar(L["bartext"], timer.teleport, icon.teleport)
-        
-        self:DelayedSync(timer.teleport, syncName.teleport_old)
-        self:DelayedSync(timer.teleport, syncName.teleport)
-        self:KTM_Reset()
-        
-        self:DelayedSound(timer.teleport - 10, "Ten")
-        self:DelayedSound(timer.teleport - 3, "Three")
-        self:DelayedSound(timer.teleport - 2, "Two")
-        self:DelayedSound(timer.teleport - 1, "One")
-        self:DelayedMessage(timer.teleport - 0.1, L["portwarn"], "Attention", false, "Alarm")
+		self:IntervalBar(L["bartext"], timer.earliestTeleport, timer.latestTeleport, icon.teleport)
+
+		--self:DelayedSync(timer.teleport, syncName.teleport_old)
+		--self:DelayedSync(timer.teleport, syncName.teleport)
+		self:KTM_Reset()
+
+		self:DelayedSound(timer.earliestTeleport - 10, "Ten")
+		self:DelayedSound(timer.earliestTeleport - 3, "Three")
+		self:DelayedSound(timer.earliestTeleport - 2, "Two")
+		self:DelayedSound(timer.earliestTeleport - 1, "One")
+		self:DelayedMessage(timer.earliestTeleport - 0.1, L["portwarn"], "Attention", false, "Alarm")
 	end
 end

@@ -33,6 +33,17 @@ if GetLocale() == "deDE" then
 	OPTION_HANDLER_NOT_FOUND = "Optionen handler |cffffff7f%q|r nicht gefunden."
 	OPTION_HANDLER_NOT_VALID = "Optionen handler nicht g\195\188ltig."
 	OPTION_IS_DISABLED = "Option |cffffff7f%s|r deaktiviert."
+elseif  GetLocale() == "esES" then
+	MAP_ONOFF = { [false] = "|cffff0000Inactivo|r", [true] = "|cff00ff00Activo|r" }
+	USAGE = "Uso"
+	IS_CURRENTLY_SET_TO = "|cffffff7f%s|r es asignado a |cffffff7f[|r%s|cffffff7f]|r"
+	IS_NOW_SET_TO = "|cffffff7f%s|r es asignado a |cffffff7f[|r%s|cffffff7f]|r"
+	IS_NOT_A_VALID_OPTION_FOR = "[|cffffff7f%s|r] no es opción válida para |cffffff7f%s|r"
+	IS_NOT_A_VALID_VALUE_FOR = "[|cffffff7f%s|r] no es valor válido para |cffffff7f%s|r"
+	NO_OPTIONS_AVAILABLE = "No hay opciones"
+	OPTION_HANDLER_NOT_FOUND = "Operario de opción |cffffff7f%q|r no se encuentra."
+	OPTION_HANDLER_NOT_VALID = "Operario de opción no es válido."
+	OPTION_IS_DISABLED = "La opción |cffffff7f%s|r es desactivado."
 elseif GetLocale() == "frFR" then
 	MAP_ONOFF = { [false] = "|cffff0000Inactif|r", [true] = "|cff00ff00Actif|r" }
 	USAGE = "Utilisation"
@@ -77,6 +88,17 @@ elseif GetLocale() == "zhTW" then
 	OPTION_HANDLER_NOT_FOUND = "找不到 |cffffff7f%q|r 選項處理器。"
 	OPTION_HANDLER_NOT_VALID = "選項處理器不符合規定。"
 	OPTION_IS_DISABLED = "|cffffff7f%s|r 已被停用。"
+elseif GetLocale() == "ruRU" then
+	MAP_ONOFF = { [false] = "|cffff0000Выкл|r", [true] = "|cff00ff00Вкл|r" }
+	USAGE = "Использование"
+	IS_CURRENTLY_SET_TO = "|cffffff7f%s|r в настоящее время установлен на |cffffff7f[|r%s|cffffff7f]|r"
+	IS_NOW_SET_TO = "|cffffff7f%s|r теперь установлен |cffffff7f[|r%s|cffffff7f]|r"
+	IS_NOT_A_VALID_OPTION_FOR = "[|cffffff7f%s|r] - недействительная опция для |cffffff7f%s|r"
+	IS_NOT_A_VALID_VALUE_FOR = "[|cffffff7f%s|r] - недействительное значение для |cffffff7f%s|r"
+	NO_OPTIONS_AVAILABLE = "Нет доступных опций"
+	OPTION_HANDLER_NOT_FOUND = "Оператор опции |cffffff7f%q|r не найден."
+	OPTION_HANDLER_NOT_VALID = "Оператор опции недействителен."
+	OPTION_IS_DISABLED = "Опция |cffffff7f%s|r отключена."
 else -- enUS
 	MAP_ONOFF = { [false] = "|cffff0000Off|r", [true] = "|cff00ff00On|r" }
 	USAGE = "Usage"

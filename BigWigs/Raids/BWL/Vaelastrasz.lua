@@ -58,6 +58,53 @@ L:RegisterTranslations("enUS", function() return {
 	icon_desc = "Marks the player with Burning Adrenaline for easier localization.\n\n(Requires assistant or higher)",
 } end)
 
+L:RegisterTranslations("esES", function() return {
+	--cmd = "Vaelastrasz",
+
+	adrenaline_trigger = "^(.+) (.+) sufre de Adrenalina ardiente\.",
+	start_trigger = "sufre de Esencia de lo Rojo",
+	flamebreath_trigger = "Vaelastrasz el Corrupto comienza a lanzar Aliento de llamarada\.",
+	yell1 = "^Too late, friends",
+	yell2 = "^I beg you, mortals",
+	yell3 = "^FLAME! DEATH! DESTRUCTION!",
+	start_bar = "Empezar",
+	tankburn_bar = "Arde de Tanque",
+	adrenaline_bar = "Adrenalina ardiente: %s",
+	breath_bar = "Aliento de llamarada",
+	breath_message = "¡Lanza Aliento de llamarada!",
+	tankburnsoon = "¡Adrenalina ardiente al tanque en 5 segundos!",
+	adrenaline_message = "¡%s tiene Adrenalina ardiente!",
+	adrenaline_message_you = "¡Tienes Adrenalina ardiente! Váyate!",
+	deathyou_trigger = "Has muerto\.",
+	deathother_trigger = "(.+) ha muerto\.",
+
+	are = "eres",
+
+	--start_cmd = "start",
+	start_name = "Empezar",
+	start_desc = "Muestra una barra para estimar cuando empiece la pelea.",
+
+	--flamebreath_cmd = "flamebreath",
+	flamebreath_name = "Aliento de llamarada",
+	flamebreath_desc = "Avisa cuando el jefe lance Aliento de llamarada.",
+
+	--adrenaline_cmd = "adrenaline",
+	adrenaline_name = "Adrenalina ardiente",
+	adrenaline_desc = "Anuncia quien tiene Adrenalina ardiente y muestra una barra cliqueable para seleccionarlo fácilmente.",
+
+	--whisper_cmd = "whisper",
+	whisper_name = "Susurrar",
+	whisper_desc = "Susurra a los jugadores quien tienen Adrenalina ardiente para moverse.",
+
+	--tankburn_cmd = "tankburn",
+	tankburn_name = "Arde de Tanque",
+	tankburn_desc = "Muestra una barra para Adrenalina ardiente que está aplicado al objetivo del jefe.",
+
+	--icon_cmd = "icon",
+	icon_name = "Marcar para Adrenalina ardiente",
+	icon_desc = "Marca el jugador con Adrenalina ardiente para localizarlo más fácilmente.\n\n(Require asistente o líder)",
+} end)
+
 L:RegisterTranslations("deDE", function() return {
 	cmd = "Vaelastrasz",
 
@@ -111,7 +158,7 @@ L:RegisterTranslations("deDE", function() return {
 ---------------------------------
 
 -- module variables
-module.revision = 20006 -- To be overridden by the module!
+module.revision = 20008 -- To be overridden by the module!
 module.enabletrigger = module.translatedName -- string or table {boss, add1, add2}
 --module.wipemobs = { L["add_name"] } -- adds which will be considered in CheckForEngage
 module.toggleoptions = {"start", "flamebreath", "adrenaline", "whisper", "tankburn", "icon", "bosskill"}
@@ -121,10 +168,10 @@ module.toggleoptions = {"start", "flamebreath", "adrenaline", "whisper", "tankbu
 local timer = {
 	adrenaline = 20,
 	flamebreath = 2,
-	tankburn = 44.9,
-	start1 = 38,
-	start2 = 28,
-	start3 = 12,
+	tankburn = 45,
+	start1 = 36,
+	start2 = 26,
+	start3 = 10,
 }
 local icon = {
 	adrenaline = "INV_Gauntlets_03",
@@ -133,9 +180,9 @@ local icon = {
 	start = "Spell_Holy_PrayerOfHealing",
 }
 local syncName = {
-	adrenaline = "VaelAdrenaline",
-	flamebreath = "VaelBreath",
-	tankburn = "VaelTankBurn",
+	adrenaline = "VaelAdrenaline"..module.revision,
+	flamebreath = "VaelBreath"..module.revision,
+	tankburn = "VaelTankBurn"..module.revision,
 }
 
 
@@ -150,8 +197,8 @@ function module:OnEnable()
 	self:RegisterEvent("CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_DAMAGE", "Event")
 	self:RegisterEvent("CHAT_MSG_SPELL_PERIODIC_PARTY_DAMAGE", "Event")
 	self:RegisterEvent("CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE")
-	
-	
+
+
 	self:ThrottleSync(2, syncName.adrenaline)
 	self:ThrottleSync(3, syncName.flamebreath)
 	self:ThrottleSync(5, syncName.tankburn)
@@ -178,83 +225,25 @@ end
 ------------------------------
 
 function module:CheckForEngage()
-    local function IsHostile()
-        if UnitExists("target") and UnitName("target") == self:ToString() and UnitIsEnemy("player", "target") then
-            return true
-        end
-
-        local num = GetNumRaidMembers()
-        for i = 1, num do
-            local raidUnit = string.format("raid%starget", i)
-            if UnitExists(raidUnit) and UnitName(raidUnit) == self:ToString() and UnitIsEnemy("raid" .. i, raidUnit) then
-                return true
-            end
-        end
-        
-        return false
-    end
-    
-    if IsHostile() then
-        BigWigs:CheckForEngage(self)
-    end
-    --[[
-    local running = module:IsEventScheduled(module:ToString().."_CheckStart")
-		if IsHostile() then
-			module:DebugMessage("Vael is hostile.")
-			module:CancelScheduledEvent(module:ToString().."_CheckStart")
-
-			BigWigs:CheckForEngage(self)
-		elseif not running then
-			module:ScheduleRepeatingEvent(module:ToString().."_CheckStart", module.CheckForEngage, .5, module)
+	local function IsHostile()
+		if UnitExists("target") and UnitName("target") == self:ToString() and UnitIsEnemy("player", "target") then
+			return true
 		end
+
+		local num = GetNumRaidMembers()
+		for i = 1, num do
+			local raidUnit = string.format("raid%starget", i)
+			if UnitExists(raidUnit) and UnitName(raidUnit) == self:ToString() and UnitIsEnemy("raid" .. i, raidUnit) then
+				return true
+			end
+		end
+
+		return false
 	end
-    if module and module:IsBossModule() then
-        local function IsBossInCombat()
-            local t = module.enabletrigger
-            local a = module.wipemobs
-            if not t then return false end
-            if type(t) == "string" then t = {t} end
-            if a then
-                if type(a) == "string" then a = {a} end
-                for k,v in pairs(a) do table.insert(t, v) end
-            end
 
-            if UnitExists("target") and UnitAffectingCombat("target") then
-                local target = UnitName("target")
-                for _, mob in pairs(t) do
-                    if target == mob then
-                        return true
-                    end
-                end
-            end
-
-            local num = GetNumRaidMembers()
-            for i = 1, num do
-                local raidUnit = string.format("raid%starget", i)
-                if UnitExists(raidUnit) and UnitAffectingCombat(raidUnit) then
-                    local target = UnitName(raidUnit)
-                    for _, mob in pairs(t) do
-                        if target == mob then
-                            return true
-                        end
-                    end
-                end
-            end
-            return false
-        end
-
-        local inCombat = IsBossInCombat()
-        local running = module:IsEventScheduled(module:ToString().."_CheckStart")
-        if inCombat then
-            module:DebugMessage("Scan returned true, engaging ["..module:ToString().."].")
-            module:CancelScheduledEvent(module:ToString().."_CheckStart")
-
-            module:SendEngageSync()
-        elseif not running then
-            module:ScheduleRepeatingEvent(module:ToString().."_CheckStart", module.CheckForEngage, .5, module)
-        end
-    end
-	]]
+	if IsHostile() then
+		BigWigs:CheckForEngage(self)
+	end
 end
 function module:CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE(msg)
 	if msg == L["flamebreath_trigger"] then
@@ -263,8 +252,9 @@ function module:CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE(msg)
 end
 
 function module:CHAT_MSG_COMBAT_FRIENDLY_DEATH(msg)
-	BigWigs:CheckForWipe(self)
-	
+	if self.engaged then
+		BigWigs:CheckForWipe(self)
+	end
 	local _, _, deathother = string.find(msg, L["deathother_trigger"])
 	if msg == L["deathyou_trigger"] then
 		if self.db.profile.adrenaline then
@@ -295,7 +285,7 @@ function module:Event(msg)
 		if detect == L["are"] then
 			name = UnitName("player")
 		end
-		self:Sync(syncName.adrenaline .. " "..name)
+		self:CheckTankburn(name)
 	end
 end
 
@@ -305,23 +295,37 @@ end
 ------------------------------
 
 function module:BigWigs_RecvSync(sync, rest, nick)
-    if sync == syncName.flamebreath then
+	if sync == syncName.flamebreath then
 		self:Flamebreath()
 	elseif sync == syncName.adrenaline and rest and rest ~= "" then
 		self:Adrenaline(rest)
-	elseif sync == syncName.tankburn then
-		self:Tankburn()
+	elseif sync == syncName.tankburn and rest and rest ~= ""  then
+		self:Tankburn(rest)
 	end
 end
 
 ------------------------------
 --      Sync Handlers	    --
 ------------------------------
+function module:CheckTankburn(name)
+	-- tank burn
+	for i = 1, GetNumRaidMembers() do
+		if UnitExists("raid" .. i .. "target") and UnitName("raid" .. i .. "target") == self.translatedName and UnitExists("raid" .. i .. "targettarget") and UnitName("raid" .. i .. "targettarget") == name then
+			self:Sync(syncName.tankburn.." "..name)
+			return
+		end
+	end
+	self:Sync(syncName.adrenaline.." "..name)
+end
 
-function module:Tankburn()
+function module:Tankburn(name)
 	if self.db.profile.tankburn then
 		self:Bar(L["tankburn_bar"], timer.tankburn, icon.tankburn, true, "Black")
 		self:DelayedMessage(timer.tankburn - 5, L["tankburnsoon"], "Urgent", nil, nil, true)
+		if name then
+			self:Bar(string.format(L["adrenaline_bar"], name), timer.adrenaline, icon.adrenaline, true, "Black")
+			self:Message(string.format(L["adrenaline_message"], name), "Urgent")
+		end
 	end
 end
 
@@ -338,30 +342,22 @@ function module:Adrenaline(name)
 		if self.db.profile.whisper and name ~= UnitName("player") then
 			self:TriggerEvent("BigWigs_SendTell", name, L["adrenaline_message_you"])
 		end
-		
+
 		-- bar and message
 		if self.db.profile.adrenaline then
 			self:Bar(string.format(L["adrenaline_bar"], name), timer.adrenaline, icon.adrenaline, true, "White")
 			self:SetCandyBarOnClick("BigWigsBar "..string.format(L["adrenaline_bar"], name), function(name, button, extra) TargetByName(extra, true) end, name)
 			if name == UnitName("player") then
 				self:Message(L["adrenaline_message_you"], "Attention", true, "Beware")
-                self:WarningSign(icon.adrenaline, timer.adrenaline)
+				self:WarningSign(icon.adrenaline, timer.adrenaline)
 			else
 				self:Message(string.format(L["adrenaline_message"], name), "Urgent")
 			end
 		end
-		
+
 		-- set icon
 		if self.db.profile.icon then
 			self:Icon(name)
-		end
-		
-		-- tank burn
-		for i = 1, GetNumRaidMembers() do
-			if UnitExists("raid" .. i .. "target") and UnitName("raid" .. i .. "target") == self.translatedName and UnitExists("raid" .. i .. "targettarget") and UnitName("raid" .. i .. "targettarget") == name then
-				self:Sync(syncName.tankburn)
-				break
-			end
 		end
 	end
 end

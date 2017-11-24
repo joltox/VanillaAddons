@@ -30,8 +30,32 @@ L:RegisterTranslations("enUS", function() return {
 	paralyzebar = "Paralyze",
 	returnincoming = "Moam unparalyzed in %s seconds!",
 	returntrigger = "Energize fades from Moam.",
-    returntrigger2 = "bristles with energy",
-	returnwarn = "Moam unparalyzed! 90 seconds until Mana Fiends!",	
+	returntrigger2 = "bristles with energy",
+	returnwarn = "Moam unparalyzed! 90 seconds until Mana Fiends!",
+} end )
+
+L:RegisterTranslations("esES", function() return {
+	--cmd = "Moam",
+
+	--adds_cmd = "adds",
+	adds_name = "Alerta de Maligno de maná",
+	adds_desc = "Avisa para Malignos de maná",
+
+	--paralyze_cmd = "paralyze",
+	paralyze_name = "Alerta de Paralizar",
+	paralyze_desc = "Avisa para Paralizar",
+
+	starttrigger = "%s senses your fear.",
+	startwarn = "¡Moam Efurecido! 90 Segundos hasta que aparecen los adds!",
+	addsbar = "Adds",
+	addsincoming = "¡Malignos de maná entrantes en %s segundos!",
+	addstrigger = "drains your mana and turns to stone.",
+	addswarn = "¡Aparecen los Malignos de maná! Moam Paralizado por 90 segundos!",
+	paralyzebar = "Paralizar",
+	returnincoming = "¡Moam no estará paralizado en %s segundos!",
+	returntrigger = "Energize fades from Moam.",
+	returntrigger2 = "bristles with energy",
+	returnwarn = "¡Moam no está paralizado! 90 segundos hasta que aparecen los Malignos de maná!",
 } end )
 
 L:RegisterTranslations("deDE", function() return {
@@ -61,7 +85,7 @@ L:RegisterTranslations("deDE", function() return {
 ---------------------------------
 
 -- module variables
-module.revision = 20005 -- To be overridden by the module!
+module.revision = 20006 -- To be overridden by the module!
 module.enabletrigger = module.translatedName -- string or table {boss, add1, add2}
 module.toggleoptions = {"adds", "paralyze", "bosskill"}
 
@@ -75,8 +99,8 @@ local icon = {
 	unparalyze = "Spell_Shadow_CurseOfTounges"
 }
 local syncName = {
-	paralyze = "MoamParalyze",
-	unparalyze = "MoamUnparalyze",
+	paralyze = "MoamParalyze"..module.revision,
+	unparalyze = "MoamUnparalyze"..module.revision,
 }
 
 local firstunparalyze = nil
@@ -88,10 +112,10 @@ local firstunparalyze = nil
 
 -- called after module is enabled
 function module:OnEnable()
-	self:RegisterEvent("CHAT_MSG_MONSTER_EMOTE")
-    self:RegisterEvent("CHAT_MSG_RAID_BOSS_EMOTE")
+	self:RegisterEvent("CHAT_MSG_MONSTER_EMOTE", "Emote")
+	self:RegisterEvent("CHAT_MSG_RAID_BOSS_EMOTE", "Emote")
 	self:RegisterEvent("CHAT_MSG_SPELL_AURA_GONE_OTHER")
-	
+
 	self:ThrottleSync(10, syncName.paralyze)
 	self:ThrottleSync(10, syncName.unparalyze)
 end
@@ -103,8 +127,8 @@ end
 
 -- called after boss is engaged
 function module:OnEngage()
-	if self.db.profile.adds then 
-		self:Message(L["startwarn"], "Important") 
+	if self.db.profile.adds then
+		self:Message(L["startwarn"], "Important")
 	end
 	self:Unparalyze()
 end
@@ -118,21 +142,11 @@ end
 --      Event Handlers	    --
 ------------------------------
 
-function module:CHAT_MSG_RAID_BOSS_EMOTE(msg)
-    self:DebugMessage("moam raid boss emote: " .. msg)
-    if string.find(msg, L["addstrigger"]) then -- alternative trigger: Moam gains Energize.
-		self:Sync(syncName.paralyze)
-	elseif string.find(msg, L["returntrigger2"]) then
-        self:Sync(syncName.unparalyze)
-	end
-end
-function module:CHAT_MSG_MONSTER_EMOTE(msg)
-    self:DebugMessage("moam monster emote: " .. msg)
+function module:Emote(msg)
+	self:DebugMessage("moam raid boss emote: " .. msg)
 	if string.find(msg, L["addstrigger"]) then -- alternative trigger: Moam gains Energize.
 		self:Sync(syncName.paralyze)
-	elseif string.find(msg, L["returntrigger2"]) then
-        self:Sync(syncName.unparalyze)
-    end
+	end
 end
 
 function module:CHAT_MSG_SPELL_AURA_GONE_OTHER(msg)
@@ -159,6 +173,8 @@ end
 ------------------------------
 
 function module:Paralyze()
+	self:RemoveBar(L["paralyzebar"])
+	self:RemoveBar(L["addsbar"])
 	if self.db.profile.adds then
 		self:Message(L["addswarn"], "Important")
 	end
@@ -172,17 +188,19 @@ function module:Paralyze()
 end
 
 function module:Unparalyze()
+	self:RemoveBar(L["paralyzebar"])
+	self:RemoveBar(L["addsbar"])
 	if firstunparalyze then
 		firstunparalyze = false
-	elseif self.db.profile.paralyze then 
-		self:Message(L["returnwarn"], "Important") 
+	elseif self.db.profile.paralyze then
+		self:Message(L["returnwarn"], "Important")
 	end
-	
+
 	if self.db.profile.adds then
 		self:DelayedMessage(timer.unparalyze - 60, format(L["addsincoming"], 60), "Attention", nil, nil, true)
 		self:DelayedMessage(timer.unparalyze - 30, format(L["addsincoming"], 30), "Attention", nil, nil, true)
 		self:DelayedMessage(timer.unparalyze - 15, format(L["addsincoming"], 15), "Urgent", nil, nil, true)
 		self:DelayedMessage(timer.unparalyze - 5, format(L["addsincoming"], 5), "Important", nil, nil, true)
-		self:Bar(L["addsbar"], timer.unparalyze, icon.unparalyze) 
+		self:Bar(L["addsbar"], timer.unparalyze, icon.unparalyze)
 	end
 end

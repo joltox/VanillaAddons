@@ -11,7 +11,7 @@ local module, L = BigWigs:ModuleDeclaration("High Priestess Jeklik", "Zul'Gurub"
 ----------------------------
 
 L:RegisterTranslations("enUS", function() return {
-    combat_trigger = "grant me wings of v",
+	combat_trigger = "grant me wings of v",
 	swarmbat_name = "Bloodseeker Bat",
 	bombbat_name = "Frenzied Bloodseeker Bat",
 	swarm_trigger = "Bloodseeker Bat gains Hover\.",
@@ -55,6 +55,9 @@ L:RegisterTranslations("enUS", function() return {
 	you = "you",
 	HighPriestessJeklik = "High Priestess Jeklik",
 
+	["Next Heal"] = true,
+	["Fire Bombs"] = true,
+
 	cmd = "Jeklik",
 
 	phase_cmd = "phase",
@@ -80,15 +83,94 @@ L:RegisterTranslations("enUS", function() return {
 	swarm_cmd = "swarm",
 	swarm_name = "Bat Swarm Alert",
 	swarm_desc = "Warn for Bat swarms",
-    swarm_bartext = "Bat Swarm",
+	swarm_bartext = "Bat Swarm",
 
 	announce_cmd = "whispers",
 	announce_name = "Whisper to burning people",
 	announce_desc = "Sends a whisper to players that stand in fire\n\n(Requires assistant or higher)\n\n(Disclaimer: to avoid spamming whispers, it will only whisper people that take damage from fire that is on the ground - aka not the Bat's throw itself)",
 } end )
 
+L:RegisterTranslations("esES", function() return {
+	combat_trigger = "grant me wings of v",
+	swarmbat_name = "Murciélago buscasangre",
+	bombbat_name = "Murciélago buscasangre demenciado",
+	swarm_trigger = "Murciélago buscasangre gana Rondar\.",
+	bomb_trigger = "Murciélago buscasangre demenciado gana Rondar\.",
+	fearrep_trigger1 = "sufre de Chirrido terrorífico",
+	fearrep_trigger2 = "Resistido Chirrido terrorífico",
+	fearrep_trigger3 = "Chirrido terrorífico falla(.+) inmune",
+	fearrep_trigger4 = "sufre de Alarido psíquico",
+	fearrep_trigger5 = "Resistido Alarido psíquico",
+	fearrep_trigger6 = "Alarido psíquico falla(.+) inmune",
+	attack_trigger1 = "Suma sacerdotisa Jeklik ataca",
+	attack_trigger2 = "Suma sacerdotisa Jeklik falla",
+	attack_trigger3 = "Suma sacerdotisa Jeklik golpea",
+	attack_trigger4 = "Suma sacerdotisa Jeklik golpe crítico",
+	liquidfire_trigger = "Fuego líquido",
+	liquidfirehitsyou_trigger = "Lanza Fuego líquido impacta",
+	liquidfirehitsother_trigger = "Llamarada de Fuego líquido impacta (.+) por",
+	liquidfireabsorbyou_trigger = "Absorbes Llamarada de Fuego líquido\.",
+	liquidfireabsorb_trigger = "Llamarada de Fuego líquido está absorbido por (.+)\.",
+	liquidfireresistyou_trigger = "Resistido Llamarada de Fuego líquido\.",
+	liquidfireresist_trigger = "Ha resistido Llamarada de Fuego líquido (.+)\.",
+	liquidfireimmuneyou_trigger = "Llamarada de Fuego líquido ha fallado. Eres inmune\.",
+	liquidfireimmune_trigger = "Lammarada de Fuego líquido ha fallado. (.+) es inmune\.",
+	mindflayyou_trigger = "Sufres de Despelleje mental\.",
+	mindflayother_trigger = "(.+) sufre de Despelleje mental\.",
+	mindflayendyou_trigger = "Despelleje mental acaba de disiparse\.",
+	mindflayend_trigger = "Despelleje mental se desaparece de (.+)\.",
+	phasetwo_trigger = "Rondar se desaparece de Suma sacerdotisa Jeklik\.",
+	heal_trigger = "Suma sacerdotisa Jeklik empieza lanzar Gran sanación\.",
+	swarm_message = "¡Enjambre de murciélagos entrantes! Mátanlos!",
+	bomb_message = "¡Una murciélago de bomba se une la pelea! Cuida tu localización!",
+	fearinitext = "Miedo",
+	fearreptext = "Miedo Posible",
+	mindflaybar = "Despelleje mental",
+	greathealbar = "Sanación",
+	greathealtext = "¡Sanación! Interrúmpela!",
+	phaseone_message = "Fase de Murciélago",
+	phasetwo_message = "Fase de Trol",
+	firewarn = "¡Retrocede del fuego!",
+	firewarnyou = "¡Retrocede del fuego!",
+	you = "tu",
+	HighPriestessJeklik = "Suma sacerdotisa Jeklik",
+	
+	["Next Heal"] = "Próxima sanación",
+	["Fire Bombs"] = "Bombas de Fuego",
+	--cmd = "Jeklik",
+
+	--phase_cmd = "phase",
+	phase_name = "Alerta de Fase",
+	phase_desc = "Anuncia cuando cambie su fase la jefa",
+
+	--heal_cmd = "heal",
+	heal_name = "Alerta de sanación",
+	heal_desc = "Avisa para sanación",
+
+	--flay_cmd = "flay",
+	flay_name = "Alerta de Despelleje mental",
+	flay_desc = "Avisa para Despelleje mental",
+
+	--fear_cmd = "fear",
+	fear_name = "Alerta de Miedo",
+	fear_desc = "Avisa para Miedo\n\n(Descargo de responsabilidad: varia el temporizador, suele lanzar miedo dentro de 10 segundos después de que desaparezca la barra de miedo)",
+
+	--bomb_cmd = "bomb",
+	bomb_name = "Alerta de Murciélago de bomba",
+	bomb_desc = "Avisa para Murciélagos de bomba",
+
+	--swarm_cmd = "swarm",
+	swarm_name = "Alerta de Enjambre de Murciélagos",
+	swarm_desc = "Avisa para Enjambre de Murciélagos",
+	swarm_bartext = "Emjambre de Murciélagos",
+
+	--announce_cmd = "whispers",
+	announce_name = "Susurrar a los jugadores ardientes",
+	announce_desc = "Susurra a los jugadores que están en el fuego\n\n(Require asistente o líder)\n\n(Descargo de responsabilidad: para evitar spam, solamente susurrará los jugadores dañado por el fuego al suelo - no la lanza del murciélago)",
+} end )
+
 L:RegisterTranslations("deDE", function() return {
-    combat_trigger = "grant me wings of v",
+	combat_trigger = "grant me wings of v",
 	swarmbat_name = "Bloodseeker Bat",
 	bombbat_name = "Frenzied Bloodseeker Bat",
 	swarm_trigger = "Bloodseeker Bat bekommt \'Schweben\'\.",
@@ -157,7 +239,7 @@ L:RegisterTranslations("deDE", function() return {
 	swarm_cmd = "swarm",
 	swarm_name = "Alarm f\195\188r Fledermausschw\195\164rme",
 	swarm_desc = "Warnen vor Fledermausschw\195\164rme.",
-    swarm_bartext = "Fledermausschwarm",
+	swarm_bartext = "Fledermausschwarm",
 
 	announce_cmd = "whispers",
 	announce_name = "Brennenden Personen fl\195\188stern",
@@ -182,19 +264,19 @@ module.toggleoptions = {"phase", "heal", "flay", "fear", "swarm", "bomb", "annou
 
 -- locals
 local timer = {
-	firstFear = 23,
-	fear = 22,
-	firstSilence = 31,
+	firstFear = 12,
+	fear = 30,
+	firstSilence = 12,
 	healCast = 4,
 	nextHeal = 20,
 	fear2 = 39.5,
 	fireBombs = 10,
-	mindflay = 10,
-	bats = 68,
+	mindflay = 25,
+	bats = 45,
 }
 local icon = {
 	fear = "Spell_Shadow_SummonImp",
-	fear2 = "Spell_Shadow_PsychicScream", 
+	fear2 = "Spell_Shadow_PsychicScream",
 	silence = "Spell_Frost_Iceshock",
 	fire = "Spell_Fire_Lavaspawn",
 	bomb = "Spell_Fire_Fire",
@@ -203,14 +285,14 @@ local icon = {
 	bats = "Spell_Fire_SelfDestruct",
 }
 local syncName = {
-	fear = "JeklikFearRep",
-	fear2 = "JeklikFearTwoRep",
-	mindflay = "JeklikMindFlay",
-	mindflayOver = "JeklikMindFlayEnd",
-	heal = "JeklikHeal",
-	healOver = "JeklikHealStop",
-	bombBats = "JeklikBombBats",
-	swarmBats = "JeklikSwarmBats",
+	fear = "JeklikFearRep"..module.revision,
+	fear2 = "JeklikFearTwoRep"..module.revision,
+	mindflay = "JeklikMindFlay"..module.revision,
+	mindflayOver = "JeklikMindFlayEnd"..module.revision,
+	heal = "JeklikHeal"..module.revision,
+	healOver = "JeklikHealStop"..module.revision,
+	bombBats = "JeklikBombBats"..module.revision,
+	swarmBats = "JeklikSwarmBats"..module.revision,
 }
 
 local berserkannounced = nil
@@ -224,7 +306,7 @@ module:RegisterYellEngage(L["combat_trigger"])
 
 -- called after module is enabled
 function module:OnEnable()
-    self:RegisterEvent("UNIT_HEALTH")
+	self:RegisterEvent("UNIT_HEALTH")
 	self:RegisterEvent("CHAT_MSG_SPELL_CREATURE_VS_SELF_HITS", "Event")
 	self:RegisterEvent("CHAT_MSG_SPELL_CREATURE_VS_SELF_MISSES", "Event")
 	self:RegisterEvent("CHAT_MSG_SPELL_CREATURE_VS_SELF_DAMAGE", "Event")
@@ -248,7 +330,7 @@ function module:OnEnable()
 	self:RegisterEvent("CHAT_MSG_COMBAT_CREATURE_VS_SELF_HITS", "Event")
 	self:RegisterEvent("CHAT_MSG_COMBAT_CREATURE_VS_PARTY_HITS", "Event")
 	self:RegisterEvent("CHAT_MSG_COMBAT_CREATURE_VS_CREATURE_HITS", "Event")
-	
+
 	self:ThrottleSync(10, syncName.fear)
 	self:ThrottleSync(10, syncName.fear2)
 	self:ThrottleSync(1.5, syncName.mindflay)
@@ -261,9 +343,9 @@ end
 
 -- called after module is enabled and after each wipe
 function module:OnSetup()
-    self.phase          = 0
-    self.lastHeal       = 0
-    self.castingheal    = 0
+	self.phase          = 0
+	self.lastHeal       = 0
+	self.castingheal    = 0
 end
 
 -- called after boss is engaged
@@ -276,9 +358,9 @@ function module:OnEngage()
 		self:Message(L["phaseone_message"], "Attention")
 	end
 	self:Bar("First Silence", timer.firstSilence, icon.silence)
-	
+
 	-- bats
-    if self.db.profile.swarm then
+	if self.db.profile.swarm then
 		self:Bar(L["swarm_bartext"], timer.bats, icon.bats);
 	end
 end
@@ -289,7 +371,7 @@ end
 
 
 ------------------------------
---      Events              -- 
+--      Events              --
 ------------------------------
 
 function module:Event(msg)
@@ -299,12 +381,12 @@ function module:Event(msg)
 	local _,_,liquidfireresist,_ = string.find(msg, L["liquidfireresist_trigger"])
 	local _,_,liquidfireabsorb,_ = string.find(msg, L["liquidfireabsorb_trigger"])
 	local _,_,liquidfireimmune,_ = string.find(msg, L["liquidfireimmune_trigger"])
-    if string.find(msg, "Your Flames hits you") then
-        if self.db.profile.bomb then
-            -- Your Flames hits you for %d Fire damage.
-            self:WarningSign(icon.fire, 2)
-            self:Message(L["firewarnyou"], "Attention", "Alarm")
-        end
+	if string.find(msg, "Your Flames hits you") then
+		if self.db.profile.bomb then
+			-- Your Flames hits you for %d Fire damage.
+			self:WarningSign(icon.fire, 2)
+			self:Message(L["firewarnyou"], "Attention", "Alarm")
+		end
 	elseif string.find(msg, L["heal_trigger"]) then
 		self:Sync(syncName.heal)
 	elseif string.find(msg, L["phasetwo_trigger"]) then
@@ -313,16 +395,16 @@ function module:Event(msg)
 		self:Sync(syncName.mindflay)
 	elseif mindflayother and (UnitIsInRaidByName(mindflayother) or UnitIsPetByName(mindflayother)) then
 		self:Sync(syncName.mindflay)
-	elseif string.find(msg, L["mindflayendyou_trigger"]) then 
+	elseif string.find(msg, L["mindflayendyou_trigger"]) then
 		self:Sync(syncName.mindflayOver)
-	elseif mindflayend and (UnitIsInRaidByName(mindflayend) or UnitIsPetByName(mindflayend)) then 
+	elseif mindflayend and (UnitIsInRaidByName(mindflayend) or UnitIsPetByName(mindflayend)) then
 		self:Sync(syncName.mindflayOver)
 	elseif string.find(msg, L["fearrep_trigger1"]) or string.find(msg, L["fearrep_trigger2"]) or string.find(msg, L["fearrep_trigger3"]) then
 		self:Sync(syncName.fear)
 	elseif string.find(msg, L["fearrep_trigger4"]) or string.find(msg, L["fearrep_trigger5"]) or string.find(msg, L["fearrep_trigger6"]) then
 		self:Sync(syncName.fear2)
 	elseif string.find(msg, L["attack_trigger1"]) or string.find(msg, L["attack_trigger2"]) or string.find(msg, L["attack_trigger3"]) or string.find(msg, L["attack_trigger4"]) then
-		if self.castingheal == 1 then 
+		if self.castingheal == 1 then
 			if (GetTime()-self.lastHeal) < timer.healCast then
 				self:Sync(syncName.healOver)
 			elseif (GetTime()-self.lastHeal) >= timer.healCast then
@@ -336,9 +418,9 @@ function module:Event(msg)
 	elseif string.find(msg, L["liquidfire_trigger"]) then
 		if self.db.profile.announce then
 			if string.find(msg, L["liquidfirehitsyou_trigger"]) then
-                -- do I still need this?
-				--self:Message(L["firewarnyou"], "Attention", "Alarm")
-                --self:WarningSign(icon.fire, 2)
+			-- do I still need this?
+			--self:Message(L["firewarnyou"], "Attention", "Alarm")
+			--self:WarningSign(icon.fire, 2)
 			elseif msg == L["liquidfireresistyou_trigger"] or msg == L["liquidfireabsorbyou_trigger"] or msg == L["liquidfireimmuneyou_trigger"] then
 				self:Message(L["firewarn"], "Attention", "Alarm")
 			elseif liquidfirehitsother and liquidfirehitsother~=L["you"] then
@@ -355,14 +437,14 @@ function module:Event(msg)
 end
 
 function module:UNIT_HEALTH(msg)
-    if UnitName(msg) == self.translatedName then
-        if UnitHealthMax(msg) == 100 then
-            if self.phase < 2 and UnitHealth(msg) < 50 then
-                self:Sync("JeklikPhaseTwo")
-                self:UnregisterEvent("UNIT_HEALTH")
-            end
-        end
-    end
+	if UnitName(msg) == self.translatedName then
+		if UnitHealthMax(msg) == 100 then
+			if self.phase < 2 and UnitHealth(msg) < 50 then
+				self:Sync("JeklikPhaseTwo")
+				self:UnregisterEvent("UNIT_HEALTH")
+			end
+		end
+	end
 end
 
 ------------------------------
@@ -371,7 +453,7 @@ end
 
 function module:BigWigs_RecvSync(sync, rest, nick)
 	if sync == "JeklikPhaseTwo" and self.phase < 2 then
-        self.phase = 2
+		self.phase = 2
 		self:KTM_Reset()
 		if self.db.profile.phase then
 			self:Message(L["phasetwo_message"], "Attention")
@@ -380,7 +462,7 @@ function module:BigWigs_RecvSync(sync, rest, nick)
 			self:RemoveBar(L["fearreptext"])
 			self:Bar(L["fearreptext"], timer.fear2, icon.fear2)
 		end
-        self:Bar("Fire Bombs", timer.fireBombs, icon.bomb)
+		self:Bar(L["Fire Bombs"], timer.fireBombs, icon.bomb)
 	elseif sync == syncName.fear and self.db.profile.fear then
 		self:Bar(L["fearreptext"], timer.fear, icon.fear)
 	elseif sync == syncName.fear2 then
@@ -388,7 +470,7 @@ function module:BigWigs_RecvSync(sync, rest, nick)
 			self:Bar(L["fearreptext"], timer.fear2, icon.fear2)
 		end
 		if self.db.profile.heal then
-			self:RemoveBar(L["greathealbar"])			
+			self:RemoveBar(L["greathealbar"])
 		end
 	elseif sync == syncName.swarmBats and self.db.profile.swarm then
 		self:Message(L["swarm_message"], "Urgent")
@@ -400,7 +482,7 @@ function module:BigWigs_RecvSync(sync, rest, nick)
 			self:Bar(L["mindflaybar"], timer.mindflay, icon.mindflay)
 		end
 		if self.db.profile.heal then
-			self:RemoveBar(L["greathealbar"])			
+			self:RemoveBar(L["greathealbar"])
 		end
 	elseif sync == syncName.mindflayOver and self.db.profile.flay then
 		self:RemoveBar(L["mindflaybar"])
@@ -408,7 +490,7 @@ function module:BigWigs_RecvSync(sync, rest, nick)
 		self.lastHeal = GetTime()
 		self.castingheal = 1
 		if self.db.profile.heal then
-            self:RemoveBar("Next Heal")
+			self:RemoveBar(L["Next Heal"])
 			self:Message(L["greathealtext"], "Important", "Alarm")
 			self:Bar(L["greathealbar"], timer.healCast, icon.heal)
 		end
@@ -416,9 +498,9 @@ function module:BigWigs_RecvSync(sync, rest, nick)
 		self.castingheal = 0
 		if self.db.profile.heal then
 			self:RemoveBar(L["greathealbar"])
-            if (self.lastHeal + timer.nextHeal) > GetTime() then
-                self:Bar("Next Heal", (self.lastHeal + timer.nextHeal - GetTime()), icon.heal)
-            end
+			if (self.lastHeal + timer.nextHeal) > GetTime() then
+				self:Bar(L["Next Heal"], (self.lastHeal + timer.nextHeal - GetTime()), icon.heal)
+			end
 		end
 	end
 end

@@ -24,6 +24,9 @@ local DEBUGGING, TOGGLE_DEBUGGING
 if GetLocale() == "frFR" then
 	DEBUGGING = "D\195\169boguage"
 	TOGGLE_DEBUGGING = "Activer/d\195\169sactiver le d\195\169boguage"
+elseif GetLocale() == "esES" then
+	DEBUGGING = "Depurar"
+	TOGGLE_DEBUGGING = "Activar/desactivar depurar"
 elseif GetLocale() == "deDE" then
 	DEBUGGING = "Debuggen"
 	TOGGLE_DEBUGGING = "Aktiviert/Deaktiviert Debugging"
@@ -36,6 +39,9 @@ elseif GetLocale() == "zhTW" then
 elseif GetLocale() == "zhCN" then
 	DEBUGGING = "\232\176\131\232\175\149"
 	TOGGLE_DEBUGGING = "\229\144\175\231\148\168/\231\166\129\231\148\168 \232\176\131\232\175\149"
+elseif GetLocale() == "ruRU" then
+	DEBUGGING = "Отладка"
+	TOGGLE_DEBUGGING = "Вкл/Выкл отладку для этого аддона."
 else -- enUS
 	DEBUGGING = "Debugging"
 	TOGGLE_DEBUGGING = "Enable/disable debugging"

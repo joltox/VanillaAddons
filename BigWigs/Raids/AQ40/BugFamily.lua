@@ -15,7 +15,7 @@ local vem = AceLibrary("Babble-Boss-2.2")["Vem"]
 
 L:RegisterTranslations("enUS", function() return {
 	cmd = "BugFamily",
-	
+
 	healtrigger = "Princess Yauj begins to cast Great Heal\.",
 	healbar = "Great Heal",
 	healwarn = "Casting heal!",
@@ -24,7 +24,7 @@ L:RegisterTranslations("enUS", function() return {
 	attack_trigger3 = "Princess Yauj hits",
 	attack_trigger4 = "Princess Yauj crits",
 	panic_bar = "Panic",
-	first_panic_bar = "Possible Panic (+/- 3s)",
+	first_panic_bar = "Possible Panic",
 	panic_message = "Fear in 3 Seconds!",
 	toxicvolleyhit_trigger = "Toxic Volley hits",
 	toxicvolleyafflicted_trigger = "afflicted by Toxic Volley\.",
@@ -33,12 +33,16 @@ L:RegisterTranslations("enUS", function() return {
 	toxicvolley_bar = "Toxic Volley",
 	toxicvolley_message = "Toxic Volley in 3 Seconds!",
 
-	panic_trigger = "is afflicted by Fear%.",
-	panicresist_trigger = "Princess Yauj 's Fear was resisted",
-	panicimmune_trigger = "Princess Yauj 's Fear fail(.+) immune",
-	
-    toxicvaporsyou_trigger = "You are afflicted by Toxic Vapors\.",
+	panic_trigger = "afflicted by Panic%.",
+	panicresist_trigger = "Panic was resisted",
+	panicimmune_trigger = "Panic fail(.+) immune",
+
+	toxicvaporsyou_trigger = "You are afflicted by Toxic Vapors\.",
 	toxicvaporsother_trigger = "(.+) is afflicted by Toxic Vapors\.",
+
+	toxicvaporsyou_trigger2 = "You suffer (%d+) (.+) from Lord Kri's Toxic Vapors.",
+	toxicvaporsother_trigger2 = "(.+) suffers (%d+) (.+) from Lord Kri's Toxic Vapors.",
+
 	toxicvapors_message = "Move away from the Poison Cloud!",
 	enrage_bar = "Enrage",
 	warn5minutes = "Enrage in 5 minutes!",
@@ -55,7 +59,7 @@ L:RegisterTranslations("enUS", function() return {
 	vemdeadcontboth_message = "Vem is dead! Lord Kri & Princess Yauj are enraged!",
 	enrage_trigger = "%s goes into a berserker rage!",
 	enrage_warning = "Enraged!",
-	
+
 	panic_cmd = "panic",
 	panic_name = "Fear",
 	panic_desc = "Warn for Princess Yauj's Panic.",
@@ -71,19 +75,91 @@ L:RegisterTranslations("enUS", function() return {
 	announce_cmd = "announce",
 	announce_name = "Poison Cloud",
 	announce_desc = "Whispers players that stand in the Poison Cloud.\n\n(Requires assistant or higher)",
-	
+
 	deathspecials_cmd = "deathspecials",
 	deathspecials_name = "Death Specials",
 	deathspecials_desc = "Lets people know which boss has been killed and what special abilities they do.",
-	
+
 	enrage_cmd = "enrage",
 	enrage_name = "Enrage",
 	enrage_desc = "Enrage timers.",
 } end )
 
+L:RegisterTranslations("esES", function() return {
+	--cmd = "BugFamily",
+
+	healtrigger = "Princesa Yauj comienza a lanzar Gran sanación\.",
+	healbar = "Gran sanación",
+	healwarn = "¡Se lanza sanación!",
+	attack_trigger1 = "Princesa Yauj ataca",
+	attack_trigger2 = "Princess Yauj falla",
+	attack_trigger3 = "Princess Yauj golpea",
+	attack_trigger4 = "Princess Yauj golpe crítico",
+	panic_bar = "Pánico",
+	first_panic_bar = "Pánico Posible",
+	panic_message = "¡Miedo en 3 Segundos!",
+	toxicvolleyhit_trigger = "Salva tóxica golpea",
+	toxicvolleyafflicted_trigger = "sufre de Salva tóxica\.",
+	toxicvolleyresist_trigger = "Resistido Salva tóxica",
+	toxicvolleyimmune_trigger = "Salva tóxica falla(.+) inmune",
+	toxicvolley_bar = "Salva tóxica",
+	toxicvolley_message = "¡Salva tóxica en 3 segundos!",
+
+	panic_trigger = "sufre de Pánico%.",
+	panicresist_trigger = "Resistido Pánico",
+	panicimmune_trigger = "Pánico falla(.+) inmune",
+
+	toxicvaporsyou_trigger = "Sufres de Vapores tóxicos\.",
+	toxicvaporsother_trigger = "(.+) sufre de Vapores tóxicos\.",
+
+	toxicvaporsyou_trigger2 = "Sufres (%d+) de daño (.+) de los Vapores tóxicos de Lord Kri.",
+	toxicvaporsother_trigger2 = "(.+) sufre (%d+) de daño (.+) de los Vapores tóxicos de Lord Kri.",
+
+	toxicvapors_message = "¡Muévate del Nube de veneno!",
+	enrage_bar = "Enfurecer",
+	warn5minutes = "¡Enfurecer en 5 minutos!",
+	warn3minutes = "¡Enfurecer en 3 minutos!",
+	warn90seconds = "¡Enfurecer en 90 segundos!",
+	warn60seconds = "¡Enfurecer en 60 segundos!",
+	warn30seconds = "¡Enfurecer en 30 segundos!!",
+	warn10seconds = "¡Enfurecer en 10 segundos!",
+	kridead_message = "¡Lord Kri está muerto! Aparece el Nube de veneno!",
+	yaujdead_message = "¡Princesa Yauj está muerta! Matan los spawns!",
+	vemdead_message = "¡Vem está muerto!",
+	vemdeadcontkri_message = "¡Vem está muerto! Lord Kri está enfurecido!",
+	vemdeadcontyauj_message = "¡Vem está muerto! Princesa Yauj está enfurecida!",
+	vemdeadcontboth_message = "¡Vem está muerto! Lord Kri y Princesa Yauj están enfurecidos!",
+	enrage_trigger = "¡%s se enfurece!",
+	enrage_warning = "¡Efurecido!",
+
+	--panic_cmd = "panic",
+	panic_name = "Miedo",
+	panic_desc = "Avisa para Pánico de Princesa Yauj.",
+
+	--toxicvolley_cmd = "toxicvolley",
+	toxicvolley_name = "Salva tóxica",
+	toxicvolley_desc = "Avisa para Salva tóxica de Lord Kri.",
+
+	--heal_cmd = "heal",
+	heal_name = "Gran sanación",
+	heal_desc = "Anuncia la sanación de Princesa Yauj.",
+
+	--announce_cmd = "announce",
+	announce_name = "Nube de veneno",
+	announce_desc = "Susurra a los jugadores que están en el Nube de veneno.\n\n(Require asistente o líder)",
+
+	--deathspecials_cmd = "deathspecials",
+	deathspecials_name = "Especiales del Muerte",
+	deathspecials_desc = "Avisa cual jefe está muerto y sus habilidades.",
+
+	--enrage_cmd = "enrage",
+	enrage_name = "Enfurecer",
+	enrage_desc = "Temporizador para Enfurecer.",
+} end )
+
 L:RegisterTranslations("deDE", function() return {
 	cmd = "BugFamily",
-	
+
 	healtrigger = "Prinzessin Yauj beginnt Großes Heilen zu wirken.",
 	healbar = "Gro\195\159e Heilung",
 	healwarn = "Wirkt Heilung!",
@@ -121,7 +197,7 @@ L:RegisterTranslations("deDE", function() return {
 	vemdeadcontboth_message = "Vem ist tot! Lord Kri & Prinzessin Yauj verfallen in Raserei!",
 	enrage_trigger = "%s goes into a berserker rage!",
 	enrage_warning = "Raserei!",
-	
+
 	panic_cmd = "panic",
 	panic_name = "Furcht",
 	panic_desc = "Warnung f\195\188r Prinzessin Yaujs Furcht.",
@@ -137,11 +213,11 @@ L:RegisterTranslations("deDE", function() return {
 	announce_cmd = "announce",
 	announce_name = "Giftwolke",
 	announce_desc = "Fl\195\188stert Spielern, dass sie in der Giftwolke stehen.\n\n(Ben\195\182tigt Schlachtzugleiter oder Assistent)",
-	
+
 	deathspecials_cmd = "deathspecials",
 	deathspecials_name = "Spezielle Todeseffekte",
 	deathspecials_desc = "Informiert Spieler, welcher Boss bereits get\195\182tet wurde und welche Spezialf\195\164higkeiten sie haben.",
-	
+
 	enrage_cmd = "enrage",
 	enrage_name = "Raserei",
 	enrage_desc = "Zeit, bis der Boss in Raserei verf\195\164llt.",
@@ -153,7 +229,7 @@ L:RegisterTranslations("deDE", function() return {
 ---------------------------------
 
 -- module variables
-module.revision = 20006 -- To be overridden by the module!
+module.revision = 20007 -- To be overridden by the module!
 module.enabletrigger = {kri, yauj, vem} -- string or table {boss, add1, add2}
 --module.wipemobs = { L["add_name"] } -- adds which will be considered in CheckForEngage
 module.toggleoptions = {"panic", "toxicvolley", "heal", "announce", "deathspecials", "enrage", "bosskill"}
@@ -161,10 +237,13 @@ module.toggleoptions = {"panic", "toxicvolley", "heal", "announce", "deathspecia
 
 -- locals
 local timer = {
-	firstPanic = 17.5,
+	earliestFirstPanic = 10,
+	latestFirstPanic = 20,
 	panic = 20,
-	firstVolley = 11.4,
-	volley = 5,
+	earliestFirstVolley = 8,
+	latestFirstVolley = 10,
+	earliestVolley = 8,
+	latestVolley = 14,
 	enrage = 900,
 	heal = 2,
 }
@@ -176,17 +255,17 @@ local icon = {
 	heal = "Spell_Holy_Heal",
 }
 local syncName = {
-	volley = "BugTrioKriVolley",
-	heal = "BugTrioYaujHealStart",
-	healStop = "BugTrioYaujHealStop",
-	panic = "BugTrioYaujPanic",
-	enrage = "BugTrioEnraged",
-	kriDead = "BugTrioKriDead",
-	yaujDead = "BugTrioYaujDead",
-	vemDead = "BugTrioVemDead",
-	allDead = "BugTrioAllDead",
+	volley = "BugTrioKriVolley"..module.revision,
+	heal = "BugTrioYaujHealStart"..module.revision,
+	healStop = "BugTrioYaujHealStop"..module.revision,
+	panic = "BugTrioYaujPanic"..module.revision,
+	enrage = "BugTrioEnraged"..module.revision,
+	kriDead = "BugTrioKriDead"..module.revision,
+	yaujDead = "BugTrioYaujDead"..module.revision,
+	vemDead = "BugTrioVemDead"..module.revision,
+	allDead = "BugTrioAllDead"..module.revision,
 }
-	
+
 local kridead = nil
 local vemdead = nil
 local yaujdead = nil
@@ -203,7 +282,7 @@ local castingheal = false
 ------------------------------
 
 -- called after module is enabled
-function module:OnEnable()	
+function module:OnEnable()
 	self:RegisterEvent("CHAT_MSG_MONSTER_EMOTE")
 	self:RegisterEvent("CHAT_MSG_COMBAT_CREATURE_VS_SELF_HITS", "Melee")
 	self:RegisterEvent("CHAT_MSG_COMBAT_CREATURE_VS_SELF_MISSES", "Melee")
@@ -218,7 +297,7 @@ function module:OnEnable()
 	self:RegisterEvent("CHAT_MSG_SPELL_CREATURE_VS_SELF_DAMAGE", "Spells")
 	self:RegisterEvent("CHAT_MSG_SPELL_CREATURE_VS_PARTY_DAMAGE", "Spells")
 	self:RegisterEvent("CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE", "Spells")
-	
+
 	self:ThrottleSync(5, syncName.volley)
 	self:ThrottleSync(5, syncName.heal)
 	self:ThrottleSync(5, syncName.healStop)
@@ -238,19 +317,19 @@ function module:OnSetup()
 	yaujdead = nil
 	healtime = 0
 	castingheal = false
-	
+
 	self:RegisterEvent("CHAT_MSG_COMBAT_HOSTILE_DEATH")
 end
 
 -- called after boss is engaged
 function module:OnEngage()
 	if self.db.profile.panic then
-		self:Bar(L["first_panic_bar"], timer.firstPanic, icon.panic, true, "white")
-		--self:DelayedMessage(timer.firstPanic - 3, L["panic_message"], "Urgent", true, "Alarm") 
+		self:IntervalBar(L["first_panic_bar"], timer.earliestFirstPanic, timer.latestFirstPanic, icon.panic, true, "white")
+		--self:DelayedMessage(timer.firstPanic - 3, L["panic_message"], "Urgent", true, "Alarm")
 	end
 	if self.db.profile.toxicvolley then
-		self:Bar(L["toxicvolley_bar"], timer.firstVolley, icon.volley, true, "green")
-		self:DelayedMessage(timer.firstVolley - 3, L["toxicvolley_message"], "Urgent") 
+		self:IntervalBar(L["toxicvolley_bar"], timer.earliestFirstVolley, timer.latestFirstVolley, icon.volley, true, "green")
+		self:DelayedMessage(timer.earliestFirstVolley - 3, L["toxicvolley_message"], "Urgent")
 	end
 	if self.db.profile.enrage then
 		self:Bar(L["enrage_bar"], timer.enrage, icon.enrage, true, "red")
@@ -292,7 +371,7 @@ end
 
 function module:Melee(msg)
 	if string.find(msg, L["attack_trigger1"]) or string.find(msg, L["attack_trigger2"]) or string.find(msg, L["attack_trigger3"]) or string.find(msg, L["attack_trigger4"]) then
-		if castingheal then 
+		if castingheal then
 			if (GetTime() - healtime) < timer.heal then
 				self:Sync(syncName.healStop)
 			elseif (GetTime() - healtime) >= timer.heal then
@@ -310,14 +389,17 @@ end
 
 function module:Spells(msg)
 	local _,_,toxicvaporsother,_ = string.find(msg, L["toxicvaporsother_trigger"])
+	local _,_,toxicvaporsother2,_ = string.find(msg, L["toxicvaporsother_trigger2"])
 	if string.find(msg, L["panic_trigger"]) or string.find(msg, L["panicresist_trigger"]) or string.find(msg, L["panicimmune_trigger"]) then
 		self:Sync(syncName.panic)
 	elseif string.find(msg, L["toxicvolleyhit_trigger"]) or string.find(msg, L["toxicvolleyafflicted_trigger"]) or string.find(msg, L["toxicvolleyresist_trigger"]) or string.find(msg, L["toxicvolleyimmune_trigger"]) then
 		self:Sync(syncName.volley)
-	elseif msg == L["toxicvaporsyou_trigger"] and self.db.profile.announce then		
+	elseif ( msg == L["toxicvaporsyou_trigger"] or string.find(msg, L["toxicvaporsyou_trigger2"]) ) and self.db.profile.announce then
 		self:Message(L["toxicvapors_message"], "Attention", "Alarm")
-	elseif toxicvaporsother and self.db.profile.announce then		
-		--self:TriggerEvent("BigWigs_SendTell", toxicvaporsother, L["toxicvapors_message"]) -- can cause whisper bug on nefarian
+	elseif toxicvaporsother and self.db.profile.announce then
+		self:TriggerEvent("BigWigs_SendTell", toxicvaporsother, L["toxicvapors_message"])
+	elseif toxicvaporsother2 and self.db.profile.announce then
+		self:TriggerEvent("BigWigs_SendTell", toxicvaporsother2, L["toxicvapors_message"])
 	end
 end
 
@@ -354,7 +436,7 @@ end
 
 function module:Volley()
 	if self.db.profile.toxicvolley then
-		self:Bar(L["toxicvolley_bar"], timer.volley, icon.volley, true, "green")
+		self:IntervalBar(L["toxicvolley_bar"], timer.earliestVolley, timer.latestVolley, icon.volley, true, "green")
 		--self:DelayedMessage(timer.firstVolley - 3, L["toxicvolley_message"], "Urgent")
 	end
 end
@@ -377,6 +459,7 @@ end
 
 function module:Panic()
 	if self.db.profile.panic then
+		self:RemoveBar(L["first_panic_bar"])
 		self:Bar(L["panic_bar"], timer.panic, icon.panic, true, "white")
 		self:Message(L["panic_message"], "Urgent", true, "Alarm")
 	end

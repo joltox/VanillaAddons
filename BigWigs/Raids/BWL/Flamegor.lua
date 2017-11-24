@@ -22,13 +22,13 @@ L:RegisterTranslations("enUS", function() return {
 	shadowflame_warning = "Shadow Flame incoming!",
 	frenzy_message = "Frenzy! Tranq now!",
 	frenzy_bar = "Frenzy",
-    frenzy_Nextbar = "Next Frenzy",
+	frenzy_Nextbar = "Next Frenzy",
 
 	wingbuffetcast_bar = "Wing Buffet",
 	wingbuffet_bar = "Next Wing Buffet",
 	wingbuffet1_bar = "Initial Wing Buffet",
 	shadowflame_bar = "Shadow Flame",
-	shadowflame_Nextbar = "Possible Shadow Flame",
+	shadowflame_Nextbar = "Next Shadow Flame",
 
 	cmd = "Flamegor",
 
@@ -45,6 +45,42 @@ L:RegisterTranslations("enUS", function() return {
 	frenzy_desc = "Warn when Flamegor is frenzied.",
 } end)
 
+L:RegisterTranslations("esES", function() return {
+	wingbuffet_trigger = "Flamagor comienza a lanzar Festín de alas.",
+	shadowflame_trigger = "Flamagor comienza a lanzar Llama de las Sombras.",
+	frenzygain_trigger = "Flamagor entra Frenesí.",
+	frenzygain_trigger2 = "¡Flamagor se vuelve en frenesí!",
+	frenzyend_trigger = "Frenesí desaparece de Flamagor.",
+
+
+	wingbuffet_message = "¡Festín de alas! El Próximo en 30 segundos!",
+	wingbuffet_warning = "¡IRRITA ahora! Festín de alas pronto!",
+	shadowflame_warning = "¡Llama de las Sombras entrante!",
+	frenzy_message = "¡Frenesí! Disparo tranquilizante ahora!",
+	frenzy_bar = "Frenesí",
+	frenzy_Nextbar = "Próximo Frenesí",
+
+	wingbuffetcast_bar = "Festín de alas",
+	wingbuffet_bar = "Próximo Festín de alas",
+	wingbuffet1_bar = "Festín de alas Inicial",
+	shadowflame_bar = "Llama de las Sombras",
+	shadowflame_Nextbar = "Próxima Llama de las Sombras",
+
+	--cmd = "Flamegor",
+
+	--wingbuffet_cmd = "wingbuffet",
+	wingbuffet_name = "Alerta de Festín de alas",
+	wingbuffet_desc = "Avisa cuando Flamagor lance Festín de alas.",
+
+	--shadowflame_cmd = "shadowflame",
+	shadowflame_name = "Alerta de Llama de las Sombras",
+	shadowflame_desc = "Avisa cuando Flamagor lance Llama de las Sombras.",
+
+	--frenzy_cmd = "frenzy",
+	frenzy_name = "Alerta de Frenesí",
+	frenzy_desc = "Avisa cuando Flamagor se vuelva en frenesí.",
+} end)
+
 L:RegisterTranslations("deDE", function() return {
 	wingbuffet_trigger = "Flamegor beginnt Fl\195\188gelsto\195\159 zu wirken.",
 	shadowflame_trigger = "Flamegor beginnt Schattenflamme zu wirken.",
@@ -56,13 +92,13 @@ L:RegisterTranslations("deDE", function() return {
 	shadowflame_warning = "Schattenflamme bald!",
 	frenzy_message = "Wutanfall! Tranq jetzt!",
 	frenzy_bar = "Wutanfall",
-    frenzy_Nextbar = "Nächster Wutanfall",
+	frenzy_Nextbar = "Nächster Wutanfall",
 
 	wingbuffetcast_bar = "Fl\195\188gelsto\195\159",
 	wingbuffet_bar = "N\195\164chster Fl\195\188gelsto\195\159",
 	wingbuffet1_bar = "Erster Fl\195\188gelsto\195\159",
 	shadowflame_bar = "Schattenflamme",
-	shadowflame_Nextbar = "Mögliche Schattenflamme",
+	shadowflame_Nextbar = "Nächste Schattenflamme",
 
 	cmd = "Flamegor",
 
@@ -84,7 +120,7 @@ L:RegisterTranslations("deDE", function() return {
 ---------------------------------
 
 -- module variables
-module.revision = 20007 -- To be overridden by the module!
+module.revision = 20008 -- To be overridden by the module!
 module.enabletrigger = module.translatedName -- string or table {boss, add1, add2}
 --module.wipemobs = { L["add_name"] } -- adds which will be considered in CheckForEngage
 module.toggleoptions = {"wingbuffet", "shadowflame", "frenzy", "bosskill"}
@@ -92,10 +128,10 @@ module.toggleoptions = {"wingbuffet", "shadowflame", "frenzy", "bosskill"}
 
 -- locals
 local timer = {
-	firstWingbuffet = 33.5,
+	firstWingbuffet = 30,
 	wingbuffet = 30,
 	wingbuffetCast = 1,
-	firstShadowflame = 15,
+	firstShadowflame = 16,
 	shadowflame = 16,
 	shadowflameCast = 2,
 	firstFrenzy = 10,
@@ -108,10 +144,10 @@ local icon = {
 	tranquil = "Spell_Nature_Drowsy",
 }
 local syncName = {
-	wingbuffet = "FlamegorWingBuffetX",
-	shadowflame = "FlamegorShadowflameX",
-	frenzy = "FlamegorFrenzyStart",
-	frenzyOver = "FlamegorFrenzyEnd",
+	wingbuffet = "FlamegorWingBuffet"..module.revision,
+	shadowflame = "FlamegorShadowflame"..module.revision,
+	frenzy = "FlamegorFrenzyStart"..module.revision,
+	frenzyOver = "FlamegorFrenzyEnd"..module.revision,
 }
 
 local lastFrenzy = 0
@@ -123,13 +159,13 @@ local _, playerClass = UnitClass("player")
 ------------------------------
 
 -- called after module is enabled
-function module:OnEnable()	
+function module:OnEnable()
 	self.started = nil
 	self:RegisterEvent("CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE")
 	self:RegisterEvent("CHAT_MSG_SPELL_PERIODIC_CREATURE_BUFFS", "Event")
 	self:RegisterEvent("CHAT_MSG_SPELL_AURA_GONE_OTHER", "Event")
-    self:RegisterEvent("CHAT_MSG_MONSTER_EMOTE", "Event")
-	
+	self:RegisterEvent("CHAT_MSG_MONSTER_EMOTE", "Event")
+
 	self:ThrottleSync(10, syncName.wingbuffet)
 	self:ThrottleSync(10, syncName.shadowflame)
 	self:ThrottleSync(5, syncName.frenzy)
@@ -150,7 +186,7 @@ function module:OnEngage()
 		self:Bar(L["shadowflame_Nextbar"], timer.firstShadowflame, icon.shadowflame)
 	end
 	if self.db.profile.frenzy then
-		self:Bar(L["frenzy_Nextbar"], timer.firstFrenzy, icon.frenzy, true, "white") 
+		self:Bar(L["frenzy_Nextbar"], timer.firstFrenzy, icon.frenzy, true, "white")
 	end
 end
 
@@ -186,30 +222,30 @@ end
 
 function module:BigWigs_RecvSync(sync, rest, nick)
 	if sync == syncName.wingbuffet and self.db.profile.wingbuffet then
-        self:Message(L["wingbuffet_message"], "Important")
+		self:Message(L["wingbuffet_message"], "Important")
 		self:RemoveBar(L["wingbuffet_bar"]) -- remove timer bar
-        self:DelayedMessage(timer.wingbuffet - 5, L["wingbuffet_warning"], "Attention", nil, nil, true)
+		self:DelayedMessage(timer.wingbuffet - 5, L["wingbuffet_warning"], "Attention", nil, nil, true)
 		self:Bar(L["wingbuffetcast_bar"], timer.wingbuffetCast, icon.wingbuffet, true, "black") -- show cast bar
 		self:DelayedBar(timer.wingbuffetCast, L["wingbuffet_bar"], timer.wingbuffet, icon.wingbuffet) -- delayed timer bar
 	elseif sync == syncName.shadowflame and self.db.profile.shadowflame then
-        self:Message(L["shadowflame_warning"], "Important", true, "Alarm")
+		self:Message(L["shadowflame_warning"], "Important", true, "Alarm")
 		self:RemoveBar(L["shadowflame_Nextbar"]) -- remove timer bar
 		self:Bar(L["shadowflame_bar"], timer.shadowflameCast, icon.shadowflame, true, "red") -- show cast bar
-        self:DelayedBar(timer.shadowflameCast, L["shadowflame_Nextbar"], timer.shadowflame, icon.shadowflame) -- delayed timer bar
+		self:DelayedBar(timer.shadowflameCast, L["shadowflame_Nextbar"], timer.shadowflame-timer.shadowflameCast, icon.shadowflame) -- delayed timer bar
 	elseif sync == syncName.frenzy and self.db.profile.frenzy then
 		self:Message(L["frenzy_message"], "Important", nil, true, "Alert")
 		self:Bar(L["frenzy_bar"], timer.frenzy, icon.frenzy, true, "red")
-        if playerClass == "HUNTER" or true then
-            self:WarningSign(icon.tranquil, timer.frenzy, true)
-        end
-        lastFrenzy = GetTime()
+		if playerClass == "HUNTER" then
+			self:WarningSign(icon.tranquil, timer.frenzy, true)
+		end
+		lastFrenzy = GetTime()
 	elseif sync == syncName.frenzyOver and self.db.profile.frenzy then
-        self:RemoveBar(L["frenzy_bar"])
-        self:RemoveWarningSign(icon.tranquil, true)
-        if lastFrenzy ~= 0 then
-            local NextTime = (lastFrenzy + timer.frenzy) - GetTime()
-            self:Bar(L["frenzy_Nextbar"], NextTime, icon.frenzy, true, "white")
-        end
+		self:RemoveBar(L["frenzy_bar"])
+		self:RemoveWarningSign(icon.tranquil, true)
+		if lastFrenzy ~= 0 then
+			local NextTime = (lastFrenzy + timer.frenzy) - GetTime()
+			self:Bar(L["frenzy_Nextbar"], NextTime, icon.frenzy, true, "white")
+		end
 	end
 end
 
@@ -219,39 +255,39 @@ end
 ----------------------------------
 
 function module:Test()
-    -- /run local m=BigWigs:GetModule("Ouro");m:Test()
-    local function frenzy()
-        self:Event(L["frenzygain_trigger"])
-    end
-    local function frenzyEnd()
-        self:Event(L["frenzyend_trigger"])
-    end
-    local function deactivate()
-        self:DebugMessage("deactivate")
-        self:Disable()
-        --[[self:DebugMessage("deactivate ")
-        if self.phase then
-            self:DebugMessage("deactivate module "..self:ToString())
-            --BigWigs:ToggleModuleActive(self, false) 
-            self.core:ToggleModuleActive(self, false)
-            self.phase = nil
-        end]]
-    end
-    
-    BigWigs:Print("module Test started")
-    BigWigs:Print("  frenzy after 5s")
-    
-    
-    -- immitate CheckForEngage
-    self:SendEngageSync()    
-    
-    -- sweep after 5s
-    self:ScheduleEvent(self:ToString().."Test_frenzy", frenzy, 5, self)
-    
-    -- sweep after 5s
-    self:ScheduleEvent(self:ToString().."Test_frenzyEnd", frenzyEnd, 10, self)
-    
-    -- reset after 60s
-    self:ScheduleEvent(self:ToString().."Test_deactivate", deactivate, 15, self)
-    
+	-- /run local m=BigWigs:GetModule("Ouro");m:Test()
+	local function frenzy()
+		self:Event(L["frenzygain_trigger"])
+	end
+	local function frenzyEnd()
+		self:Event(L["frenzyend_trigger"])
+	end
+	local function deactivate()
+		self:DebugMessage("deactivate")
+		self:Disable()
+		--[[self:DebugMessage("deactivate ")
+		if self.phase then
+		self:DebugMessage("deactivate module "..self:ToString())
+		--BigWigs:ToggleModuleActive(self, false)
+		self.core:ToggleModuleActive(self, false)
+		self.phase = nil
+		end]]
+	end
+
+	BigWigs:Print("module Test started")
+	BigWigs:Print("  frenzy after 5s")
+
+
+	-- immitate CheckForEngage
+	self:SendEngageSync()
+
+	-- sweep after 5s
+	self:ScheduleEvent(self:ToString().."Test_frenzy", frenzy, 5, self)
+
+	-- sweep after 5s
+	self:ScheduleEvent(self:ToString().."Test_frenzyEnd", frenzyEnd, 10, self)
+
+	-- reset after 60s
+	self:ScheduleEvent(self:ToString().."Test_deactivate", deactivate, 15, self)
+
 end

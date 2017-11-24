@@ -1,4 +1,4 @@
-﻿
+
 assert(BigWigs, "BigWigs not found!")
 
 ----------------------------
@@ -17,6 +17,18 @@ L:RegisterTranslations("enUS", function() return {
 	["Options for the tranq module."] = true,
 	["Toggle tranq bars on or off."] = true,
 	["Bars"] = true,
+} end)
+
+L:RegisterTranslations("esES", function() return {
+	CHAT_MSG_SPELL_SELF_BUFF = "Fallas de disipar el Frenesí de (.+) ",
+	CHAT_MSG_SPELL_SELF_DAMAGE = "Lanzas Disparo tranquilizante al (.+).",
+
+	["Tranq - %s"] = "Disparo Tranquilizante - %s",
+	["%s's Tranq failed!"] = "¡Falló el Disparo tranquilizante de %s!",
+	["Tranq"] = "Tranquilizante",
+	["Options for the tranq module."] = "Opciones para el módulo tranquilizante",
+	["Toggle tranq bars on or off."] = "Alterna las barras de tranquilizante",
+	["Bars"] = "Barras",
 } end)
 
 L:RegisterTranslations("koKR", function() return {

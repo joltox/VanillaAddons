@@ -1,14 +1,14 @@
 ## Interface: 11200
 
-## Title: Big Wigs |cff7fff7fClassic-WoW|r
-## Title-zhCN: |cff7fff7fClassic-WoW|r Big Wigs 
+## Title: Big Wigs |cff7fff7fElysium|r
+## Title-zhCN: |cff7fff7fElysium|r Big Wigs 
 ## Notes: Boss Mods with Timer bars.
+## Notes-esES: Módulos para Jefes con barras temporizadoras.
 ## Notes-zhCN: 团队首领战信息提示插件，带有计时条。
 ## Notes-zhTW: 團隊首領戰訊息提示插件，帶有計時條。
-## Author: Tekkub Stoutwrithe, Ammo, Shyva, Rabbit, LYQ, Dorann & Others
+## Author: Tekkub Stoutwrithe, Ammo, Shyva, Rabbit, LYQ, Dorann, Hosq & Others
 ## Version: 2.0.0
-## X-Website: https://github.com/xorann/BigWigs/releases
-## X-Email: xorann@gmail.com
+## X-Website: https://github.com/Hosq/BigWigs
 ## X-Category: Raid
 ## X-RelSite-WoWI: 5086
 ## X-RelSite-Curse: 4356
@@ -64,24 +64,23 @@ Plugins\BossBlock.lua
 Plugins\RaidIcon.lua
 Plugins\Range.lua
 Plugins\CommonAuras.lua
-Plugins\contribute.lua
 Plugins\Version.lua
 Plugins\Test.lua
 Plugins\CustomBar.lua
 Plugins\Tranq.lua
 Plugins\ZombieFood.lua
-Plugins\LoathebTactical.lua
-# Plugins\NefCount.lua
 Plugins\RespawnTimers.lua
 Plugins\WarningSign.lua
 Plugins\BossRecords.lua
-#Plugins\ReadyCheck.lua
 Plugins\RaidOfficer.lua
 Plugins\AutoReply.lua
 Plugins\Proximity.lua
-Plugins\DousedRunes.lua
-#Plugins\Enrage.lua
 Plugins\Ignite.lua
+Plugins\WorldBuffTimers.lua
+Plugins\ScorchTimer.lua
+Plugins\FRBuffMacro.lua
+Plugins\Farclip.lua
+Plugins\FrostBlast.lua
 
 Raids\ZG\Arlokk.lua
 Raids\ZG\Jeklik.lua
@@ -96,6 +95,7 @@ Raids\ZG\Renataki.lua
 Raids\ZG\Hazzarah.lua
 Raids\ZG\Wushoolay.lua
 Raids\ZG\Gahzranka.lua
+Raids\ZG\GurubashiBerserker.lua
 
 Raids\AQ20\Ayamiss.lua
 Raids\AQ20\Buru.lua
@@ -115,6 +115,7 @@ Raids\AQ40\Defenders.lua
 Raids\AQ40\Twins.lua
 Raids\AQ40\Cthun.lua
 Raids\AQ40\Viscidus.lua
+Raids\AQ40\Warder.lua
 
 Raids\BWL\Chromaggus.lua
 Raids\BWL\Ebonroc.lua
@@ -135,6 +136,7 @@ Raids\MC\Shazzrah.lua
 Raids\MC\Garr.lua
 Raids\MC\Sulfuron.lua
 Raids\MC\Golemagg.lua
+Raids\MC\CoreHound.lua
 
 Raids\Other\Azuregos.lua
 Raids\Other\Kazzak.lua
@@ -142,8 +144,7 @@ Raids\Other\Emeriss.lua
 Raids\Other\Lethon.lua
 Raids\Other\Taerar.lua
 Raids\Other\Ysondre.lua
-
-#Raids\Other\Boar.lua
+Raids\Other\Gordok.lua
 
 Raids\Onyxia\Onyxia.lua
 
@@ -162,4 +163,3 @@ Raids\Naxxramas\Loatheb.lua
 Raids\Naxxramas\Horsemen.lua
 Raids\Naxxramas\Sapphiron.lua
 Raids\Naxxramas\Kelthuzad.lua
-

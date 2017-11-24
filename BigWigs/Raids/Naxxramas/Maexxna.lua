@@ -56,12 +56,57 @@ L:RegisterTranslations("enUS", function() return {
 	are = "are",
 } end )
 
+L:RegisterTranslations("esES", function() return {
+	--cmd = "Maexxna",
+
+	--spray_cmd = "spray",
+	spray_name = "Alerta de Pulverizador de tela de araña",
+	spray_desc = "Avisa para Pulverizador de tela de araña",
+
+	--enrage_cmd = "enrage",
+	enrage_name = "Alerta de Enfurecer",
+	enrage_desc = "Avisa para Enfurecer",
+
+	--cocoon_cmd = "cocoon",
+	cocoon_name = "Alerta de Capullo",
+	cocoon_desc = "Avisa para jugadores en Capullo",
+
+	--poison_cmd = "Poison",
+	poison_name = "Alerta de Veneno necrótico",
+	poison_desc = "Avisa para Veneno necrótico",
+
+	cocoontrigger = "(.*) (.*) sufre de Trampa arácnida.",
+	webspraytrigger = "sufre de Pulverizador de tela de araña",
+	poisontrigger = "sufre de Veneno necrótico.",
+	etrigger1 = "gana Enfurecer",
+
+	cocoonwarn = "¡%s en Capullo!",
+	poisonwarn = "¡Veneno necrótico!",
+	enragetrigger = "%s becomes enraged.",
+
+	webspraywarn30sec = "Capullos al muro en 10 segundos",
+	webspraywarn20sec = "¡Capullos al muro! 15 segundos hasta aparezcan las arañas!",
+	webspraywarn10sec = "¡10 segundos hasta Pulverizador de tela de araña!",
+	webspraywarn5sec = "¡AOE - Aparecen las arañas - AOE! PULVERIZADOR DE TELA DE ARAÑA 5 SEGUNDOS!",
+	webspraywarn = "¡Pulverizador de tela de araña! 40 segundos hasta el próximo!",
+
+	enragewarn = "¡Enfurecer!",
+	enragesoonwarn = "¡Enfurecer pronto!",
+
+	webspraybar = "Pulverizador de tela de araña",
+	cocoonbar = "Capullos",
+	spiderbar = "Arañás",
+	poisonbar = "Veneno necrótico",
+
+	you = "Tu",
+	are = "estás",
+} end )
 ---------------------------------
 --      	Variables 		   --
 ---------------------------------
 
 -- module variables
-module.revision = 20003 -- To be overridden by the module!
+module.revision = 20011 -- To be overridden by the module!
 module.enabletrigger = module.translatedName -- string or table {boss, add1, add2}
 --module.wipemobs = { L["add_name"] } -- adds which will be considered in CheckForEngage
 module.toggleoptions = {"spray", "poison", "cocoon", "enrage", "bosskill"}
@@ -69,19 +114,22 @@ module.toggleoptions = {"spray", "poison", "cocoon", "enrage", "bosskill"}
 
 -- locals
 local timer = {
-	poison = 20,
+	poison = {5, 10},
+	firstPoison = 15,
 	cocoon = 20,
-	spider = 35,
+	spider = 30,
 	webspray = 40,
 }
 local icon = {
-	charge = "Spell_Frost_FrostShock",
-	teleport = "Spell_Arcane_Blink",
+	spider = "INV_Misc_MonsterSpiderCarapace_01",
+	cocoon = "Spell_Nature_Web",
+	poison = "Ability_Creature_Poison_03",
+	webspray = "Ability_Ensnare",
 }
 local syncName = {
-	webspray = "MaexxnaWebspray",
-	poison = "MaexxnaPoison",
-	cocoon = "MaexxnaCocoon",
+	webspray = "MaexxnaWebspray"..module.revision,
+	poison = "MaexxnaPoison"..module.revision,
+	cocoon = "MaexxnaCocoon"..module.revision,
 }
 
 local times = {}
@@ -92,7 +140,7 @@ local enrageannounced = false
 ------------------------------
 
 -- called after module is enabled
-function module:OnEnable()	
+function module:OnEnable()
 	self:RegisterEvent("CHAT_MSG_SPELL_PERIODIC_CREATURE_BUFFS", "Enrage")
 	self:RegisterEvent("UNIT_HEALTH")
 
@@ -115,6 +163,8 @@ end
 
 -- called after boss is engaged
 function module:OnEngage()
+	self:KTM_SetTarget(self:ToString())
+	self:Bar(L["poisonbar"], timer.firstPoison, icon.poison)
 	self:Webspray()
 end
 
@@ -151,8 +201,8 @@ function module:UNIT_HEALTH( msg )
 	if UnitName(msg) == boss then
 		local health = UnitHealth(msg)
 		if (health > 30 and health <= 33 and not enrageannounced) then
-			if self.db.profile.enrage then 
-				self:Message(L["enragesoonwarn"], "Important") 
+			if self.db.profile.enrage then
+				self:Message(L["enragesoonwarn"], "Important")
 			end
 			enrageannounced = true
 		elseif (health > 40 and enrageannounced) then
@@ -163,8 +213,8 @@ end
 
 function module:Enrage( msg )
 	if string.find(msg, L["etrigger1"]) then
-		if self.db.profile.enrage then 
-			self:Message(L["enragewarn"], "Important", nil, "Beware") 
+		if self.db.profile.enrage then
+			self:Message(L["enragewarn"], "Important", nil, "Beware")
 		end
 	end
 end
@@ -190,34 +240,34 @@ end
 ------------------------------
 
 function module:Webspray()
-	self:CancelDelayedMessage(L["webspraywarn30sec"])
-	self:CancelDelayedMessage(L["webspraywarn20sec"])
-	self:CancelDelayedMessage(L["webspraywarn10sec"])
-	self:CancelDelayedMessage(L["webspraywarn5sec"])
+	--self:CancelDelayedMessage(L["webspraywarn30sec"])
+	--self:CancelDelayedMessage(L["webspraywarn20sec"])
+	--self:CancelDelayedMessage(L["webspraywarn10sec"])
+	--self:CancelDelayedMessage(L["webspraywarn5sec"])
 
 	self:Message(L["webspraywarn"], "Important")
-	self:Bar(L["cocoonbar"], timer.cocoon, "Spell_Nature_Web")
-	self:Bar(L["spiderbar"], timer.spider, "INV_Misc_MonsterSpiderCarapace_01")
-	self:Bar(L["webspraybar"], timer.webspray, "Ability_Ensnare")
-	
-	self:DelayedMessage(timer.webspray - 30, L["webspraywarn30sec"], "Attention")
-	self:DelayedMessage(timer.webspray - 20, L["webspraywarn20sec"], "Attention")
-	self:DelayedMessage(timer.webspray - 10, L["webspraywarn10sec"], "Attention")
-	self:DelayedMessage(timer.webspray - 5, L["webspraywarn5sec"], "Attention")
+	self:Bar(L["cocoonbar"], timer.cocoon, icon.cocoon)
+	self:Bar(L["spiderbar"], timer.spider, icon.spider)
+	self:Bar(L["webspraybar"], timer.webspray, icon.webspray)
+
+	--self:DelayedMessage(timer.webspray - 30, L["webspraywarn30sec"], "Attention")
+	--self:DelayedMessage(timer.webspray - 20, L["webspraywarn20sec"], "Attention")
+	--self:DelayedMessage(timer.webspray - 10, L["webspraywarn10sec"], "Attention")
+	--self:DelayedMessage(timer.webspray - 5, L["webspraywarn5sec"], "Attention")
 end
 
 function module:Poison()
-	if self.db.profile.poison then 
+	if self.db.profile.poison then
 		self:Message(L["poisonwarn"], "Important")
-		self:Bar(L["poisonbar"], timer.poison, "Ability_Creature_Poison_03")
+		self:IntervalBar(L["poisonbar"], timer.poison[1], timer.poison[2], icon.poison)
 	end
 end
 
 function module:Cocoon(player)
 	local t = GetTime()
 	if (not times[player]) or (times[player] and (times[player] + 10) < t) then
-		if self.db.profile.cocoon then 
-			self:Message(string.format(L["cocoonwarn"], player), "Urgent") 
+		if self.db.profile.cocoon then
+			self:Message(string.format(L["cocoonwarn"], player), "Urgent")
 		end
 		times[player] = t
 	end

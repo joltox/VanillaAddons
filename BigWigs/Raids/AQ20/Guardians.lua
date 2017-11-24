@@ -49,7 +49,7 @@ L:RegisterTranslations("enUS", function() return {
 	plaguewarn = " has the Plague!",
 	plaguewarnyou = "You have the Plague!",
 	plagueyou = "You",
-	plagueare = "are",	
+	plagueare = "are",
 } end )
 
 L:RegisterTranslations("deDE", function() return {
@@ -86,7 +86,47 @@ L:RegisterTranslations("deDE", function() return {
 	plagueare = "seid",
 } end )
 
+L:RegisterTranslations("esES", function() return {
+	--cmd = "Guardian",
 
+	--summon_cmd = "summon",
+	summon_name = "Alerta de Invocación",
+	summon_desc = "Avisa para adds invocados",
+
+	--plagueyou_cmd = "plagueyou",
+	plagueyou_name = "Alerta personal del Peste",
+	plagueyou_desc = "Avisa si tienes el Peste",
+
+	--plagueother_cmd = "plagueother",
+	plagueother_name = "Alerta del Peste",
+	plagueother_desc = "Avisa si otros jugadores tienen el Peste",
+
+	--icon_cmd = "icon",
+	icon_name = "Marcar para Peste",
+	icon_desc = "Marca con un icono el jugador con el Peste (require asistente o líder)",
+
+	--explode_cmd = "explode",
+	explode_name = "Alerta de Explotar",
+	explode_desc = "Avisa para una explosión entrante",
+
+	--enrage_cmd = "enrage",
+	enrage_name = "Alerta de Enfurecer",
+	enrage_desc = "Avisa para Enfurecer",
+
+	explodetrigger = "Guardián Anubisath gana Explotar.",
+	explodewarn = "¡Explota!",
+	enragetrigger = "Guardián Anubisath gana Enfurecer.",
+	enragewarn = "¡Enfurecido!",
+	summonguardtrigger = "Guardián Anubisath lanza Invocar guardaenjambre Anubisath.",
+	summonguardwarn = "Guardaenjambre Anubisath invocado",
+	summonwarriortrigger = "Guardián Anubisath lanza Invocar guerrero Anubisathr.",
+	summonwarriorwarn = "Guerrero invocado",
+	plaguetrigger = "^([^%s]+) ([^%s]+) afligido por Peste%.$",
+	plaguewarn = " tiene el Peste!",
+	plaguewarnyou = "¡Tienes el Peste!",
+	plagueyou = "Tu",
+	plagueare = "eres",
+} end )
 ---------------------------------
 --      	Variables 		   --
 ---------------------------------
@@ -111,7 +151,7 @@ local syncName = {}
 ------------------------------
 
 -- called after module is enabled
-function module:OnEnable()	
+function module:OnEnable()
 	self:RegisterEvent("CHAT_MSG_COMBAT_HOSTILE_DEATH")
 	self:RegisterEvent("CHAT_MSG_SPELL_PERIODIC_CREATURE_BUFFS")
 	self:RegisterEvent("CHAT_MSG_SPELL_CREATURE_VS_CREATURE_BUFF")
@@ -147,17 +187,17 @@ function module:CHAT_MSG_COMBAT_HOSTILE_DEATH(msg)
 end
 
 function module:CHAT_MSG_SPELL_PERIODIC_CREATURE_BUFFS( msg )
-	if self.db.profile.explode and msg == L["explodetrigger"] then 
+	if self.db.profile.explode and msg == L["explodetrigger"] then
 		self:Message(L["explodewarn"], "Important")
-	elseif self.db.profile.enrage and msg == L["enragetrigger"] then 
+	elseif self.db.profile.enrage and msg == L["enragetrigger"] then
 		self:Message(L["enragewarn"], "Important")
 	end
 end
 
 function module:CHAT_MSG_SPELL_CREATURE_VS_CREATURE_BUFF( msg )
-	if self.db.profile.summon and msg == L["summonguardtrigger"] then 
+	if self.db.profile.summon and msg == L["summonguardtrigger"] then
 		self:Message(L["summonguardwarn"], "Attention")
-	elseif self.db.profile.summon and msg == L["summonwarriortrigger"] then 
+	elseif self.db.profile.summon and msg == L["summonwarriortrigger"] then
 		self:Message(L["summonwarriorwarn"], "Attention")
 	end
 end

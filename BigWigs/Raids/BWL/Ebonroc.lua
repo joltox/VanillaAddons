@@ -23,10 +23,10 @@ L:RegisterTranslations("enUS", function() return {
 	wingbuffetcast_bar = "Wing Buffet",
 	wingbuffet_bar = "Next Wing Buffet",
 	wingbuffet1_bar = "Initial Wing Buffet",
-	shadowflame_bar = "Possible Shadow Flame",
+	shadowflame_bar = "Shadow Flame",
 	shadowflame_Nextbar = "Next Shadow Flame",
 	shadowcurse_bar = "%s - Shadow of Ebonroc",
-    shadowcurse_Firstbar = "Initial Shadow of Ebonroc",
+	shadowcurse_Firstbar = "Initial Shadow of Ebonroc",
 
 	cmd = "Ebonroc",
 
@@ -43,6 +43,40 @@ L:RegisterTranslations("enUS", function() return {
 	curse_desc = "Shows a timer bar and announces who gets Shadow of Ebonroc.",
 } end)
 
+L:RegisterTranslations("esES", function() return {
+	wingbuffet_trigger = "Ebanorroca comienza a lanzar Festín de alas.",
+	shadowflame_trigger = "Ebanorroca comienza a lanzar Llama de las Sombras.",
+	shadowcurseyou_trigger = "sufres de Llama de las Sombras\.",
+	shadowcurseother_trigger = "(.+) sufre de Sombra de Ebanorroca\.",
+	wingbuffet_message = "¡Festín de alas! El Próximo en 30 segundos!",
+	wingbuffet_warning = "¡IRRITA ahora! Festín de alas pronto!",
+	shadowflame_warning = "¡Llama de las Sombras entrante!",
+	shadowfcurse_message_you = "¡Tienes Sombra de Ebanorroca!",
+	shadowfcurse_message_taunt = "¡%s tiene Sombra de Ebanorroca! IRRITA!",
+
+	wingbuffetcast_bar = "Festín de alas",
+	wingbuffet_bar = "Próximo Festín de alas",
+	wingbuffet1_bar = "Festín de alas Inicial",
+	shadowflame_bar = "Llama de las Sombras",
+	shadowflame_Nextbar = "Próxima Llama de las Sombras",
+	shadowcurse_bar = "%s - Sombra de Ebanorroca",
+	shadowcurse_Firstbar = "Sombra de Ebanorroca Inicial",
+
+	--cmd = "Ebonroc",
+
+	--wingbuffet_cmd = "wingbuffet",
+	wingbuffet_name = "Alerta de Festín de alas",
+	wingbuffet_desc = "Avisa cuando Ebanorroca lance Festín de alas.",
+
+	--shadowflame_cmd = "shadowflame",
+	shadowflame_name = "Alerta de Llama de las Sombras",
+	shadowflame_desc = "Avisa cuando Ebanorroca lance Llama de las Sombras.",
+
+	--curse_cmd = "curse",
+	curse_name = "Alerta de Sombra de Ebanorroca",
+	curse_desc = "Muestra una barra temporizadora y anuncia quién tiene Sombra de Ebanorroca.",
+} end)
+
 L:RegisterTranslations("deDE", function() return {
 	wingbuffet_trigger = "Schattenschwinge beginnt Fl\195\188gelsto\195\159 zu wirken.",
 	shadowflame_trigger = "Schattenschwinge beginnt Schattenflamme zu wirken.",
@@ -57,10 +91,10 @@ L:RegisterTranslations("deDE", function() return {
 	wingbuffetcast_bar = "Fl\195\188gelsto\195\159",
 	wingbuffet_bar = "N\195\164chster Fl\195\188gelsto\195\159",
 	wingbuffet1_bar = "Erster Fl\195\188gelsto\195\159",
-	shadowflame_bar = "Mögliche Schattenflamme",
+	shadowflame_bar = "Schattenflamme",
 	shadowflame_Nextbar = "Nächste Schattenflamme",
 	shadowcurse_bar = "%s - Schattenschwinges Schatten",
-    shadowcurse_Firstbar = "Erster Schattenschwinges Schatten",
+	shadowcurse_Firstbar = "Erster Schattenschwinges Schatten",
 
 	cmd = "Ebonroc",
 
@@ -83,7 +117,7 @@ L:RegisterTranslations("deDE", function() return {
 ---------------------------------
 
 -- module variables
-module.revision = 20006 -- To be overridden by the module!
+module.revision = 20007 -- To be overridden by the module!
 module.enabletrigger = module.translatedName -- string or table {boss, add1, add2}
 --module.wipemobs = { L["add_name"] } -- adds which will be considered in CheckForEngage
 module.toggleoptions = {"curse", "wingbuffet", "shadowflame", "bosskill"}
@@ -100,12 +134,12 @@ local timer = {
 local icon = {
 	wingbuffet = "INV_Misc_MonsterScales_14",
 	curse = "Spell_Shadow_GatherShadows",
-	shadowflame = "Spell_Fire_Incinerate",	
+	shadowflame = "Spell_Fire_Incinerate",
 }
 local syncName = {
-	wingbuffet = "EbonrocWingBuffet1",
-	shadowflame = "EbonrocShadowflame1",
-	curse = "EbonrocShadow1",
+	wingbuffet = "EbonrocWingBuffet"..module.revision,
+	shadowflame = "EbonrocShadowflame"..module.revision,
+	curse = "EbonrocShadow"..module.revision,
 }
 
 
@@ -116,12 +150,12 @@ local syncName = {
 --module:RegisterYellEngage(L["start_trigger"])
 
 -- called after module is enabled
-function module:OnEnable()	
+function module:OnEnable()
 	self:RegisterEvent("CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE")
 	self:RegisterEvent("CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE", "Event")
 	self:RegisterEvent("CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_DAMAGE", "Event")
 	self:RegisterEvent("CHAT_MSG_SPELL_PERIODIC_PARTY_DAMAGE", "Event")
-	
+
 	self:ThrottleSync(10, syncName.wingbuffet)
 	self:ThrottleSync(5, syncName.shadowflame)
 	self:ThrottleSync(5, syncName.curse)
@@ -142,7 +176,7 @@ function module:OnEngage()
 		self:Bar(L["shadowcurse_Firstbar"], timer.curse, icon.curse, true, "white")
 	end
 	if self.db.profile.shadowflame then
-		self:Bar(L["shadowflame_Nextbar"], timer.shadowflameCast, icon.shadowflame)
+		self:Bar(L["shadowflame_Nextbar"], timer.shadowflame, icon.shadowflame)
 	end
 end
 
@@ -169,7 +203,7 @@ function module:Event(msg)
 		self:Sync(syncName.curse .. " " .. UnitName("player"))
 		if self.db.profile.curse then
 			self:Message(L["shadowfcurse_message_you"], "Attention")
-            self:WarningSign(icon.curse, timer.curse)
+			self:WarningSign(icon.curse, timer.curse)
 		end
 	elseif shadowcurseother then
 		self:Sync(syncName.curse .. " " .. shadowcurseother)
@@ -213,6 +247,6 @@ function module:ShadowFlame()
 		self:Message(L["shadowflame_warning"], "Important", true, "Alarm")
 		self:RemoveBar(L["shadowflame_Nextbar"]) -- remove timer bar
 		self:Bar(L["shadowflame_bar"], timer.shadowflameCast, icon.shadowflame, true, "red") -- show cast bar
-		self:DelayedBar(timer.shadowflameCast, L["shadowflame_Nextbar"], timer.shadowflame, icon.shadowflame) -- delayed timer bar
+		self:DelayedBar(timer.shadowflameCast, L["shadowflame_Nextbar"], timer.shadowflame-timer.shadowflameCast, icon.shadowflame) -- delayed timer bar
 	end
 end

@@ -14,7 +14,7 @@ L:RegisterTranslations("enUS", function() return {
 	cmd = "Hazzarah",
 	nightmaresummon_trigger = "Hazza\'rah casts Summon Nightmare Illusions\.",
 	nightmaresummon_message = "Kill the spawns!",
-	
+
 	nightmaresummon_cmd = "spawns",
 	nightmaresummon_name = "Spawns alert",
 	nightmaresummon_desc = "Shows a warning when the boss summons Nightmare Illusions.",
@@ -25,13 +25,21 @@ L:RegisterTranslations("deDE", function() return {
 
 	nightmaresummon_trigger = "Hazza\'rah wirkt Alptraumillusionen beschw\195\182ren\.",
 	nightmaresummon_message = "T\195\182tet die Adds!",
-	
+
 	nightmaresummon_cmd = "spawns",
 	nightmaresummon_name = "Alarm f\195\188r die Adds",
 	nightmaresummon_desc = "Zeigt eine Warnung wenn der Boss Alptraumillusionen beschw\195\182rt.",
 } end )
 
+L:RegisterTranslations("esES", function() return {
+	--cmd = "Hazzarah",
+	nightmaresummon_trigger = "Hazza\'rah lanza Invocar ilusiones de pesadilla\.",
+	nightmaresummon_message = "¡Matan los Ilusiones!",
 
+	--nightmaresummon_cmd = "spawns",
+	nightmaresummon_name = "Alerta de Ilusiones",
+	nightmaresummon_desc = "Avisa cuando el jefe Invoque ilusiones de pesadilla",
+} end )
 ---------------------------------
 --      	Variables 		   --
 ---------------------------------
@@ -46,7 +54,7 @@ module.toggleoptions = {"nightmaresummon", "bosskill"}
 local timer = {}
 local icon = {}
 local syncName = {
-	illusions = "HazzarahIllusions",
+	illusions = "HazzarahIllusions"..module.revision,
 }
 
 ------------------------------
@@ -56,7 +64,7 @@ local syncName = {
 -- called after module is enabled
 function module:OnEnable()
 	self:RegisterEvent("CHAT_MSG_SPELL_CREATURE_VS_CREATURE_BUFF")
-	
+
 	self:ThrottleSync(5, syncName.illusions)
 end
 
@@ -81,7 +89,7 @@ end
 ------------------------------
 
 function module:BigWigs_RecvSync(sync, rest, nick)
-    if sync == syncName.illusions and self.db.profile.nightmaresummon then
+	if sync == syncName.illusions and self.db.profile.nightmaresummon then
 		self:Message(L["nightmaresummon_message"], "Important", true, "Alarm")
 	end
 end

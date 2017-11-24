@@ -27,6 +27,23 @@ L:RegisterTranslations("enUS", function() return {
 	massivegeyser_desc = "Warn when the boss is casting Massive Geyser.",
 } end )
 
+L:RegisterTranslations("esES", function() return {
+	--cmd = "Gahzranka",
+
+	frostbreath_trigger = "Gahz\'ranka comienza a lanzar Aliento de Escarcha\.",
+	frostbreath_bar = "Aliento de Escarcha",
+	massivegeyser_trigger = "Gahz\'ranka comienza a lanzar Géiser monumental\.",
+	massivegeyser_bar = "Géiser monumental",
+
+	--frostbreath_cmd = "frostbreath",
+	frostbreath_name = "Alerta de Aliento de Escarcha",
+	frostbreath_desc = "Avisa cuando el jefe lance Aliento de Escarcha.",
+
+	--massivegeyser_cmd = "massivegeyser",
+	massivegeyser_name = "Alerta de Géiser monumental",
+	massivegeyser_desc = "Avisa cuando el jefe lance Géiser monumental.",
+} end )
+
 L:RegisterTranslations("deDE", function() return {
 	--cmd = "Gahzranka",
 
@@ -38,7 +55,7 @@ L:RegisterTranslations("deDE", function() return {
 	--frostbreath_cmd = "frostbreath",
 	frostbreath_name = "Alarm f\195\188r Frostatem",
 	frostbreath_desc = "Warnen wenn Gahz'ranka beginnt Frostatem zu wirken.",
-	
+
 	--massivegeyser_cmd = "massivegeyser",
 	massivegeyser_name = "Alarm f\195\188r Massiver Geysir",
 	massivegeyser_desc = "Warnen wenn Gahz'ranka beginnt Massiver Geysir zu wirken.",
@@ -69,7 +86,7 @@ local icon = {
 ------------------------------
 
 -- called after module is enabled
-function module:OnEnable()	
+function module:OnEnable()
 	self:RegisterEvent("CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE")
 	self:RegisterEvent("PLAYER_REGEN_DISABLED", "CheckForEngage")
 end

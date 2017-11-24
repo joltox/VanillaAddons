@@ -367,6 +367,15 @@ pfUI:RegisterModule("nameplates", function ()
       end
     end
 
+    -- hide totems
+    if C.nameplates.totems == "1" and not this.needNameUpdate then
+      for totem in pairs(L["totems"]) do
+        if string.find(unitname, totem) then
+          this:Hide()
+        end
+      end
+    end
+
     -- level elite indicator
     if this.needEliteUpdate and pfUI.nameplates.mobs[unitname] then
       if level:GetText() ~= nil then
@@ -572,8 +581,10 @@ pfUI:RegisterModule("nameplates", function ()
   pfUI.nameplates.combat:SetScript("OnEvent", function()
     if event == "PLAYER_ENTER_COMBAT" then
       this.inCombat = 1
+      if PlayerFrame then PlayerFrame.inCombat = 1 end
     elseif event == "PLAYER_LEAVE_COMBAT" then
       this.inCombat = nil
+      if PlayerFrame then PlayerFrame.inCombat = nil end
     end
   end)
 

@@ -58,6 +58,54 @@ L:RegisterTranslations("enUS", function() return {
 	thunderclapwarn = "Thunderclap!",
 } end )
 
+L:RegisterTranslations("esES", function() return {
+	--cmd = "Defender",
+
+	--plagueyou_cmd = "plagueyou",
+	plagueyou_name = "Alerta personal del Peste",
+	plagueyou_desc = "Avisa si tienes el Peste",
+
+	--plagueother_cmd = "plagueother",
+	plagueother_name = "Alerta del Peste",
+	plagueother_desc = "Avisa si otros jugadores tienen el Peste",
+
+	--thunderclap_cmd = "thunderclap",
+	thunderclap_name = "Alerta de Trueno",
+	thunderclap_desc = "Avisa para Trueno",
+
+	--explode_cmd = "explode",
+	explode_name = "Alerta de Explotar",
+	explode_desc = "Avisa para Explotar",
+
+	--enrage_cmd = "enrage",
+	enrage_name = "Alerta de Enfurecer",
+	enrage_desc = "Avisa para Enfurecer",
+
+	--summon_cmd = "summon",
+	summon_name = "Alerta de Invocación",
+	summon_desc = "Avisa para Guardaenjambres Anubisath invocados",
+
+	--icon_cmd = "icon",
+	icon_name = "Marcar con icono",
+	icon_desc = "Marca con un icono los jugadores con el Peste (require asistente o líder)",
+
+	explodetrigger = "Defensor Anubisath gana Explotar.",
+	explodewarn = "¡Explotando!",
+	enragetrigger = "Defensor Anubisath gana Enfurecer.",
+	enragewarn = "¡Enfurecido!",
+	summonguardtrigger = "Defensor Anubisath lanza Invocar guardaenjambre Anubisath.",
+	summonguardwarn = "Guardaenjambre Anubisath Invocado",
+	summonwarriortrigger = "Defensor Anubisath lanza Invocar guerrero Anubisath.",
+	summonwarriorwarn = "Guerrero Anubisath Invocado",
+	plaguetrigger = "^([^%s]+) ([^%s]+) sufre de Peste%.$",
+	plaguewarn = " tiene el Peste!",
+	plagueyouwarn = "¡Tienes el Peste!",
+	plagueyou = "Tu",
+	plagueare = "eres",
+	thunderclaptrigger = "^Trueno de Defensor Anubisath golpea a ([^%s]+) por %d+%.",
+	thunderclapwarn = "¡Trueno!",
+} end )
+
 L:RegisterTranslations("deDE", function() return {
 	plagueyou_name = "Du hast die Seuche",
 	plagueyou_desc = "Warnung, wenn Du die Seuche hast.",
@@ -105,13 +153,13 @@ L:RegisterTranslations("deDE", function() return {
 ---------------------------------
 
 -- module variables
-module.revision = 20003 -- To be overridden by the module!
+module.revision = 20004 -- To be overridden by the module!
 module.enabletrigger = module.translatedName -- string or table {boss, add1, add2}
 --module.wipemobs = { L["add_name"] } -- adds which will be considered in CheckForEngage
 module.toggleoptions = {"plagueyou", "plagueother", "icon", -1, "thunderclap", "explode", "enrage"--[[, "bosskill"]]}
 
 module.defaultDB = {
-    enrage = false,
+	enrage = false,
 	bosskill = nil,
 }
 
@@ -124,9 +172,9 @@ local icon = {
 	plague = "Spell_Shadow_CurseOfTounges",
 }
 local syncName = {
-	enrage = "DefenderEnrage",
-	explode = "DefenderExplode",
-	thunderclap = "DefenderThunderclap",
+	enrage = "DefenderEnrage"..module.revision,
+	explode = "DefenderExplode"..module.revision,
+	thunderclap = "DefenderThunderclap"..module.revision,
 }
 
 
@@ -135,7 +183,7 @@ local syncName = {
 ------------------------------
 
 -- called after module is enabled
-function module:OnEnable()	
+function module:OnEnable()
 	self:RegisterEvent("CHAT_MSG_SPELL_PERIODIC_CREATURE_BUFFS")
 	self:RegisterEvent("CHAT_MSG_SPELL_CREATURE_VS_CREATURE_BUFF")
 	self:RegisterEvent("CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE", "CheckPlague")
@@ -144,7 +192,7 @@ function module:OnEnable()
 	self:RegisterEvent("CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE", "Thunderclap")
 	self:RegisterEvent("CHAT_MSG_SPELL_CREATURE_VS_PARTY_DAMAGE", "Thunderclap")
 	self:RegisterEvent("CHAT_MSG_SPELL_CREATURE_VS_SELF_DAMAGE", "Thunderclap")
-	
+
 	self:ThrottleSync(10, syncName.enrage)
 	self:ThrottleSync(10, syncName.explode)
 	self:ThrottleSync(6, syncName.thunderclap)

@@ -52,7 +52,7 @@ L:RegisterTranslations("enUS", function() return {
 	adddeath = "No... more... Feugen...",
 	adddeath2 = "Master save me...",
 
-	teslaoverload = "%s overloads!",
+	teslaoverload = "overloads!",
 
 	pstrigger = "Now YOU feel pain!",
 	trigger_polarity_cast = "Thaddius begins to cast Polarity Shift",
@@ -67,7 +67,7 @@ L:RegisterTranslations("enUS", function() return {
 	enragewarn = "Enrage!",
 	startwarn = "Thaddius Phase 1",
 	startwarn2 = "Thaddius Phase 2, Enrage in 5 minutes!",
-	addsdownwarn = "Thaddius incoming in 10-20sec!",
+	addsdownwarn = "Thaddius incoming in 14sec!",
 	pswarn1 = "Thaddius begins to cast Polarity Shift! - CHECK DEBUFF!",
 	pswarn2 = "30 seconds to Polarity Shift!",
 	pswarn3 = "3 seconds to Polarity Shift!",
@@ -88,6 +88,93 @@ L:RegisterTranslations("enUS", function() return {
 
 	throwbar = "Throw",
 	throwwarn = "Throw in ~5 seconds!",
+
+	phasebar = "Phase 2",
+
+	add1 = "Feugen",
+	add2 = "Stalagg",
+
+} end )
+
+L:RegisterTranslations("esES", function() return {
+	--cmd = "Thaddius",
+
+	--enrage_cmd = "enrage",
+	enrage_name = "Alerta de Enfurecer",
+	enrage_desc = "Avisa para Enfurecer",
+
+	--phase_cmd = "phase",
+	phase_name = "Alerta de Fase",
+	phase_desc = "Avisa para cambios de Fase",
+
+	--polarity_cmd = "polarity",
+	polarity_name = "Alerta de Cambio de polaridad",
+	polarity_desc = "Avisa para Cambio de polaridad",
+
+	--power_cmd = "power",
+	power_name = "Alerta de Oleada de poder",
+	power_desc = "Avisa para Oleada de poder de Stalagg",
+
+	--adddeath_cmd = "adddeath",
+	adddeath_name = "Alerta del Muerte del Add",
+	adddeath_desc = "Avisa cuando muera un add.",
+
+	--charge_cmd = "charge",
+	charge_name = "Alerta de Carga",
+	charge_desc = "Avisa para Carga positiva/negativa por ti mismo.",
+
+	--throw_cmd = "throw",
+	throw_name = "Alerta de Lanzar",
+	throw_desc = "Avisa para cambios de la tarima de los tanques.",
+
+	enragetrigger = "%s goes into a berserker rage!",
+	starttrigger = "Stalagg crush you!",
+	starttrigger1 = "Feed you to master!",
+	trigger_phase2_1 = "EAT YOUR BONES",
+	trigger_phase2_2 = "BREAK YOU!",
+	trigger_phase2_3 = "KILL!",
+
+	adddeath = "No... more... Feugen...",
+	adddeath2 = "Master save me...",
+
+	teslaoverload = "overloads!",
+
+	pstrigger = "Now YOU feel pain!",
+	trigger_polarity_cast = "Thaddius comienza a lanzar Cambio de polaridad",
+	chargetrigger = "You are afflicted by (%w+) Charge.",
+	positivetype = "Spell_ChargePositive",
+	negativetype = "Spell_ChargeNegative",
+	stalaggtrigger = "Stalagg gains Power Surge.",
+
+	you = "Tu",
+	are = "estás",
+
+	enragewarn = "¡Enfurecer!",
+	startwarn = "Thaddius Fase 1",
+	startwarn2 = "¡Thaddius Fase 2, Enfurecer en 5 minutos!",
+	addsdownwarn = "¡Thaddius entrante en 14 segundos!",
+	pswarn1 = "¡Thaddius comienza a lanzar Cambio de polaridad! - COMPRUEBA CARGA!",
+	pswarn2 = "¡30 segundos hasta Cambio de polaridad!",
+	pswarn3 = "¡3 segundos hasta Cambio de polaridad!",
+	poswarn = "¡Cambias a la Carga positiva!",
+	negwarn = "¡Cambias a la Carga negativa!",
+	nochange = "¡Tu polaridad no cambió!",
+	polaritytickbar = "Tic de Polaridad",
+	enragebartext = "Enfurecer",
+	warn_enrage_3m = "Enfurecer en 3 minutos",
+	warn_enrage_90 = "Enfurecer en 90 segundos",
+	warn_enrage_60 = "Enfurecer en 60 segundos",
+	warn_enrage_30 = "Enfurecer en 30 segundos",
+	warn_enrage_10 = "Enfurecer en 10 segundos",
+	stalaggwarn = "Oleada de poder en Stalagg!",
+	powersurgebar = "Oleada de poder",
+
+	bar1text = "Cambio de polaridad",
+
+	throwbar = "Lanzar",
+	throwwarn = "¡Lanzar en ~5 segundos!",
+
+	phasebar = "Fase 2",
 } end )
 
 ---------------------------------
@@ -103,11 +190,14 @@ module.toggleoptions = {"enrage", "charge", "polarity", -1, "power", "throw", "p
 
 -- locals
 local timer = {
-	throw = 21,
+	throw = 20.5,
 	powerSurge = 10,
 	enrage = 300,
 	polarityTick = 6,
+	firstPolarity = 10,
 	polarityShift = 30,
+	transition = 14,
+	transition2 = 4,
 }
 local icon = {
 	throw = "Ability_Druid_Maul",
@@ -116,11 +206,11 @@ local icon = {
 	polarityShift = "Spell_Nature_Lightning",
 }
 local syncName = {
-	powerSurge = "StalaggPower",
-	phase2 = "ThaddiusPhaseTwo",
-	adddied = "ThaddiusAddDeath",
-	polarity = "ThaddiusPolarity",
-	enrage = "ThaddiusEnrage",
+	powerSurge = "StalaggPower"..module.revision,
+	--phase2 = "ThaddiusPhaseTwo"..module.revision,
+	addsdead = "ThaddiusAdsDead"..module.revision,
+	polarity = "ThaddiusPolarity"..module.revision,
+	enrage = "ThaddiusEnrage"..module.revision,
 }
 
 
@@ -138,7 +228,7 @@ function module:OnEnable()
 	self:RegisterEvent("CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE", "PolarityCast")
 	self:RegisterEvent("CHAT_MSG_SPELL_CREATURE_VS_CREATURE_BUFF", "PolarityCast")
 	self:RegisterEvent("CHAT_MSG_MONSTER_EMOTE", "CheckForEnrage")
-	
+
 	self:ThrottleSync(10, syncName.polarity)
 	self:ThrottleSync(4, syncName.powerSurge)
 end
@@ -148,19 +238,29 @@ function module:OnSetup()
 	self.started = nil
 	self.enrageStarted = nil
 	self.addsdead = 0
+	self.transition = nil
 	self.teslawarn = nil
 	self.stage1warn = nil
 	self.previousCharge = ""
+	self.add1HP = 100
+	self.add2HP = 100
 end
 
 -- called after boss is engaged
 function module:OnEngage()
+	self.add1HP = 100
+	self.add2HP = 100
+	self:TriggerEvent("BigWigs_StartHPBar", self, L["add1"], 100)
+	self:TriggerEvent("BigWigs_SetHPBar", self, L["add1"], 0)
+	self:TriggerEvent("BigWigs_StartHPBar", self, L["add2"], 100)
+	self:TriggerEvent("BigWigs_SetHPBar", self, L["add2"], 0)
 	if self.db.profile.phase and not self.stage1warn then
 		self:Message(L["startwarn"], "Important")
 	end
 	self.stage1warn = true
 	self:Throw()
 	self:ScheduleRepeatingEvent("bwthaddiusthrow", self.Throw, timer.throw, self)
+	self:ScheduleRepeatingEvent("bwThaddiusAddCheck", self.CheckAddHP, 0.5, self )
 end
 
 -- called after boss is disengaged (wipe(retreat) or victory)
@@ -180,17 +280,22 @@ end
 
 function module:CHAT_MSG_MONSTER_YELL( msg )
 	if string.find(msg, L["pstrigger"]) then
-		self:Sync(syncName.polarity)	
+		self:Sync(syncName.polarity)
 	elseif msg == L["adddeath"] or msg == L["adddeath2"] then
-		self:Sync(syncName.adddied)
-	elseif string.find(msg, L["trigger_phase2_1"]) or string.find(msg, L["trigger_phase2_2"]) or string.find(msg, L["trigger_phase2_3"]) then
-		self:Sync(syncName.phase2)
+		self.addsdead = self.addsdead + 1
+		if self.addsdead == 2 then
+			self:Sync(syncName.addsdead)
+		end
+		--elseif string.find(msg, L["trigger_phase2_1"]) or string.find(msg, L["trigger_phase2_2"]) or string.find(msg, L["trigger_phase2_3"]) then
+		--	self:Sync(syncName.phase2)
 	end
 end
 
 function module:CheckForEnrage(msg)
 	if msg == L["enragetrigger"] then
 		self:Sync(syncName.enrage)
+	elseif string.find(msg, L["teslaoverload"]) then
+		self:Transition(timer.transition2)
 	end
 end
 
@@ -211,8 +316,8 @@ function module:PLAYER_AURAS_CHANGED(msg)
 			-- counter debuff, and thus nothing has changed yet.
 			-- (we got a PW:S or Renew or whatever after he casted
 			--  PS, but before we got the new debuff)
-			if applications > 1 then 
-				return 
+			if applications > 1 then
+				return
 			end
 			chargetype = texture
 			-- Note that we do not break out of the while loop when
@@ -229,7 +334,7 @@ function module:PLAYER_AURAS_CHANGED(msg)
 end
 
 function module:NewPolarity(chargetype)
-    if self.db.profile.charge then
+	if self.db.profile.charge then
 		if self.previousCharge and self.previousCharge == chargetype then
 			self:Message(L["nochange"], "Urgent", true, "Long")
 		elseif chargetype == L["positivetype"] then
@@ -251,10 +356,10 @@ end
 function module:BigWigs_RecvSync(sync, rest, nick)
 	if sync == syncName.powerSurge then
 		self:PowerSurge()
-	elseif sync == syncName.adddied then
-		self:AddDied()
-	elseif sync == syncName.phase2 then
-		self:Phase2()
+	elseif sync == syncName.addsdead then
+		self:Transition(timer.transition)
+		--elseif sync == syncName.phase2 then
+		--	self:Phase2()
 	elseif sync == syncName.polarity then
 		self:PolarityShift()
 	elseif sync == syncName.enrage then
@@ -273,24 +378,27 @@ function module:PowerSurge()
 	end
 end
 
-function module:AddDied()
-	self.addsdead = self.addsdead + 1
-	if self.addsdead == 2 then
-		if self.db.profile.phase then 
-			self:Message(L["addsdownwarn"], "Attention") 
+function module:Transition(transitionTime)
+	self:RemoveBar(L["throwbar"])
+	self:CancelDelayedMessage(L["throwwarn"])
+	self:CancelScheduledEvent("bwthaddiusthrow")
+	self:TriggerEvent("BigWigs_StopHPBar", self, L["add1"])
+	self:TriggerEvent("BigWigs_StopHPBar", self, L["add2"])
+	self:CancelScheduledEvent("bwThaddiusAddCheck")
+	if not self.transition then
+		if self.db.profile.phase then
+			self:Message(L["addsdownwarn"], "Attention")
+			self:Bar(L["phasebar"], transitionTime, icon.polarityShift)
 		end
-		self:CancelScheduledEvent("bwthaddiusthrow")
-		self:CancelDelayedMessage(L["throwwarn"])
+		self:ScheduleEvent("bwThaddiusP2", self.Phase2, transitionTime, self)
+		self.transition = true
 	end
 end
 
 function module:Phase2()
-    self:RemoveBar(L["throwbar"])
-    self:CancelDelayedMessage(L["throwwarn"])
-    self:CancelScheduledEvent("bwthaddiusthrow")
-    
-	if self.db.profile.phase then 
-		self:Message(L["startwarn2"], "Important") 
+	self:KTM_Reset()
+	if self.db.profile.phase then
+		self:Message(L["startwarn2"], "Important")
 	end
 	if self.db.profile.enrage then
 		self:Bar(L["enragebartext"], timer.enrage, icon.enrage)
@@ -300,6 +408,7 @@ function module:Phase2()
 		self:DelayedMessage(timer.enrage - 30, L["warn_enrage_30"], "Important")
 		self:DelayedMessage(timer.enrage - 10, L["warn_enrage_10"], "Important")
 	end
+	self:Bar(L["bar1text"], timer.firstPolarity, icon.polarityShift)
 end
 
 function module:PolarityShift()
@@ -311,12 +420,12 @@ function module:PolarityShift()
 end
 
 function module:Enrage()
-	if self.db.profile.enrage then 
-		self:Message(L["enragewarn"], "Important") 
+	if self.db.profile.enrage then
+		self:Message(L["enragewarn"], "Important")
 	end
-	
+
 	self:RemoveBar(L["enragebartext"])
-	
+
 	self:CancelDelayedMessage(L["warn_enrage_3m"])
 	self:CancelDelayedMessage(L["warn_enrage_90"])
 	self:CancelDelayedMessage(L["warn_enrage_60"])
@@ -335,86 +444,114 @@ function module:Throw()
 	end
 end
 
+function module:CheckAddHP()
+	local health1
+	local health2
+	if UnitName("playertarget") == L["add1"] then
+		health1 = UnitHealth("playertarget")
+	elseif UnitName("playertarget") == L["add2"] then
+		health2 = UnitHealth("playertarget")
+	end
+
+	for i = 1, GetNumRaidMembers(), 1 do
+		if UnitName("Raid"..i.."target") == L["add1"] then
+			health1 = UnitHealth("Raid"..i.."target")
+		elseif UnitName("Raid"..i.."target") == L["add2"] then
+			health2 = UnitHealth("Raid"..i.."target")
+		end
+		if health1 and health2 then break; end
+	end
+
+	if health1 then
+		self.add1HP = health1
+		self:TriggerEvent("BigWigs_SetHPBar", self, L["add1"], 100-self.add1HP)
+	end
+
+	if health2 then
+		self.add2HP = health2
+		self:TriggerEvent("BigWigs_SetHPBar", self, L["add2"], 100-self.add2HP)
+	end
+end
 
 ------------------------------
 --      Test                --
 ------------------------------
 
 function module:Test(long)
-    -- /run local m=BigWigs:GetModule("Thaddius");m:Test()
-    
+	-- /run local m=BigWigs:GetModule("Thaddius");m:Test()
+
 	local function testPhase2()
 		module:CHAT_MSG_MONSTER_YELL(L["trigger_phase2_1"])
-        BigWigs:Print("  testPhase2")
-    end
+		BigWigs:Print("  testPhase2")
+	end
 	local function testPolarityShiftPositive()
 		module:NewPolarity(L["positivetype"])
 	end
-    local function testPolarityShiftNegative()
+	local function testPolarityShiftNegative()
 		module:NewPolarity(L["negativetype"])
 	end
 	local function testDisable()
 		--module:SendWipeSync()
 		BigWigs:TriggerEvent("BigWigs_RebootModule", self:ToString())
 		BigWigs:DisableModule(module:ToString())
-        BigWigs:Print("  testDisable")
+		BigWigs:Print("  testDisable")
 	end
-    
-    if long then
-        local testTimer = 0
-        self:SendEngageSync()
 
-        -- phase2
-        testTimer = testTimer + 10
-        self:ScheduleEvent(self:ToString() .. "testPhase2", testPhase2, testTimer, self)
-        BigWigs:Print(" testPhase2 in " .. testTimer)
+	if long then
+		local testTimer = 0
+		self:SendEngageSync()
 
-        -- polarity shift 1
-        testTimer = testTimer + 5
-        self:ScheduleEvent(self:ToString() .. "testPolarityShiftPositive", testPolarityShiftPositive, testTimer, self)
-        BigWigs:Print(" testPolarityShiftPositive1 in " .. testTimer)
+		-- phase2
+		testTimer = testTimer + 10
+		self:ScheduleEvent(self:ToString() .. "testPhase2", testPhase2, testTimer, self)
+		BigWigs:Print(" testPhase2 in " .. testTimer)
 
-        -- polarity shift 2
-        testTimer = testTimer + 30
-        self:ScheduleEvent(self:ToString() .. "testPolarityShiftPositive2", testPolarityShiftPositive, testTimer, self)
-        BigWigs:Print(" testPolarityShiftPositive2 in " .. testTimer)
+		-- polarity shift 1
+		testTimer = testTimer + 5
+		self:ScheduleEvent(self:ToString() .. "testPolarityShiftPositive", testPolarityShiftPositive, testTimer, self)
+		BigWigs:Print(" testPolarityShiftPositive1 in " .. testTimer)
 
-        -- polarity shift 3
-        testTimer = testTimer + 30
-        self:ScheduleEvent(self:ToString() .. "testPolarityShiftNegative", testPolarityShiftNegative, testTimer, self)
-        BigWigs:Print(" testPolarityShiftNegative in " .. testTimer)
+		-- polarity shift 2
+		testTimer = testTimer + 30
+		self:ScheduleEvent(self:ToString() .. "testPolarityShiftPositive2", testPolarityShiftPositive, testTimer, self)
+		BigWigs:Print(" testPolarityShiftPositive2 in " .. testTimer)
 
-        -- disable
-        testTimer = testTimer + 5
-        self:ScheduleEvent(self:ToString() .. "testDisable", testDisable, testTimer, self)
-        BigWigs:Print(" testDisable in " .. testTimer)
-    else
-        local testTimer = 0
-        self:SendEngageSync()
+		-- polarity shift 3
+		testTimer = testTimer + 30
+		self:ScheduleEvent(self:ToString() .. "testPolarityShiftNegative", testPolarityShiftNegative, testTimer, self)
+		BigWigs:Print(" testPolarityShiftNegative in " .. testTimer)
 
-        -- phase2
-        testTimer = testTimer + 5
-        self:ScheduleEvent(self:ToString() .. "testPhase2", testPhase2, testTimer, self)
-        BigWigs:Print(" testPhase2 in " .. testTimer)
+		-- disable
+		testTimer = testTimer + 5
+		self:ScheduleEvent(self:ToString() .. "testDisable", testDisable, testTimer, self)
+		BigWigs:Print(" testDisable in " .. testTimer)
+	else
+		local testTimer = 0
+		self:SendEngageSync()
 
-        -- polarity shift 1
-        testTimer = testTimer + 5
-        self:ScheduleEvent(self:ToString() .. "testPolarityShiftPositive", testPolarityShiftPositive, testTimer, self)
-        BigWigs:Print(" testPolarityShiftPositive1 in " .. testTimer)
+		-- phase2
+		testTimer = testTimer + 5
+		self:ScheduleEvent(self:ToString() .. "testPhase2", testPhase2, testTimer, self)
+		BigWigs:Print(" testPhase2 in " .. testTimer)
 
-        -- polarity shift 2
-        testTimer = testTimer + 5
-        self:ScheduleEvent(self:ToString() .. "testPolarityShiftPositive2", testPolarityShiftPositive, testTimer, self)
-        BigWigs:Print(" testPolarityShiftPositive2 in " .. testTimer)
+		-- polarity shift 1
+		testTimer = testTimer + 5
+		self:ScheduleEvent(self:ToString() .. "testPolarityShiftPositive", testPolarityShiftPositive, testTimer, self)
+		BigWigs:Print(" testPolarityShiftPositive1 in " .. testTimer)
 
-        -- polarity shift 3
-        testTimer = testTimer + 5
-        self:ScheduleEvent(self:ToString() .. "testPolarityShiftNegative", testPolarityShiftNegative, testTimer, self)
-        BigWigs:Print(" testPolarityShiftNegative in " .. testTimer)
+		-- polarity shift 2
+		testTimer = testTimer + 5
+		self:ScheduleEvent(self:ToString() .. "testPolarityShiftPositive2", testPolarityShiftPositive, testTimer, self)
+		BigWigs:Print(" testPolarityShiftPositive2 in " .. testTimer)
 
-        -- disable
-        testTimer = testTimer + 5
-        self:ScheduleEvent(self:ToString() .. "testDisable", testDisable, testTimer, self)
-        BigWigs:Print(" testDisable in " .. testTimer)
-    end
+		-- polarity shift 3
+		testTimer = testTimer + 5
+		self:ScheduleEvent(self:ToString() .. "testPolarityShiftNegative", testPolarityShiftNegative, testTimer, self)
+		BigWigs:Print(" testPolarityShiftNegative in " .. testTimer)
+
+		-- disable
+		testTimer = testTimer + 5
+		self:ScheduleEvent(self:ToString() .. "testDisable", testDisable, testTimer, self)
+		BigWigs:Print(" testDisable in " .. testTimer)
+	end
 end

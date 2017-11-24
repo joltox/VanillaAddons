@@ -77,19 +77,19 @@ L:RegisterTranslations("enUS", function() return {
 	mc_cmd = "mc",
 	mc_name = "Mind Control",
 	mc_desc = "Alert when players have Cause Insanity.",
-	
+
 	aspectjeklik_cmd = "aspectjeklik",
 	aspectjeklik_name = "Aspect of Jeklik",
 	aspectjeklik_desc = "Warnings for the extra ability Hakkar gains when High Priestess Jeklik is still alive.",
-	
+
 	aspectvenoxis_cmd = "aspectvenoxis",
 	aspectvenoxis_name = "Aspect of Venoxis",
 	aspectvenoxis_desc = "Warnings for the extra ability Hakkar gains when High Priest Venoxis is still alive.",
-	
+
 	aspectmarli_cmd = "aspectmarli",
 	aspectmarli_name = "Aspect of Mar'li",
 	aspectmarli_desc = "Warnings for the extra ability Hakkar gains when High Priestess Mar'li is still alive.",
-	
+
 	aspectthekal_cmd = "aspectthekal",
 	aspectthekal_name = "Aspect of Thekal",
 	aspectthekal_desc = "Warnings for the extra ability Hakkar gains when High Priest Thekal is still alive.",
@@ -97,10 +97,103 @@ L:RegisterTranslations("enUS", function() return {
 	aspectarlokk_cmd = "aspectarlokk",
 	aspectarlokk_name = "Aspect of Arlokk",
 	aspectarlokk_desc = "Warnings for the extra ability Hakkar gains when High Priestess Arlokk is still alive.",
-	
+
 	puticon_cmd = "puticon",
 	puticon_name = "Raid icon on MCed players",
 	puticon_desc = "Place a raid icon on the player with Cause Insanity.\n\n(Requires assistant or higher)",
+} end)
+
+L:RegisterTranslations("esES", function() return {
+	engage_trigger = "FACE THE WRATH OF THE SOULFLAYER!",
+	siphon_trigger = "Hakkar gana Succión de sangre.",
+	poisonousblood_trigger = "Sufres de Sangre envenenada.",
+	mindcontrolyou_trigger = "Sufres de Provocar locura.",
+	mindcontrolother_trigger = "(.+) sufre de Provocar locura.",
+	flee_trigger = "Fleeing will do you no good, mortals!",
+	aspectofthekal_trigger = "Hakkar gana Aspecto de Thekal.",
+	aspectofthekalend_trigger = "Aspecto de Thekal desaparece de Hakkar.",
+	aspectofmarliyou_trigger = "Sufres de Aspecto de Mar'li.",
+	aspectofmarliyouimmune_trigger = "Aspecto de Mar'li de Hakkar ha fallado. Eres inmune.",
+	aspectofmarliother_trigger = "(.+) sufre de Aspecto de Mar'li.",
+	aspectofmarliotherimmune_trigger = "Aspecto de Mar'li de Hakkar ha fallado. (.+) es inmune.",
+	aspectofmarligeneralavoid_trigger = "Aspecto de Mar'li de Hakkar",
+	aspectofjeklikyou_trigger = "Sufres de Aspecto de Jeklik.",
+	aspectofjeklikyouimmune_trigger = "Aspecto de Jeklik de Hakkar ha fallado. Eres inmune.",
+	aspectofjeklikother_trigger = "(.+) sufre de Aspecto de Jeklik.",
+	aspectofjeklikotherimmune_trigger = "Aspecto de Jeklik de Hakkar ha fallado. (.+) es inmune.",
+	aspectofjeklikgeneralavoid_trigger = "Aspecto de Jeklik de Hakkar",
+	aspectofarlokkyou_trigger = "Sufres de Aspecto de Arlokk.",
+	aspectofarlokkyouimmune_trigger = "Aspecto de Arlokk de Hakkar ha fallado. Eres inmune.",
+	aspectofarlokkother_trigger = "(.+) sufre de Aspecto de Arlokk.",
+	aspectofarlokkotherimmune_trigger = "Aspecto de Arlokk de Hakkar ha fallado. (.+) es inmune.",
+	aspectofarlokkgeneralavoid_trigger = "Aspecto de Arlokk de Hakkar",
+	aspectofvenoxisyou_trigger = "Aspecto de Venoxis te lanza Hakkar y te inflige",
+	aspectofvenoxisyouresist_trigger = "Resistido Aspecto de Venoxis de Hakkar.",
+	aspectofvenoxisother_trigger = "Aspecto de Venoxis de Hakkar impacta",
+	aspectofvenoxisotherresist_trigger = "Ha resistido Aspecto de Venoxis de Hakkar",
+
+	siphon_warning = "¡Succión de sangre en %d segundos!",
+	siphon_message = "¡Succión de sangre - la próxima en 90 segundos!",
+	enrage5minutes_message = "¡Enfurecer en 5 minutos!",
+	enrage1minute_message = "¡Enfurecer en 1 minuto!",
+	enrageseconds_message = "¡Enfurecer en %d segundos!",
+
+	mindcontrol_message = "¡%s está controlado por mente!",
+	mindcontrol_message_you = "¡Estás contraldo por mente!",
+	mindcontrol_bar = "CM: %s",
+	firstmc_bar = "Primer CM",
+	nextmc_bar = "Próximo CM",
+	enrage_bar = "Enfurecer",
+	siphon_bar = "Succión de sangre",
+	aspectthekalnext_bar = "Próximo Frenesí",
+	aspectthekal_bar = "Frenesí - Aspecto de Thekal",
+	aspectthekal_ann = "¡Frenesí! Disparo tranquilizante ahora!",
+	aspectmarli_bar = "Próxima Aturde",
+	aspectmarlidebuff_bar = "Aturde: %s - Aspecto de Mar'li",
+	aspectjeklik_bar = "Próximo silencio",
+	aspectjeklikdebuff_bar = "Silencio - Aspecto de Jeklik",
+	aspectarlokk_bar = "Próximo Esfumar",
+	aspectarlokkdebuff_bar = "Esfumar: %s - Aspecto de Arlokk",
+	aspectvenoxis_bar = "Próximo Veneno",
+	aspectvenoxisdebuff_bar = "Veneno - Aspecto de Venoxis",
+
+	--cmd = "Hakkar",
+
+	--siphon_cmd = "siphon",
+	siphon_name = "Succión de sangre",
+	siphon_desc = "Muestra barras, advertencias y temporizadores para Succión de sangre de Hakkar.",
+
+	--enrage_cmd = "enrage",
+	enrage_name = "Enfurecer",
+	enrage_desc = "Avisa cuando ha pasado 10 minutos",
+
+	--mc_cmd = "mc",
+	mc_name = "Provocar locura",
+	mc_desc = "Avisa cuando los jugadores tengan Provocar locura.",
+
+	--aspectjeklik_cmd = "aspectjeklik",
+	aspectjeklik_name = "Aspecto de Jeklik",
+	aspectjeklik_desc = "Avisa para la habilidad que gane Hakkar cuando esté viva Suma sacerdotisa Jeklik.",
+
+	--aspectvenoxis_cmd = "aspectvenoxis",
+	aspectvenoxis_name = "Aspecto de Venoxis",
+	aspectvenoxis_desc = "Avisa para la habilidad que gane Hakkar cuando esté vivo Sumo sacerdote Venoxis.",
+
+	--aspectmarli_cmd = "aspectmarli",
+	aspectmarli_name = "Aspecto de Mar'li",
+	aspectmarli_desc = "Avisa para la habilidad que gane Hakkar cuando esté viva Suma sacerdotisa Mar'li.",
+
+	--aspectthekal_cmd = "aspectthekal",
+	aspectthekal_name = "Aspecto de Thekal",
+	aspectthekal_desc = "Avisa para la habilidad que gane Hakkar cuando esté vivo Sumo sacerdote Thekal.",
+
+	--aspectarlokk_cmd = "aspectarlokk",
+	aspectarlokk_name = "Aspecto de Arlokk",
+	aspectarlokk_desc = "Avisa para la habilidad que gane Hakkar cuando esté viva Suma sacerdotisa Arlokk.",
+
+	--puticon_cmd = "puticon",
+	puticon_name = "Marcar los jugadores controlados por mente",
+	puticon_desc = "Marca con un icono el jugador con Provocar locura.\n\n(Require asistente o líder)",
 } end)
 
 L:RegisterTranslations("deDE", function() return {
@@ -170,19 +263,19 @@ L:RegisterTranslations("deDE", function() return {
 	mc_cmd = "mc",
 	mc_name = "Mind Control",
 	mc_desc = "Alert when players have Cause Insanity.",
-	
+
 	aspectjeklik_cmd = "aspectjeklik",
 	aspectjeklik_name = "Aspect of Jeklik",
 	aspectjeklik_desc = "Warnings for the extra ability Hakkar gains when High Priestess Jeklik is still alive.",
-	
+
 	aspectvenoxis_cmd = "aspectvenoxis",
 	aspectvenoxis_name = "Aspect of Venoxis",
 	aspectvenoxis_desc = "Warnings for the extra ability Hakkar gains when High Priest Venoxis is still alive.",
-	
+
 	aspectmarli_cmd = "aspectmarli",
 	aspectmarli_name = "Aspect of Mar'li",
 	aspectmarli_desc = "Warnings for the extra ability Hakkar gains when High Priestess Mar'li is still alive.",
-	
+
 	aspectthekal_cmd = "aspectthekal",
 	aspectthekal_name = "Aspect of Thekal",
 	aspectthekal_desc = "Warnings for the extra ability Hakkar gains when High Priest Thekal is still alive.",
@@ -190,7 +283,7 @@ L:RegisterTranslations("deDE", function() return {
 	aspectarlokk_cmd = "aspectarlokk",
 	aspectarlokk_name = "Aspect of Arlokk",
 	aspectarlokk_desc = "Warnings for the extra ability Hakkar gains when High Priestess Arlokk is still alive.",
-	
+
 	puticon_cmd = "puticon",
 	puticon_name = "Raid icon on MCed players",
 	puticon_desc = "Place a raid icon on the player with Cause Insanity.\n\n(Requires assistant or higher)",
@@ -223,7 +316,7 @@ local icon = {
 	bloodSiphon = "Spell_Shadow_LifeDrain",
 	serpent = "Ability_Hunter_Pet_WindSerpent",
 	mindcontrol = "Spell_Shadow_ShadowWordDominate",
-	
+
 	-- aspects
 	jeklik = "Spell_Shadow_Teleport",
 	arlokk = "Ability_Vanish",
@@ -232,18 +325,18 @@ local icon = {
 	thekal = "Ability_Druid_ChallangingRoar",
 }
 local syncName = {
-	bloodSiphon = "HakkarBloodSiphon",
-	mindcontrol = "HakkarMC",
-	
+	bloodSiphon = "HakkarBloodSiphon"..module.revision,
+	mindcontrol = "HakkarMC"..module.revision,
+
 	-- aspects
-	jeklik = "HakkarAspectJeklik",
-	arlokk = "HakkarAspectArlokk",
-	arlokkAvoid = "HakkarAspectArlokkAvoid",
-	venoxis = "HakkarAspectVenoxis",
-	marli = "HakkarAspectMarli",
-	marliAvoid = "HakkarAspectMarliAvoid",
-	thekalStart = "HakkarAspectThekalStart",
-	thekalStop = "HakkarAspectThekalStop",
+	jeklik = "HakkarAspectJeklik"..module.revision,
+	arlokk = "HakkarAspectArlokk"..module.revision,
+	arlokkAvoid = "HakkarAspectArlokkAvoid"..module.revision,
+	venoxis = "HakkarAspectVenoxis"..module.revision,
+	marli = "HakkarAspectMarli"..module.revision,
+	marliAvoid = "HakkarAspectMarliAvoid"..module.revision,
+	thekalStart = "HakkarAspectThekalStart"..module.revision,
+	thekalStop = "HakkarAspectThekalStop"..module.revision,
 }
 
 local berserkannounced = nil
@@ -264,11 +357,11 @@ function module:OnEnable()
 	self:RegisterEvent("CHAT_MSG_SPELL_CREATURE_VS_PARTY_DAMAGE", "Others")
 	self:RegisterEvent("CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE", "Others")
 	self:RegisterEvent("CHAT_MSG_SPELL_PERIODIC_HOSTILEPLAYER_DAMAGE")
-	
-	
+
+
 	self:ThrottleSync(5, syncName.bloodSiphon)
 	self:ThrottleSync(5, syncName.mindcontrol)
-	
+
 	self:ThrottleSync(5, syncName.jeklik)
 	self:ThrottleSync(5, syncName.arlokk)
 	self:ThrottleSync(5, syncName.arlokkAvoid)
@@ -323,10 +416,10 @@ end
 function module:Self(msg)
 	if msg == L["mindcontrolyou_trigger"] then
 		self:Sync(syncName.mindcontrol .. " "..UnitName("player"))
-    elseif string.find(msg, L["poisonousblood_trigger"]) then
-        self:RemoveWarningSign(icon.serpent)
-		
-	-- aspects
+	elseif string.find(msg, L["poisonousblood_trigger"]) then
+		self:RemoveWarningSign(icon.serpent)
+
+		-- aspects
 	elseif msg == L["aspectofjeklikyou_trigger"] then
 		self:Sync(syncName.jeklik)
 	elseif msg == L["aspectofmarliyou_trigger"] then
@@ -388,8 +481,8 @@ end
 function module:CHAT_MSG_SPELL_PERIODIC_CREATURE_BUFFS(msg)
 	if msg == L["siphon_trigger"] then
 		self:Sync(syncName.bloodSiphon)
-		
-	-- aspects
+
+		-- aspects
 	elseif string.find(msg, L["aspectofthekal_trigger"]) then
 		self:Sync(syncName.thekalStart)
 	end
@@ -408,18 +501,18 @@ end
 ------------------------------
 
 function module:BigWigs_RecvSync(sync, rest, nick)
-    if sync == syncName.bloodSiphon then
-        self:BloodSiphon()
+	if sync == syncName.bloodSiphon then
+		self:BloodSiphon()
 	elseif sync == syncName.mindcontrol and rest then
 		self:MindControl(rest)
 
-	-- aspects
+		-- aspects
 	elseif sync == syncName.jeklik and self.db.profile.aspectjeklik then
 		self:Bar(L["aspectjeklik_bar"], 10, icon.jeklik, true, "Orange")
 		self:Bar(L["aspectjeklikdebuff_bar"], 5, icon.jeklik, true, "Orange")
 	elseif sync == syncName.arlokk and self.db.profile.aspectarlokk then
 		self:Bar(L["aspectarlokk_bar"], 10, icon.arlokk, true, "Blue")
-		self:Bar(string.format(L["aspectarlokkdebuff_bar"], rest), 2, icon.arlokk, true, "Blue")	
+		self:Bar(string.format(L["aspectarlokkdebuff_bar"], rest), 2, icon.arlokk, true, "Blue")
 	elseif sync == syncName.arlokkAvoid and self.db.profile.aspectarlokk then
 		self:Bar(L["aspectarlokk_bar"], 10, icon.arlokk, true, "Blue")
 	elseif sync == syncName.venoxis and self.db.profile.aspectvenoxis then
@@ -435,7 +528,7 @@ function module:BigWigs_RecvSync(sync, rest, nick)
 		self:Bar(L["aspectthekal_bar"], 8, icon.thekal, true, "Black")
 		self:Message(L["aspectthekal_ann"], "Important", true, "Alarm")
 	elseif sync == syncName.thekalStop and self.db.profile.aspectthekal then
-        self:RemoveBar(L["aspectthekal_bar"])
+		self:RemoveBar(L["aspectthekal_bar"])
 	end
 end
 
@@ -452,7 +545,7 @@ function module:BloodSiphon()
 		-- before I display that I need to figure out, how to track when the player gained the Poisonous Blood - this should hide the icon again
 		self:DelayedMessage(timer.bloodSiphon - 10, string.format(L["siphon_warning"], 10), "Attention", nil, nil, true)
 	end
-	
+
 	-- aspects
 	if self.db.profile.aspectjeklik then
 		self:RemoveBar(L["aspectjeklik_bar"])
